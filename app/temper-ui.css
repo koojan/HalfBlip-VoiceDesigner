@@ -1,0 +1,14 @@
+/* shared by the all-in-one app and the Listen page. Pages define --ink --card --bg --acc --acc2 --good --bad */
+.tp-q{margin:10px 0 2px}.tp-q b{display:block;font-size:12.5px;margin-bottom:4px}
+.tp-opts{display:flex;gap:6px;flex-wrap:wrap}
+.tp-o{font:700 12px "DM Sans",system-ui,sans-serif;color:#1b1b1f;background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:5px 11px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .08s,background .15s}
+.tp-o:active{transform:translate(3px,3px);box-shadow:none}.tp-o.on{background:var(--acc);box-shadow:inset 0 0 0 2px var(--ink),3px 3px 0 var(--ink)}
+.tp-g{border:2.5px solid var(--ink);border-radius:16px;padding:6px 10px 8px;margin-top:8px;background:color-mix(in srgb,var(--gc,var(--acc)) 20%,var(--card))}
+.tp-g>summary{cursor:pointer;font-weight:800;font-size:12px}.tp-g[open]>summary{margin-bottom:4px}
+.tp-s{display:grid;grid-template-columns:104px 1fr 38px;gap:8px;align-items:center;margin:5px 0}
+.tp-s span{font-weight:700;font-size:11.5px}.tp-s output{font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+.tp-s small{grid-column:2/4;margin-top:-3px;opacity:.7;font-size:10.5px;line-height:1.25}
+.tp-s input[type=range]{-webkit-appearance:none;appearance:none;height:11px;background:var(--card);border:2.5px solid var(--ink);border-radius:8px;width:100%;margin:0}
+.tp-s input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--acc2);border:2.5px solid var(--ink);border-radius:38%}
+.tp-s input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--acc2);border:2.5px solid var(--ink);border-radius:38%}
+.tp-note{font-size:11.5px;opacity:.8;margin:4px 0 0}

@@ -1,0 +1,57 @@
+<div class="wrap hb-view" id="view-respond" hidden>
+ <div class="hb-grid">
+  <section class="card hb-card wide">
+   <div class="hb-who"><div class="hb-av" id="rs-av"></div><div style="flex:1;min-width:200px"><h3 id="rs-name"></h3><div class="sub" id="rs-sub"></div></div>
+    <label class="k">Archetype <select id="rs-arch" aria-label="Archetype"></select></label>
+    <button id="rs-reset" title="Replace the numbers below with this archetype's starting personality">Reset to archetype</button>
+    <button id="rs-forget" title="Forget how it feels about you">Forget our history</button></div>
+   <div class="hb-kv"><div><small>Feeling for you</small><div class="hb-meter"><u></u><i id="rs-bond"></i></div></div><div><small>Mood right now</small><b id="rs-mood"></b></div><div><small>It likes</small><b id="rs-likes"></b></div></div>
+   <p class="hb-help">This is how the character <b>reacts to people</b>, separate from how it sounds. A voice that is the same for everyone would feel like a toy; a character with moods, taste and a temper feels like someone. It chooses between matching you, soothing you, teasing you, disagreeing, grumbling, sulking, perking up, or staying quiet.</p>
+  </section>
+  <section class="card hb-card"><h2><span>Who it is</span></h2><div id="rs-ui"></div></section>
+  <section class="card hb-card"><h2><span>Try it, no microphone needed</span></h2>
+   <p class="hb-help" style="margin-top:0">Pretend to be someone talking to it. Each button plays one reaction and explains why. Your tuning on the left changes the result.</p>
+   <div class="hb-sim" id="rs-sim"></div>
+   <div class="hb-row2"><label class="k"><input type="checkbox" id="rs-know" checked>It can tell my mood (as if it understood my words)</label></div>
+   <div class="hb-row2"><button id="rs-30" class="save">Run each situation 30 times</button><span class="hb-help" style="margin:0">shows how this character usually reacts</span></div>
+   <div class="hb-res" id="rs-res"><span class="hb-help">Press a situation above.</span></div>
+   <div id="rs-hist"></div>
+  </section>
+ </div>
+</div>
+<div class="wrap hb-view" id="view-listen" hidden>
+ <div class="hb-grid">
+  <section class="card hb-card">
+   <h2><span>Right now</span></h2>
+   <div class="hb-stat"><div class="hb-orb" id="ls-orb"></div><div style="flex:1;min-width:180px"><div id="hb-st">Not listening</div><div id="hb-sub">Press Start and allow the microphone. <b id="ls-who"></b> will answer.</div></div></div>
+   <div class="hb-lv"><i id="ls-lv"></i><u id="ls-th" style="left:10%"></u></div>
+   <div class="hb-row2"><button class="speak" id="ls-go" style="font-size:15px;min-height:40px">🎤 Start listening</button><button id="ls-hello">Say hello</button><button id="ls-ser" hidden>Robot (serial)</button></div>
+   <p class="hb-help">Audio is analysed in this page only and is not stored. Use headphones or keep volume low: it stops listening while it talks.</p>
+  </section>
+  <section class="card hb-card"><h2><span>What it did</span></h2><div id="ls-dec"><span class="hb-help">Waiting for you to speak.</span></div></section>
+  <section class="card hb-card"><h2><span>What it heard</span></h2>
+   <table class="hb-tbl" id="ls-heard"><tr><td>Nothing yet</td><td></td></tr></table>
+   <div style="margin-top:10px">Energy (calm ↔ lively) <b id="ls-aN" style="float:right"></b></div><div class="hb-dual"><b id="ls-aB"></b><i id="ls-aI" style="left:50%"></i></div>
+   <div>Mood (low ↔ good) <b id="ls-vN" style="float:right"></b></div><div class="hb-dual"><b id="ls-vB"></b><i id="ls-vI" style="left:50%"></i></div>
+   <p class="hb-help">Energy can be read from a voice. Mood mostly cannot, so the mood bar stays in the middle unless words tell it more (type below).</p>
+  </section>
+  <section class="card hb-card"><h2><span>Set-up</span></h2>
+   <details class="g" open><summary>Microphone</summary>
+    <div class="ctl"><span>Sensitivity</span><input type="range" id="ls-sens" min="15" max="60" value="28"><output id="ls-senso"></output></div>
+    <p class="hb-help" style="margin-top:0">Higher hears quieter speech but also more noise. Press calibrate in a quiet room for the best setting.</p>
+    <div class="ctl"><span>Sentence end</span><input type="range" id="ls-hang" min="300" max="1400" step="50" value="500"><output id="ls-hango"></output></div>
+    <p class="hb-help" style="margin-top:0">How long a pause means you have finished. Longer feels more patient, shorter feels quicker.</p>
+    <div class="row"><button id="ls-cal">Calibrate (stay quiet 2 s)</button><span class="hb-help" id="ls-calr" style="margin:0"></span></div>
+    <div class="row" style="margin-top:6px"><label class="k"><input type="checkbox" id="ls-guard" checked>Stop listening while it talks</label><label class="k"><input type="checkbox" id="ls-ec" checked>Echo cancellation</label></div></details>
+   <details class="g"><summary>How it answers</summary>
+    <div class="ctl"><span>Echo you</span><input type="range" id="ls-echo" min="0" max="150" value="100"><output id="ls-echoo"></output></div>
+    <p class="hb-help" style="margin-top:0">Scales how closely it copies your melody on top of the character's own habit. 0 never copies.</p>
+    <div class="ctl"><span>Volume</span><input type="range" id="ls-vol" min="0" max="100" value="70"><output id="ls-vo"></output></div>
+    <p class="hb-help">Who it is and how it reacts live in the <b>Respond</b> section.</p></details>
+   <details class="g"><summary>Give it more to go on</summary>
+    <label for="ls-txt" class="hb-help" style="display:block;margin-top:0">Type what you said (a stand-in for speech-to-text; a toy word list reads it):</label>
+    <input type="text" id="ls-txt" style="width:100%" placeholder="e.g. thanks, that was great!"></details>
+  </section>
+  <section class="card hb-card wide"><h2><span>Log</span></h2><div class="hb-log" id="ls-log"></div></section>
+ </div>
+</div>

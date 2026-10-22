@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Half Blip Listen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@500;700&display=swap">
+<style>
+:root{--bg:#fff1d6;--card:#fffaf0;--ink:#1b1b1f;--acc:#ff9a3c;--acc2:#3b63ff;--good:#14b88f;--bad:#ff4d3d;--save:#ffc928;--dots:#1b1b1f1c}
+@media(prefers-color-scheme:dark){:root{--bg:#16121f;--card:#241e33;--ink:#fff1d6;--dots:#fff1d61c}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 13px/1.4 "DM Sans",system-ui,sans-serif;background-image:radial-gradient(var(--dots) 1.5px,transparent 2px);background-size:18px 18px}
+h1,h2,h3{font-family:Unbounded,"Arial Black",sans-serif;margin:0}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 12px 0}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:1000px;margin:0 auto;padding-bottom:5px}
+.logo{font:800 19px Unbounded,sans-serif;letter-spacing:-.04em;white-space:nowrap}.logo i{font-style:normal;background:var(--bad);color:#1b1b1f;border:2.5px solid var(--ink);padding:0 .14em;border-radius:38%;display:inline-block;transform:rotate(-4deg);margin-left:3px}
+.chars{display:flex;gap:6px;overflow-x:auto;flex:1 1 240px;padding:4px 4px 6px;scrollbar-width:none;min-width:0}.chars::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:6px;padding:2px 11px 2px 3px;border-radius:999px;flex:none}.chip.act{background:var(--c);box-shadow:inset 0 0 0 2.5px var(--ink),3px 3px 0 var(--ink);font-weight:800}
+.av{width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);background:var(--c);display:grid;place-items:center;font:800 11px Unbounded,sans-serif;color:#1b1b1f}
+.border{display:block;width:calc(100% + 24px);margin:0 -12px;height:20px}
+main{max-width:1000px;margin:0 auto;padding:12px 12px 60px}
+.grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}@media(max-width:760px){.grid{grid-template-columns:1fr}}.wide{grid-column:1/-1}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:22px;padding:11px 13px;box-shadow:5px 5px 0 var(--ink)}
+.card h2{font-size:12px;margin-bottom:8px}.card h2 span{background:var(--save);padding:1px 8px;border-radius:10px;border:2px solid var(--ink)}
+button,.btn{font:700 12px "DM Sans",sans-serif;color:#1b1b1f;background:var(--card);border:2.5px solid var(--ink);padding:5px 11px;cursor:pointer;border-radius:12px;box-shadow:3px 3px 0 var(--ink)}
+button:active{transform:translate(3px,3px);box-shadow:none}button.go{font:800 15px Unbounded,sans-serif;background:var(--acc2);color:#fff;padding:7px 18px;border-radius:18px}button.alt{background:var(--save)}
+.orb{width:70px;height:70px;border-radius:40% 60% 55% 45%;border:3px solid var(--ink);background:var(--card);flex:none;transition:background .2s,border-radius 1.2s}.orb.hear{background:#3cc8e0}.orb.think{background:#9b7bff}.orb.talk{background:var(--acc);border-radius:50%}.orb.idle{background:color-mix(in srgb,var(--good) 45%,var(--card))}
+#st{font:800 19px Unbounded,sans-serif}.help{font-size:11.5px;opacity:.8;margin:5px 0 0}
+.lv{height:13px;border:2.5px solid var(--ink);border-radius:8px;overflow:hidden;background:var(--card);margin-top:8px}.lv i{display:block;height:100%;width:0;background:var(--good)}
+table{border-collapse:collapse;width:100%}td{padding:2px 0;border-bottom:1px dashed #8886}td:last-child{text-align:right;font-weight:800}
+.dual{position:relative;height:13px;border:2.5px solid var(--ink);border-radius:8px;margin:3px 0 8px;background:linear-gradient(90deg,#8883,transparent 50%,#8883)}.dual b{position:absolute;inset:0;border-radius:5px;background:var(--acc2);opacity:.35}.dual i{position:absolute;top:-4px;width:7px;height:19px;background:var(--ink);border-radius:4px}
+.mode{display:inline-block;font:800 13px Unbounded,sans-serif;padding:3px 12px;border:2.5px solid var(--ink);border-radius:999px;background:var(--m,var(--acc))}
+.bars{margin-top:8px;display:grid;gap:3px}.bar{display:grid;grid-template-columns:104px 1fr 34px;gap:6px;align-items:center;font-size:11px;font-weight:700}.bar i{display:block;height:9px;border:2px solid var(--ink);border-radius:6px;background:linear-gradient(90deg,var(--m) var(--w),var(--card) var(--w))}
+.log{max-height:170px;overflow:auto;font:11.5px/1.5 ui-monospace,monospace;opacity:.85}.log div{border-bottom:1px dashed #8884}
+input[type=range]{-webkit-appearance:none;appearance:none;height:11px;background:var(--card);border:2.5px solid var(--ink);border-radius:8px;width:100%;margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--acc2);border:2.5px solid var(--ink);border-radius:38%}
+input[type=text]{width:100%;font:inherit;border:2.5px solid var(--ink);border-radius:12px;padding:5px 9px;background:var(--card);color:var(--ink)}
+.ctl{display:grid;grid-template-columns:104px 1fr 54px;gap:8px;align-items:center;margin:6px 0}
+details.g{border:2.5px dashed var(--ink);border-radius:14px;padding:5px 9px;margin-top:8px}details.g summary{cursor:pointer;font-weight:800}
+.sim{display:flex;gap:6px;flex-wrap:wrap}
+.drop{border:3px dashed var(--ink);border-radius:16px;padding:8px 12px;text-align:center;font-weight:700}.drop.over{background:var(--save)}
+label.k{display:inline-flex;gap:6px;align-items:center;font-weight:700;cursor:pointer}
+/* shared by the all-in-one app and the Listen page. Pages define --ink --card --bg --acc --acc2 --good --bad */
+.tp-q{margin:10px 0 2px}.tp-q b{display:block;font-size:12.5px;margin-bottom:4px}
+.tp-opts{display:flex;gap:6px;flex-wrap:wrap}
+.tp-o{font:700 12px "DM Sans",system-ui,sans-serif;color:#1b1b1f;background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:5px 11px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .08s,background .15s}
+.tp-o:active{transform:translate(3px,3px);box-shadow:none}.tp-o.on{background:var(--acc);box-shadow:inset 0 0 0 2px var(--ink),3px 3px 0 var(--ink)}
+.tp-g{border:2.5px solid var(--ink);border-radius:16px;padding:6px 10px 8px;margin-top:8px;background:color-mix(in srgb,var(--gc,var(--acc)) 20%,var(--card))}
+.tp-g>summary{cursor:pointer;font-weight:800;font-size:12px}.tp-g[open]>summary{margin-bottom:4px}
+.tp-s{display:grid;grid-template-columns:104px 1fr 38px;gap:8px;align-items:center;margin:5px 0}
+.tp-s span{font-weight:700;font-size:11.5px}.tp-s output{font-size:11px;text-align:right;font-variant-numeric:tabular-nums}
+.tp-s small{grid-column:2/4;margin-top:-3px;opacity:.7;font-size:10.5px;line-height:1.25}
+.tp-s input[type=range]{-webkit-appearance:none;appearance:none;height:11px;background:var(--card);border:2.5px solid var(--ink);border-radius:8px;width:100%;margin:0}
+.tp-s input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--acc2);border:2.5px solid var(--ink);border-radius:38%}
+.tp-s input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--acc2);border:2.5px solid var(--ink);border-radius:38%}
+.tp-note{font-size:11.5px;opacity:.8;margin:4px 0 0}
+
+:root{--spring:cubic-bezier(.34,1.56,.64,1)}
+button,.btn,.chip{transition:transform .45s var(--spring),box-shadow .45s ease}
+@media(hover:hover){button:not(:disabled):hover,.btn:hover,.chip:hover{transform:translate(-2px,-4px) rotate(-1.5deg) scale(1.05);box-shadow:5px 7px 0 var(--ink)}}
+button:active,.btn:active{transform:translate(2px,3px) scale(.92)!important;box-shadow:0 0 0 var(--ink)!important;transition-duration:.12s}
+@keyframes popin{0%{opacity:0;transform:translateY(20px) rotate(-1.4deg) scale(.97)}60%{opacity:1;transform:translateY(-5px) rotate(.7deg)}100%{opacity:1;transform:none}}
+.card{animation:popin .75s var(--spring) both}.card:nth-child(2){animation-delay:.07s}.card:nth-child(3){animation-delay:.14s}.card:nth-child(4){animation-delay:.21s}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}.orb{animation:breathe 5s ease-in-out infinite}.orb.hear,.orb.talk{animation-duration:1.4s}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+</style></head><body>
+<div class="top"><div class="row"><div class="logo">HALF<i>BLIP</i> Listen</div><div class="chars" id="chars" aria-label="Choose a character"></div>
+ <label class="btn" title="Load one or more character files saved from the designer">Load character file<input type="file" id="chf" accept=".json" multiple hidden></label></div>
+ <svg class="border" width="100%" height="20" aria-hidden="true"><defs><pattern id="pt" width="120" height="20" patternUnits="userSpaceOnUse"><animateTransform attributeName="patternTransform" type="translate" from="0 0" to="120 0" dur="50s" repeatCount="indefinite"/><path d="M0 18.5H120" stroke="var(--ink)" stroke-width="2.4"/><g stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"><path d="M14 17 C5 17 3 7 12 2.5 C11 7.5 18 7 19 12 C19.6 15 17 17 14 17Z" fill="var(--acc)"/><path d="M41 16.5 L47 5 L53 16.5Z" fill="var(--acc2)"/><circle cx="68" cy="10.5" r="4.4" fill="var(--save)"/><path d="M80 12 q3.5 -8 7 0 t7 0" fill="none" stroke="var(--bad)" stroke-width="2.2" stroke-linecap="round"/><path d="M104 17 C97 17 96 9 103 5 C102 9.5 108 9 108.6 13 C109 15.5 107 17 104 17Z" fill="var(--good)"/></g></pattern></defs><rect width="100%" height="20" fill="url(#pt)"/></svg></div>
+<main><div class="grid">
+ <section class="card"><h2><span>Right now</span></h2>
+  <div style="display:flex;gap:14px;align-items:center"><div class="orb" id="orb"></div><div><div id="st">Not listening</div><div id="sub" class="help" style="margin:0">Press Start and allow the microphone. <b id="who"></b> will answer.</div></div></div>
+  <div class="lv"><i id="lv"></i></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="go" id="go">🎤 Start listening</button><button id="hello">Say hello</button></div>
+  <p class="help">Audio is analysed in this page only and is not stored. It stops listening while it talks, so it will not answer itself; headphones help.</p></section>
+ <section class="card"><h2><span>What it did</span></h2><div id="dec"><span class="help">Waiting for you to speak.</span></div></section>
+ <section class="card"><h2><span>What it heard</span></h2><table id="heard"><tr><td>Nothing yet</td><td></td></tr></table>
+  <div style="margin-top:10px">Energy (calm ↔ lively) <b id="aN" style="float:right"></b></div><div class="dual"><b id="aB"></b><i id="aI" style="left:50%"></i></div>
+  <div>Mood (low ↔ good) <b id="vN" style="float:right"></b></div><div class="dual"><b id="vB"></b><i id="vI" style="left:50%"></i></div>
+  <p class="help">Energy can be read from a voice. Mood mostly cannot, so that bar stays in the middle unless words tell it more.</p></section>
+ <section class="card"><h2><span>Set-up</span></h2>
+  <div class="ctl"><span>Sensitivity</span><input type="range" id="sens" min="15" max="60" value="28"><output id="senso"></output></div>
+  <div class="ctl"><span>Sentence end</span><input type="range" id="hang" min="300" max="1400" step="50" value="500"><output id="hango"></output></div>
+  <div class="ctl"><span>Echo you</span><input type="range" id="echo" min="0" max="150" value="100"><output id="echoo"></output></div>
+  <div class="ctl"><span>Volume</span><input type="range" id="vol" min="0" max="100" value="80"><output id="vo"></output></div>
+  <label class="k"><input type="checkbox" id="guard" checked> Stop listening while it talks</label>
+  <details class="g"><summary>Type what you said (stand-in for speech-to-text)</summary><input type="text" id="txt" placeholder="e.g. thanks, that was great!"></details></section>
+ <section class="card wide"><h2><span>Who it is when you talk to it</span></h2>
+  <p class="help" style="margin-top:0">Every character reacts in its own way: it may soothe you, tease you, disagree, grumble, sulk or stay quiet. Answer the questions or tune the numbers. It is saved in the character file when you use the designer, and kept in this browser here.</p>
+  <div id="tui"></div>
+  <h2 style="margin-top:14px"><span>Try it without a microphone</span></h2><div class="sim" id="sim"></div><p class="help"><label class="k"><input type="checkbox" id="know" checked> It can tell my mood (as if it understood my words)</label></p></section>
+ <section class="card wide"><h2><span>Log</span></h2><div class="log" id="log"></div></section>
+</div></main>
+<script>
+/* Blip engine: one source of truth for the voice generator, the renderer and the exporters.
+ * Runs unchanged in browsers, Node, Deno and Bun. No dependencies.
+ *
+ *   character + feeling + seed  --generate-->  sound  --toScore-->  blip-score (plain JSON)
+ *   blip-score  --renderScore-->  samples  --wav-->  .wav        (plain-code synth, no Web Audio)
+ *   blip-score  --midi-->  .mid           (lossy: no choir, noise or distortion)
+ *   blip-score  --tierA-->  tone timeline  (what a one-buzzer player must do)
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.Blip = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  // ---------------------------------------------------------------- basics
+  const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const num = (x, d) => (typeof x === 'number' && isFinite(x) ? x : d);
+  function rng(s) {
+    return () => {
+      s |= 0; s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const gauss = r => Math.sqrt(-2 * Math.log(r() || 1e-9)) * Math.cos(6.2832 * r());
+
+  // ---------------------------------------------------------------- dials
+  const GROUPS = [
+    ['Melody', ['pitch', 'slope', 'wobble', 'span', 'leap', 'len']],
+    ['Time', ['tempo', 'pause', 'meter', 'swing', 'chaos', 'noteLen']],
+    ['Bend', ['gliss', 'bendA', 'bendZ', 'vib']],
+    ['Timbre', ['chip', 'flute', 'bass', 'trump', 'piano', 'choir']],
+    ['Grit', ['noise', 'drive']],
+    ['Drums', ['drum', 'kit']],
+    ['Volume', ['dyn', 'swell', 'accent']],
+  ];
+  const K = GROUPS.flatMap(g => g[1]);
+  const INS = ['chip', 'flute', 'bass', 'trump', 'piano'];
+  const EM = { Sad: [-.7, -.6], Happy: [.8, .4], Curious: [.1, .25], Excited: [.7, .9], Grumpy: [-.6, .6], Sleepy: [.2, -.8] };
+  const QK = { stutter: 'repeats a note', squeak: 'a note jumps an octave', hiccup: 'a note drops out', waver: 'a note detunes briefly' };
+
+  // Feeling (valence v, arousal a, depth d) -> a target for every dial.
+  function emoT(v, a, d = 0) {
+    const m = Math.max, dp = cl(d, -1, 1), o = {
+      pitch: .5 + .22 * v + .2 * a - .12 * dp, tempo: .5 + .42 * a - .12 * dp,
+      pause: .5 - .38 * a - .1 * v + .15 * m(dp, 0),
+      vib: .2 + .3 * Math.abs(a) + .15 * m(v, 0) - .12 * dp, slope: .5 + .4 * v,
+      wobble: .2 + .5 * (1 - Math.abs(v)) * (.4 + .3 * (a + 1)), span: .45 + .2 * a + .15 * m(dp, 0),
+      leap: .1 + .25 * (a + 1) / 2 * (v > 0 ? 1 : .5), gliss: .25 + .3 * (1 - Math.abs(v)) + .1 * a,
+      bendA: .5 - .25 * v, bendZ: .5 + .3 * v, meter: .3 + .4 * (1 - Math.abs(v)) + .1 * a,
+      len: .5 + .25 * a, noteLen: .5 - .18 * a,
+      swing: .15 + .4 * m(v, 0) * (a + 1) / 2, chaos: .1 + .35 * m(-v, 0) * (a + 1) / 2,
+      drum: .05 + .3 * m(a, 0), kit: .5 - .3 * v,
+      noise: .05 + .3 * m(-v, 0) * (a + 1) / 2 - .1 * m(dp, 0),
+      drive: .08 + .4 * m(a, 0) * (v < 0 ? 1 : .3) + .1 * m(dp, 0),
+      choir: .2 + .3 * m(v, 0) * (1 - a) / 2 + .25 * m(dp, 0),
+      flute: .25 - .15 * a + .2 * v - .15 * m(dp, 0), bass: .25 - .3 * v + .1 * a + .35 * m(dp, 0),
+      trump: .2 + .35 * a + .2 * v, piano: .35 + .1 * v, chip: .3 - .3 * m(dp, 0),
+      dyn: .2 + .25 * Math.abs(a), swell: .5 + .2 * v + .1 * dp, accent: .25 + .3 * m(a, 0),
+    };
+    K.forEach(k => o[k] = cl(o[k]));
+    return o;
+  }
+  const fixX = t => { const b = emoT(0, 0), o = {}; K.forEach(k => o[k] = cl(num(t && t[k], b[k]))); return o; };
+  function nearest(v, a) {
+    let best = 'Custom', d = .55;
+    for (const [k, [x, y]] of Object.entries(EM)) { const q = Math.hypot(x - v, y - a); if (q < d) { d = q; best = k; } }
+    return best;
+  }
+  const fixQK = q => {
+    const t = {}; Object.keys(QK).forEach(k => t[k] = !!(q && q.types && q.types[k]));
+    return { amt: cl(num(q && q.amt, .12)), types: t };
+  };
+
+  // ---------------------------------------------------------------- characters (plain data, no UI)
+  // Accepts a saved blip-character (v1) object and returns what generate() needs.
+  function charFromJSON(o) {
+    const base = emoT(0, 0), mu = {}, sd = {}, lock = {}, off = {};
+    K.forEach(k => {
+      const p = (o.params || {})[k] || {};
+      mu[k] = cl(num(p.mu, base[k])); sd[k] = cl(num(p.sd, .08), .01, .4); lock[k] = !!p.lock; off[k] = !!p.off;
+    });
+    const minN = cl(Math.round(num(o.minN, 4)), 2, 24);
+    return {
+      name: String(o.name || 'Unnamed').slice(0, 18), mu, sd, lock, off,
+      pull: cl(num(o.pull !== undefined ? o.pull : o.gain, .8)),   // "gain" in v1 files; renamed to avoid clashing with volume
+      oct: cl(Math.round(num(o.octave, 0)), -2, 2), seed: num(o.seed, 1),
+      minN, maxN: cl(Math.round(num(o.maxN, 14)), minN + 2, 30), quirk: fixQK(o.quirk),
+      book: Array.isArray(o.book) ? o.book : [],
+      archetype: typeof o.archetype === 'string' ? o.archetype.slice(0, 20) : null,
+      temperament: o.temperament && typeof o.temperament === 'object' ? o.temperament : null,   // validated by blip-listen's fixTemperament
+      relationship: o.relationship && typeof o.relationship === 'object' ? o.relationship : null,
+    };
+  }
+
+  // ---------------------------------------------------------------- labels: learned meaning
+  function fixL(l) {
+    return {
+      id: l.id, n: String(l.n || 'label').slice(0, 16), cat: l.cat || 'Custom', s: cl(num(l.s, 1), 0, 2), on: !!l.on,
+      ex: (Array.isArray(l.ex) ? l.ex : []).filter(e => e && e.x).slice(-40).map(e => ({ key: String(e.key), x: fixX(e.x), y: e.y < 0 ? -1 : 1 })),
+    };
+  }
+  function meaning(l) {
+    const P = l.ex.filter(e => e.y > 0), N = l.ex.filter(e => e.y < 0), wt = e => e.key === 'prior' ? 3 : 1;
+    const n = P.reduce((a, e) => a + wt(e), 0), m = {}, w = {}, nn = N.length;
+    K.forEach(k => {
+      const mean = (P.reduce((a, e) => a + wt(e) * e.x[k], 0) + .5) / (n + 1);
+      const sd = Math.sqrt((P.reduce((a, e) => a + wt(e) * (e.x[k] - mean) ** 2, 0) + .09) / (n + 1));
+      m[k] = mean;
+      let r = n / (n + 1) * cl(1 - sd / .3) * (.3 + .7 * cl(Math.abs(mean - .5) * 3.2));
+      if (nn) { const mn = N.reduce((a, e) => a + e.x[k], 0) / nn; r *= 1 + cl(Math.abs(mean - mn) * 2) * .5; }
+      w[k] = cl(r);
+    });
+    return { m, w, n, c: n / (n + 1) };
+  }
+  // labels the caller switched on -> pulls for generate()
+  const pullsOf = labels => labels.filter(l => l.on).map(l => ({ id: l.id, s: l.s, M: meaning(l) }));
+
+  // ---------------------------------------------------------------- generator
+  // generate: draw every dial from its bell curve, then turn the dials into notes.
+  function generate(o) {
+    const c = o.char, v = o.v || 0, a = o.a || 0, seed = o.seed | 0, depth = o.depth || 0, adv = o.adv === undefined ? 1 : o.adv;
+    const pulls = o.pulls || [], r = rng(seed), sh = emoT(v, a, depth), nu = emoT(0, 0), pull = num(c.pull !== undefined ? c.pull : c.gain, .8);
+    const x = {}, z = {};
+    K.forEach(k => {
+      const g = gauss(r);
+      if (c.off[k]) { z[k] = 0; x[k] = nu[k]; return; }
+      let m = c.mu[k];
+      if (c.lock[k]) { z[k] = 0; x[k] = m; return; }
+      m += pull * (sh[k] - nu[k]);
+      pulls.forEach(p => m += cl(p.s * p.M.w[k]) * (p.M.m[k] - m));
+      z[k] = g; x[k] = cl(m + c.sd[k] * adv * g);
+    });
+    return hydrate({
+      cid: c.id, v, a, seed, x, z, act: pulls.map(p => p.id), em: nearest(v, a), pa: o.par || 'any', sn: o.sn !== false,
+      oc: c.oct, minN: c.minN, maxN: c.maxN, qk: { amt: c.quirk.amt, ...c.quirk.types },
+    });
+  }
+
+  function hydrate(s) {
+    const f = s.x, r = rng(s.seed ^ 0x5bd1e995), ph = r() * 6.28, fr = 1 + r() * 1.5, mn = s.minN || 4, mx = s.maxN || 14;
+    let n = Math.round(mn + f.len * (mx - mn));
+    if (s.pa === 'odd' && n % 2 === 0) n += n < mx ? 1 : -1;
+    if (s.pa === 'even' && n % 2) n += n < mx ? 1 : -1;
+    const f0 = 100 * 10 ** f.pitch * 2 ** (s.oc || 0), tot = (f.slope - .5) * (1.2 + f.span * 3.6), PE = [0, 2, 4, 7, 9, 12];
+    const notes = [], durs = [], first = [], last = [], rest = [], hit = [], vel = [], rv = rng(s.seed ^ 0x9e3779b9);
+    for (let i = 0; i < n; i++) {
+      const xx = i / (n - 1);
+      let q = (tot * (xx - .5) + f.wobble * (.2 + f.span * .5) * Math.sin(xx * 6.28 * fr + ph) + (r() - .5) * .3) * 12;
+      if (r() < f.leap * .5) q += r() < .5 + (f.slope - .5) * .6 ? 12 : -12;
+      if (s.sn) {
+        const oc = Math.floor(q / 12), m = q - oc * 12; let bm = 0, bd = 99;
+        for (const p of PE) if (Math.abs(p - m) < bd) { bd = Math.abs(p - m); bm = p; }
+        q = oc * 12 + bm;
+      }
+      notes.push(cl(f0 * 2 ** (q / 12), 50, 3200));
+    }
+    let i = 0, odd = false;
+    while (i < n) {
+      const o = f.meter > .55 || (f.meter >= .4 && r() < .5);
+      if (!i) odd = o;
+      let g = o ? (r() < .6 ? 3 : 5) : (r() < .6 ? 2 : 4);
+      g = Math.min(g, n - i); if (n - i - g === 1) g = n - i;
+      for (let j = 0; j < g; j++) {
+        let d = o ? (j ? 1 : 1.5) : (r() < .2 ? 2 : 1);
+        d *= .4 + 1.6 * f.noteLen;
+        if (!o) d *= j % 2 ? 1 - .5 * f.swing : 1 + .5 * f.swing;
+        d = d * (1 - f.chaos) + (.25 + r() * 2.2) * f.chaos;
+        vel.push(cl((1 + (f.swell - .5) * 1.4 * (2 * durs.length / (n - 1) - 1)) * (1 + (rv() - .5) * f.dyn * 1.4) * (j === 0 ? 1 + .6 * f.accent : 1 - .2 * f.accent), .15, 1.8));
+        durs.push(d); first.push(j === 0); last.push(j === g - 1); rest.push(r() < f.chaos * .22);
+        const kv = f.kit + (r() - .5) * .5; hit.push(r() < f.drum ? (kv < .33 ? 1 : kv < .66 ? 2 : 3) : 0);
+      }
+      i += g;
+    }
+    if (s.qk && s.qk.amt > 0) {
+      const qr = rng(s.seed ^ 0xC0FFEE), en = Object.keys(QK).filter(k => s.qk[k]);
+      if (en.length) for (let i = 0; i < notes.length; i++) {
+        if (qr() >= s.qk.amt * .3) continue;
+        const ty = en[qr() * en.length | 0];
+        if (ty === 'stutter' && i > 0 && !hit[i]) notes[i] = notes[i - 1];
+        else if (ty === 'squeak' && !hit[i]) { notes[i] = cl(notes[i] * 2, 50, 3200); vel[i] = Math.min(1.8, vel[i] * 1.3); }
+        else if (ty === 'hiccup') rest[i] = true;
+        else if (ty === 'waver' && !hit[i]) notes[i] = notes[i] * (1 + (qr() - .5) * .12);
+      }
+    }
+    return Object.assign(s, { notes, durs, first, last, rest, hit, vel, odd });
+  }
+
+  // seconds: onset and length of every note, plus the total length
+  function sched(s) {
+    const u = 60 / (40 + 160 * s.x.tempo) / 2, o = []; let t = 0;
+    s.notes.forEach((_, i) => {
+      const d = u * s.durs[i]; o.push([t, d]); t += d;
+      if (s.last[i] && i < s.notes.length - 1) t += (50 + 450 * s.x.pause) / 1000;
+    });
+    return { o, T: t };
+  }
+
+  // 17 numbers that describe how a sound feels; used for sensitivity and label learning
+  function FEAT(s) {
+    const n = s.notes, lm = n.reduce((a, b) => a + Math.log2(b), 0) / n.length, rg = Math.log2(Math.max(...n) / Math.min(...n)), T = sched(s).T, d = s.durs;
+    const dm = d.reduce((a, b) => a + b, 0) / d.length, dv = Math.sqrt(d.reduce((a, b) => a + (b - dm) ** 2, 0) / d.length), x = s.x;
+    const tw = INS.reduce((a, k) => a + x[k], 0) || 1, br = INS.reduce((a, k, i) => a + x[k] * [.9, .35, .25, .7, .5][i], 0) / tw;
+    const dr = s.hit.filter((h, i) => h && !s.rest[i]).length / n.length, rs = s.rest.filter(Boolean).length / n.length;
+    const gr = (x.noise + x.drive) / 2, mo = (x.gliss + Math.abs(x.bendA - .5) * 2 + Math.abs(x.bendZ - .5) * 2 + x.vib) / 4;
+    return {
+      lm, rg, T, br, gr, dr, rs, mo,
+      v: [lm / 6, rg / 3, n.length / 14, cl(T / 8), dv, dr, br, gr, mo, rs, (Math.log2(n[n.length - 1] / n[0]) + 3) / 6, x.bendA * .6, x.bendZ * .6, x.choir * .6, x.kit * dr,
+        Math.sqrt(s.vel.reduce((a, b) => a + (b - 1) ** 2, 0) / n.length), (s.vel[n.length - 1] - s.vel[0]) * .5 + .5],
+    };
+  }
+  // how much each dial actually changes the sound (0 .. ~1)
+  function sens(c, opt = {}) {
+    const seeds = [11, 23, 37, 51, 73], o = {};
+    K.forEach(k => {
+      if (c.off[k]) { o[k] = 0; return; }
+      let d = 0;
+      seeds.forEach(sd => {
+        const a = { ...c.mu }, b = { ...c.mu }; a[k] = 0; b[k] = 1;
+        const H = x => FEAT(hydrate({ x, seed: sd, pa: opt.par || 'any', sn: true, oc: c.oct, minN: c.minN, maxN: c.maxN })).v, fa = H(a), fb = H(b);
+        d += Math.sqrt(fa.reduce((s, v, i) => s + (v - fb[i]) ** 2, 0) / fa.length);
+      });
+      o[k] = d / seeds.length;
+    });
+    return o;
+  }
+
+  // ---------------------------------------------------------------- learning (the Like / Nope update)
+  // REINFORCE for a Gaussian policy with a running baseline. Every free dial is a bell curve (mu, sd); a sound that was
+  // liked pulls each dial's centre toward the value it drew (z = how many sd it was off), a rejected one pushes away, and
+  // the spread narrows when liked draws cluster. Locked and off dials never learn. Mutates `c`, returns [[dial, change]].
+  function learn(c, s, up, adv = 1, lr = .25) {
+    const R = up ? 1 : -1, A = R - (c.b || 0), ch = [];
+    c.b = (c.b || 0) + .2 * (R - (c.b || 0)); c.n = (c.n || 0) + 1;
+    K.forEach(k => {
+      if (c.lock[k] || c.off[k]) return;
+      const z = s.z[k] || 0, m0 = c.mu[k], s0 = c.sd[k];
+      c.mu[k] = cl(m0 + lr * A * z * s0 * Math.max(1, adv)); c.sd[k] = cl(s0 * Math.exp(.1 * A * (z * z - 1)), .01, .4);
+      const d = c.mu[k] - m0; if (Math.abs(d) > .003) ch.push([k, d]);
+    });
+    return ch;
+  }
+
+  // ---------------------------------------------------------------- Jungian archetypes as starting voices
+  // Twelve classic archetypes, each a set of dial centres. They are starting points: the designer's rating loop and the
+  // dials then make the character its own. Associations of sound with archetype are a design choice, not a measurement.
+  const ARCHETYPES = {
+    Innocent: { blurb: 'Light, bright, trusting', d: { pitch: .72, tempo: .55, chip: .55, flute: .3, vib: .3, gliss: .35, bendZ: .7, noise: 0, drive: 0, drum: 0, len: .4, pause: .35, swing: .1 } },
+    Everyman: { blurb: 'Plain, friendly, easy to be around', d: { pitch: .5, tempo: .5, chip: .6, piano: .3, meter: .35, drum: .1, vib: .2, swing: .15 } },
+    Hero: { blurb: 'Bold, brassy, rising', d: { pitch: .4, tempo: .6, trump: .9, chip: .1, drive: .15, drum: .35, kit: .3, slope: .65, accent: .6, leap: .3, bendZ: .7 } },
+    Caregiver: { blurb: 'Warm, slow, soothing', d: { pitch: .64, tempo: .38, pause: .45, flute: .5, choir: .55, piano: .25, vib: .4, gliss: .5, bendZ: .65, swell: .6, dyn: .15, swing: .2, noteLen: .65 } },
+    Explorer: { blurb: 'Curious, wandering, wide-ranging', d: { pitch: .6, tempo: .65, leap: .5, span: .7, wobble: .6, flute: .4, chip: .4, gliss: .4, chaos: .2, slope: .6 } },
+    Rebel: { blurb: 'Rough, loud, off-beat', d: { pitch: .3, tempo: .7, drive: .6, noise: .3, bass: .5, chip: .5, drum: .5, kit: .2, chaos: .45, swing: .4, accent: .7 } },
+    Lover: { blurb: 'Sliding, breathy, lingering', d: { pitch: .5, tempo: .3, pause: .55, choir: .7, flute: .5, vib: .65, gliss: .75, bendA: .35, swell: .7, noteLen: .8 } },
+    Creator: { blurb: 'Playful melodies that never repeat', d: { pitch: .55, tempo: .5, piano: .6, flute: .3, chip: .3, wobble: .7, span: .65, leap: .4, swing: .45, chaos: .3, meter: .7 } },
+    Jester: { blurb: 'Quick, bouncy, full of surprises', d: { pitch: .8, tempo: .8, chip: .7, piano: .3, drum: .4, kit: .8, swing: .8, chaos: .55, leap: .5, gliss: .5, bendZ: .85, vib: .3 } },
+    Sage: { blurb: 'Slow, airy, thoughtful', d: { pitch: .36, tempo: .2, pause: .85, bass: .45, flute: .6, choir: .1, chip: 0, vib: .3, gliss: .2, span: .3, len: .35 } },
+    Magician: { blurb: 'Shimmering, gliding, a little strange', d: { pitch: .65, tempo: .4, pause: .5, choir: .6, flute: .4, piano: .3, vib: .7, gliss: .8, bendA: .3, bendZ: .75, noise: .2, wobble: .6, span: .75 } },
+    Ruler: { blurb: 'Deep, measured, commanding', d: { pitch: .25, tempo: .3, pause: .6, bass: .7, trump: .5, chip: 0, drive: .2, vib: .15, swell: .6, accent: .5, drum: .25, kit: .15, noteLen: .7 } },
+  };
+  // which character archetype each of the designer's sound types belongs to (used for default reaction temperament)
+  const SOUND_ARCH = { Chirp: 'Innocent', Grumble: 'Rebel', Sage: 'Sage', Tock: 'Everyman', Ghost: 'Magician', Bot: 'Everyman', Brass: 'Hero', Wisp: 'Lover', Clank: 'Rebel', Drone: 'Ruler', Sparkle: 'Jester' };
+  // a ready blip-character file for an archetype
+  function fromArchetype(name, o = {}) {
+    const a = ARCHETYPES[name]; if (!a) throw new Error('archetypes: ' + Object.keys(ARCHETYPES).join(', '));
+    const mu = fixX({ ...emoT(0, 0), ...a.d }), params = {};
+    K.forEach(k => params[k] = { mu: +mu[k].toFixed(4), sd: .08, lock: false, off: false });
+    return { format: 'blip-character', version: 1, name: o.name || name, color: 0, octave: o.octave || 0, seed: o.seed === undefined ? Math.floor(rng(name.length * 7919)() * 1e9) : o.seed, gain: .8, pull: .8, params, minN: 4, maxN: 14, quirk: { amt: .12, types: { stutter: true, squeak: true, hiccup: false, waver: false } }, archetype: name };
+  }
+
+  // ---------------------------------------------------------------- score
+  // A blip-score is the whole sound as timed events. Every pitch is absolute, every time is in ms.
+  // Extension over the v1 draft: optional per-event h0 / h1 / r (start pitch, end pitch, glide ms)
+  // and a score-level "timbre" block, so a renderer needs nothing but the score.
+  const r2 = x => Math.round(x * 100) / 100, TIMBRE = ['chip', 'flute', 'bass', 'trump', 'piano', 'choir', 'noise', 'drive', 'vib'];
+  function toScore(s, o = {}) {
+    const { o: sc, T } = sched(s), f = s.x, ev = []; let prev = 0;
+    s.notes.forEach((fr, i) => {
+      const t = Math.round(sc[i][0] * 1000), dur = sc[i][1], d = Math.max(1, Math.round(dur * 1000));
+      if (s.rest[i]) { ev.push({ t, d, hz: null, vel: 0 }); prev = 0; return; }
+      const vel = r2((s.vel && s.vel[i]) || 1);
+      if (s.hit[i]) { const e = { t, d, k: s.hit[i], vel }; if (s.first[i]) e.f = 1; if (s.last[i]) e.l = 1; ev.push(e); prev = 0; return; }
+      const gl = prev && f.gliss > .15, bend = s.first[i] && Math.abs(f.bendA - .5) > .04;
+      const st = gl ? prev : bend ? fr * 2 ** ((f.bendA - .5) * 16 / 12) : fr;
+      const rt = Math.min(gl ? dur * f.gliss : bend ? .07 : .005, dur * .5);
+      const ef = s.last[i] && Math.abs(f.bendZ - .5) > .04 ? fr * 2 ** ((f.bendZ - .5) * 16 / 12) : fr;
+      const e = { t, d, hz: r2(fr), vel };
+      if (s.first[i]) e.f = 1; if (s.last[i]) e.l = 1;
+      if (Math.abs(st - fr) > .01) { e.h0 = r2(st); e.r = Math.max(1, Math.round(rt * 1000)); }
+      if (Math.abs(ef - fr) > .01) e.h1 = r2(ef);
+      ev.push(e); prev = fr;
+    });
+    const timbre = {}; TIMBRE.forEach(k => timbre[k] = r2(f[k]));
+    return {
+      format: 'blip-score', version: 1, id: o.id || ('s' + (s.seed >>> 0).toString(16)), voice: o.voice || null,
+      dur_ms: Math.round(T * 1000), timbre, events: ev,
+      meta: { seed: s.seed, source: { v: s.v, a: s.a, em: s.em } },
+    };
+  }
+  const leadOf = x => INS.slice().sort((a, b) => x[b] - x[a])[0];
+
+  // ---------------------------------------------------------------- plain-code synth
+  // Sample-by-sample. Mirrors the browser's old Web Audio voices (same wave tables, filters, envelopes)
+  // so that what the designer plays is what the WAV contains.
+  const HARM = {
+    flute: [1, .2, .05, .02], bass: [1, .8, .95, .6, .4, .3, .2, .1], trump: [1, .9, .85, .7, .55, .4, .3, .2, .1],
+    piano: [1, .5, .3, .18, .1, .06], choir: [1, .5, .35, .25, .15, .1],
+  };
+  const TN = 2048, tables = {};
+  function table(name, maxH) {
+    const h = HARM[name], key = name + ':' + Math.min(h.length, maxH);
+    if (tables[key]) return tables[key];
+    const full = tables[name + ':full'] || (tables[name + ':full'] = (() => {
+      const t = new Float32Array(TN); let pk = 0;
+      for (let i = 0; i < TN; i++) { let s = 0; h.forEach((a, k) => s += a * Math.sin(6.283185307 * (k + 1) * i / TN)); t[i] = s; pk = Math.max(pk, Math.abs(s)); }
+      return { t, pk };
+    })());
+    const t = new Float32Array(TN), nh = Math.max(1, Math.min(h.length, maxH));
+    for (let i = 0; i < TN; i++) { let s = 0; for (let k = 0; k < nh; k++) s += h[k] * Math.sin(6.283185307 * (k + 1) * i / TN); t[i] = s / full.pk; }
+    return tables[key] = t;
+  }
+  const lookup = (t, ph) => { const p = ph * TN, i = p | 0, f = p - i; return t[i % TN] * (1 - f) + t[(i + 1) % TN] * f; };
+  const blep = (t, dt) => t < dt ? (t /= dt, t + t - t * t - 1) : t > 1 - dt ? (t = (t - 1) / dt, t * t + t + t + 1) : 0;
+
+  // RBJ biquad, same maths as the Web Audio spec (lowpass/highpass Q is in dB, bandpass Q is linear)
+  class Biquad {
+    constructor(type, f, Q, sr) { this.type = type; this.sr = sr; this.Q = Q; this.x1 = this.x2 = this.y1 = this.y2 = 0; this.set(f); }
+    set(f) {
+      const sr = this.sr, fc = cl(f, 10, sr * .45), w = 2 * Math.PI * fc / sr, c = Math.cos(w), s = Math.sin(w);
+      const al = this.type === 'bandpass' ? s / (2 * this.Q) : s / (2 * 10 ** (this.Q / 20));
+      let b0, b1, b2;
+      if (this.type === 'lowpass') { b0 = (1 - c) / 2; b1 = 1 - c; b2 = b0; }
+      else if (this.type === 'highpass') { b0 = (1 + c) / 2; b1 = -(1 + c); b2 = b0; }
+      else { b0 = al; b1 = 0; b2 = -al; }
+      const a0 = 1 + al; this.b0 = b0 / a0; this.b1 = b1 / a0; this.b2 = b2 / a0; this.a1 = -2 * c / a0; this.a2 = (1 - al) / a0;
+    }
+    run(x) {
+      const y = this.b0 * x + this.b1 * this.x1 + this.b2 * this.x2 - this.a1 * this.y1 - this.a2 * this.y2;
+      this.x2 = this.x1; this.x1 = x; this.y2 = this.y1; this.y1 = y; return y;
+    }
+  }
+
+  // master compressor modelled on the one in browsers: -14 dB threshold, 22 dB knee, 7:1, with makeup gain
+  const COMP_R = 7, COMP_MK = 2; // makeup trimmed against Chromium's compressor (see tests/parity-chromium.js)
+  function compress(buf, sr) {
+    const T = -14, KN = 22, R = COMP_R, atk = Math.exp(-1 / (sr * .003)), rel = Math.exp(-1 / (sr * .18));
+    const curve = L => L < T - KN / 2 ? L : L > T + KN / 2 ? T + (L - T) / R : L + (1 / R - 1) * (L - T + KN / 2) ** 2 / (2 * KN);
+    const makeup = 10 ** (-curve(0) / 20 * .6 / 1); // 1/gain(0 dB), to the 0.6 power
+    let g = 1;
+    for (let i = 0; i < buf.length; i++) {
+      const x = buf[i], L = 20 * Math.log10(Math.abs(x) + 1e-9), want = 10 ** ((curve(L) - L) / 20);
+      g = want < g ? atk * g + (1 - atk) * want : rel * g + (1 - rel) * want;
+      buf[i] = x * g * makeup * 10 ** (COMP_MK / 20);
+    }
+  }
+
+  function renderScore(sc, o = {}) {
+    const sr = o.sr || 44100, vol = o.volume === undefined ? 1 : o.volume, tm = sc.timbre || {}, dt1 = 1 / sr;
+    const tail = 1.8, N = Math.ceil((sc.dur_ms / 1000 + tail) * sr), out = new Float32Array(N), nr = rng((sc.meta && sc.meta.seed | 0) ^ 0xBEEF);
+    const tot = INS.reduce((a, k) => a + (tm[k] || 0), 0) || 1, w = k => (tm[k] || 0) / tot, vib = tm.vib || 0;
+    const lfoHz = 5 + vib * 6, lfoCents = vib * 45, gain = .55 * vol;
+    const add = (i0, i1) => [Math.max(0, i0), Math.min(N, i1)];
+
+    // one oscillator voice: type 'sq' or a harmonic table, optional filter, envelope, detune cents
+    function voice(e, fr, st, ef, rt, dur, V) {
+      const i0 = Math.round(e.t / 1000 * sr), len = Math.round((V.dec ? dur * 1.6 + .05 : dur) * sr), amp = (e.vel || 1) * gain;
+      const att = Math.min(V.att, dur * .5), fl = V.fl && new Biquad(V.fl[0], V.fl[1], V.fl[2] || .7, sr);
+      const tHold = Math.max(att, dur - .05), tEnd = Math.max(dur - .015, tHold + .001);
+      let ph = 0; const mh = Math.floor(sr * .45 / Math.max(fr, ef, st)), tab = V.w ? table(V.w, mh) : null;
+      for (let j = 0; j < len; j++) {
+        const i = i0 + j; if (i >= N) break;
+        const tau = j * dt1; let f = fr;
+        if (tau < rt) f = st + (fr - st) * (tau / rt); else if (ef !== fr && tau >= dur * .55) f = fr + (ef - fr) * cl((tau - dur * .55) / Math.max(1e-4, dur - .02 - dur * .55));
+        f *= 2 ** ((V.det + lfoCents * Math.sin(6.283185307 * lfoHz * tau)) / 1200);
+        const dphi = f * dt1; ph += dphi; ph -= Math.floor(ph);
+        let s = tab ? lookup(tab, ph) : (ph < .5 ? 1 : -1) + blep(ph, dphi) - blep((ph + .5) % 1, dphi);
+        if (fl) { if (V.fl[3] && (j & 31) === 0) fl.set(V.fl[1] + (V.fl[3] - V.fl[1]) * Math.min(1, tau / .09)); s = fl.run(s); }
+        let env;
+        if (V.dec) env = tau < att ? V.peak * tau / att : V.peak * Math.pow(.001 / V.peak, (tau - att) / Math.max(1e-3, dur * 1.6 - att));
+        else env = tau < att ? V.peak * tau / att : tau < tHold ? V.peak : tau < tEnd ? V.peak * (1 - (tau - tHold) / (tEnd - tHold)) : 0;
+        out[i] += s * env * amp;
+      }
+    }
+    function noise(t0, d, type, fq, Q, peak, amp) {
+      const i0 = Math.round(t0 / 1000 * sr), len = Math.round(d * sr), b = new Biquad(type, fq, Q, sr);
+      for (let j = 0; j < len; j++) {
+        const i = i0 + j; if (i >= N) break;
+        out[i] += b.run(nr() * 2 - 1) * peak * Math.pow(.001 / peak, j * dt1 / d) * amp;
+      }
+    }
+    function sweep(t0, d, kind, f0, f1, peak, amp) {
+      const i0 = Math.round(t0 / 1000 * sr), len = Math.round(d * sr); let ph = 0;
+      for (let j = 0; j < len; j++) {
+        const i = i0 + j; if (i >= N) break;
+        const tau = j * dt1, f = f0 * Math.pow(f1 / f0, Math.min(1, tau / (d * .6)));
+        ph += f * dt1; ph -= Math.floor(ph);
+        const s = kind === 'sine' ? Math.sin(6.283185307 * ph) : 1 - 4 * Math.abs(((ph + .25) % 1) - .5); // triangle starts at 0
+        out[i] += s * peak * Math.pow(.001 / peak, tau / d) * amp;
+      }
+    }
+    for (const e of sc.events) {
+      if (e.hz === null) continue;
+      const amp = (e.vel || 1) * gain;
+      if (e.k) {
+        if (e.k === 1) sweep(e.t, .22, 'sine', 170, 42, .95, amp);
+        else if (e.k === 2) { noise(e.t, .16, 'bandpass', 1900, .7, .5, amp); sweep(e.t, .1, 'tri', 200, 120, .35, amp); }
+        else noise(e.t, .05, 'highpass', 7500, .5, .35, amp);
+        continue;
+      }
+      const fr = e.hz, st = e.h0 || fr, ef = e.h1 || fr, rt = (e.r || 5) / 1000, dur = e.d / 1000;
+      if (w('chip') > .04) voice(e, fr, st, ef, rt, dur, { w: 0, det: 0, peak: .22 * w('chip'), att: .005 });
+      if (w('flute') > .04) voice(e, fr, st, ef, rt, dur, { w: 'flute', det: 0, peak: .3 * w('flute'), att: .07, fl: ['lowpass', 2800] });
+      if (w('bass') > .04) voice(e, fr, st, ef, rt, dur, { w: 'bass', det: 0, peak: .3 * w('bass'), att: .05, fl: ['lowpass', 1100] });
+      if (w('trump') > .04) voice(e, fr, st, ef, rt, dur, { w: 'trump', det: 0, peak: .26 * w('trump'), att: .035, fl: ['lowpass', 500, 1.5, 3800] });
+      if (w('piano') > .04) voice(e, fr, st, ef, rt, dur, { w: 'piano', det: 0, peak: .4 * w('piano'), att: .003, fl: ['lowpass', 5500], dec: 1 });
+      if ((tm.choir || 0) > .06) [-14, 0, 14].forEach(d => voice(e, fr, st, ef, rt, dur, { w: 'choir', det: d, peak: .11 * tm.choir, att: .12, fl: ['bandpass', 900, 1.2] }));
+      if ((tm.noise || 0) > .05) noise(e.t, dur, 'bandpass', fr * 2, .8, tm.noise * .3, amp);
+    }
+    if ((tm.drive || 0) > .05) {
+      const k = 1 + tm.drive * 40, nk = Math.tanh(k);
+      for (let i = 0; i < N; i++) out[i] = Math.tanh(out[i] * k) / nk * .9;
+    }
+    compress(out, sr);
+    for (let i = 0; i < N; i++) { const x = out[i], a = Math.abs(x); out[i] = a < .9 ? x : Math.sign(x) * (.9 + .1 * Math.tanh((a - .9) / .1)); } // soft ceiling, never hard-clips
+    return out;
+  }
+  const render = (s, o) => renderScore(toScore(s), o);
+
+  // ---------------------------------------------------------------- WAV
+  function wav(samples, sr = 44100) {
+    const n = samples.length, b = new Uint8Array(44 + n * 2), dv = new DataView(b.buffer);
+    const str = (o, t) => { for (let i = 0; i < t.length; i++) b[o + i] = t.charCodeAt(i); };
+    str(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt '); dv.setUint32(16, 16, true);
+    dv.setUint16(20, 1, true); dv.setUint16(22, 1, true); dv.setUint32(24, sr, true); dv.setUint32(28, sr * 2, true);
+    dv.setUint16(32, 2, true); dv.setUint16(34, 16, true); str(36, 'data'); dv.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) dv.setInt16(44 + i * 2, Math.round(cl(samples[i], -1, 1) * 32767), true);
+    return b;
+  }
+  function readWav(bytes) { // 16-bit PCM mono/stereo (stereo is averaged)
+    const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength); let p = 12, fmt = null, data = null;
+    while (p + 8 <= bytes.length) {
+      const id = String.fromCharCode(...bytes.slice(p, p + 4)), n = dv.getUint32(p + 4, true);
+      if (id === 'fmt ') fmt = { ch: dv.getUint16(p + 10, true), sr: dv.getUint32(p + 12, true), bits: dv.getUint16(p + 22, true) };
+      if (id === 'data') { data = [p + 8, Math.min(n, bytes.length - p - 8)]; break; }
+      p += 8 + n + (n & 1);
+    }
+    if (!fmt || !data || fmt.bits !== 16) throw new Error('only 16-bit PCM WAV is supported');
+    const frames = data[1] / 2 / fmt.ch, out = new Float32Array(frames);
+    for (let i = 0; i < frames; i++) { let s = 0; for (let c = 0; c < fmt.ch; c++) s += dv.getInt16(data[0] + (i * fmt.ch + c) * 2, true); out[i] = s / fmt.ch / 32768; }
+    return { samples: out, sr: fmt.sr };
+  }
+
+  // ---------------------------------------------------------------- MIDI (format 0, 1 tick = 1 ms)
+  // Lossy by design: pitch, timing, velocity, glides (as pitch bend), vibrato (mod wheel), one GM program, drums on channel 10.
+  const GM = { chip: 80, flute: 73, bass: 70, trump: 56, piano: 0, choir: 52 };
+  function midi(sc) {
+    const trk = [];
+    const vlq = n => { const b = [n & 127]; while ((n >>= 7)) b.push((n & 127) | 128); return b.reverse(); };
+    const push = (t, bytes, ord = 1) => trk.push({ t: Math.max(0, Math.round(t)), bytes, ord });
+    const tm = sc.timbre || {}, lead = ['chip', 'flute', 'bass', 'trump', 'piano', 'choir'].sort((a, b) => (tm[b] || 0) - (tm[a] || 0))[0];
+    push(0, [0xFF, 0x51, 3, 0x07, 0xA1, 0x20], 0);                 // 500000 us per quarter
+    push(0, [0xB0, 101, 0, 0xB0, 100, 0, 0xB0, 6, 12, 0xB0, 38, 0], 0); // pitch bend range = 12 semitones
+    push(0, [0xC0, GM[lead] || 0], 0); push(0, [0xB0, 1, Math.round(cl(tm.vib || 0) * 100)], 0);
+    const note = hz => 69 + 12 * Math.log2(hz / 440), bendv = (hz, base) => cl(Math.round(8192 + (note(hz) - base) / 12 * 8192), 0, 16383);
+    const sendBend = (t, v) => push(t, [0xE0, v & 127, v >> 7], 2);
+    for (const e of sc.events) {
+      if (e.hz === null) continue;
+      const vel = Math.round(cl(e.vel * 80, 1, 127));
+      if (e.k) { const n = [0, 36, 38, 42][e.k]; push(e.t, [0x99, n, vel]); push(e.t + Math.min(e.d, 120), [0x89, n, 0], 0); continue; }
+      const nn = Math.round(note(e.hz));
+      sendBend(e.t, bendv(e.h0 || e.hz, nn));
+      if (e.h0) for (let k = 1; k <= 4; k++) sendBend(e.t + (e.r || 5) * k / 4, bendv(e.h0 + (e.hz - e.h0) * k / 4, nn));
+      push(e.t, [0x90, nn, vel]);
+      if (e.h1) for (let k = 1; k <= 4; k++) sendBend(e.t + e.d * (.55 + .4 * k / 4), bendv(e.hz + (e.h1 - e.hz) * k / 4, nn));
+      push(e.t + e.d, [0x80, nn, 0], 0);
+    }
+    push(sc.dur_ms + 100, [0xFF, 0x2F, 0], 3);
+    trk.sort((a, b) => a.t - b.t || a.ord - b.ord);
+    const body = []; let prev = 0;
+    for (const e of trk) { body.push(...vlq(e.t - prev), ...e.bytes); prev = e.t; }
+    // channel bytes inside the 'pitch bend range' blob are single messages: expand running status safely
+    const hdr = [0x4D, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, 0x01, 0xF4], n = body.length;
+    return Uint8Array.from([...hdr, 0x4D, 0x54, 0x72, 0x6B, n >>> 24 & 255, n >>> 16 & 255, n >>> 8 & 255, n & 255, ...body]);
+  }
+
+  // ---------------------------------------------------------------- Tier A reference
+  // What a one-buzzer player does: one tone at a time, no velocity, no bends, drums as short clicks.
+  // Both this function and players/common/blip_player.h must agree to the millisecond.
+  const DRUM_A = [null, [80, 60], [220, 40], [3000, 15]]; // [hz, ms] for kick, snare, hat
+  function tierA(sc, o = {}) {
+    const oc = o.oct || 0, shift = hz => oc >= 0 ? hz << oc : (hz + (1 << (-oc - 1))) >> -oc, spans = []; // integer maths, same as the C player
+    for (const e of sc.events) {
+      if (e.hz === null) continue;
+      if (e.k) { const [hz, ms] = DRUM_A[e.k]; spans.push([e.t, e.t + Math.min(ms, e.d), shift(hz)]); }
+      else spans.push([e.t, e.t + (e.d > 40 ? Math.max(e.d - 8, Math.floor((e.d * 7 + 5) / 10)) : e.d), shift(Math.round(e.hz))]);
+    }
+    return spans; // [start_ms, end_ms, hz]
+  }
+  const toneAt = (spans, ms) => { for (const s of spans) if (ms >= s[0] && ms < s[1]) return s[2]; return 0; };
+
+  // ---------------------------------------------------------------- zip (store only, no deps)
+  const crcT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = b => { let c = ~0; for (let i = 0; i < b.length; i++) c = crcT[(c ^ b[i]) & 255] ^ (c >>> 8); return ~c >>> 0; };
+  function zip(files) { // files: {name: Uint8Array|string}
+    const enc = new TextEncoder(), parts = [], cd = []; let off = 0;
+    const u16 = n => [n & 255, n >> 8 & 255], u32 = n => [n & 255, n >> 8 & 255, n >> 16 & 255, n >>> 24 & 255];
+    for (const [name, data0] of Object.entries(files)) {
+      const data = typeof data0 === 'string' ? enc.encode(data0) : data0, nm = enc.encode(name), crc = crc32(data);
+      const lh = [0x50, 0x4B, 3, 4, ...u16(20), ...u16(0x800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nm.length), ...u16(0)];
+      parts.push(Uint8Array.from(lh), nm, data);
+      cd.push(Uint8Array.from([0x50, 0x4B, 1, 2, ...u16(20), ...u16(20), ...u16(0x800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nm.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), nm);
+      off += lh.length + nm.length + data.length;
+    }
+    const cdLen = cd.reduce((a, b) => a + b.length, 0), cnt = Object.keys(files).length;
+    const end = Uint8Array.from([0x50, 0x4B, 5, 6, 0, 0, 0, 0, ...u16(cnt), ...u16(cnt), ...u32(cdLen), ...u32(off), 0, 0]);
+    const all = [...parts, ...cd, end], out = new Uint8Array(all.reduce((a, b) => a + b.length, 0)); let p = 0;
+    all.forEach(b => { out.set(b, p); p += b.length; });
+    return out;
+  }
+
+  // ---------------------------------------------------------------- bank: voice + scores + tags
+  const slug = t => String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'voice';
+  function voiceOf(c, id) {
+    const x = fixX(c.mu), lead = leadOf(x), timbre = {};
+    TIMBRE.forEach(k => timbre[k] = r2(x[k]));
+    return { format: 'blip-voice', version: 1, id, name: c.name, lead, octave: c.oct, timbre };
+  }
+  // Pre-render a palette: `per` sounds for every feeling (and any extra [v,a,name] points).
+  function bake(c, o = {}) {
+    const per = o.per || 3, id = o.id || slug(c.name), base = (o.seed === undefined ? c.seed : o.seed) | 0, pulls = o.pulls || [], scores = [];
+    const pts = Object.entries(EM).map(([n, [v, a]]) => [v, a, n]).concat(o.points || []);
+    pts.forEach(([v, a, name], pi) => {
+      for (let j = 0; j < per; j++) {
+        const seed = (base + pi * 7919 + j * 104729) | 0, s = generate({ char: c, v, a, seed, pulls, depth: o.depth || 0, par: o.par });
+        const sid = `${id}-${slug(name)}-${j + 1}`, sc = toScore(s, { id: sid, voice: id });
+        sc.meta.source.v = v; sc.meta.source.a = a; sc.meta.source.em = name;
+        scores.push({ id: sid, tags: [name], v, a, score: sc });
+      }
+    });
+    return { format: 'blip-bank', version: 1, id, voice: voiceOf(c, id), scores, bank_meta: { character: c.name, exported: o.date || new Date().toISOString() } };
+  }
+  // choose a baked score for a target feeling: nearest few, then a random one so replies do not repeat
+  function pick(bank, v, a, r = Math.random) {
+    const d = bank.scores.map(s => [Math.hypot(s.v - v, (s.a - a) * 1.2), s]).sort((p, q) => p[0] - q[0]).slice(0, 3);
+    return d[Math.floor(r() * d.length)][1];
+  }
+
+  // C header for the Tier A player (players/common/blip_player.h)
+    function cHeader(bank) {
+    let h = `/* generated by tools/blip.js header from bank "${bank.id}" -- do not edit */\n#pragma once\n#include "blip_player.h"\n\n`;
+    bank.scores.forEach((s, i) => {
+      const ev = s.score.events.map(e => `{${e.t},${e.d},${e.hz == null ? 0 : Math.round(e.hz)},${e.k || 0}}`);
+      h += `static const blip_ev blip_ev_${i}[] = {${ev.join(',')}};\n`;
+    });
+    h += `static const blip_score blip_scores[] = {\n` + bank.scores.map((s, i) => `  {"${s.id}", blip_ev_${i}, ${s.score.events.length}, ${s.score.dur_ms}}`).join(',\n') + `\n};\n`;
+    h += `static const blip_bank blip_the_bank = {"${bank.voice.id}", blip_scores, ${bank.scores.length}};\n`;
+    h += `/* ${bank.scores.length} scores, about ${bank.scores.reduce((a, s) => a + s.score.events.length * 7, 0)} bytes of events */\n`;
+    return h;
+  }
+
+  // ---------------------------------------------------------------- protocol helpers (host side)
+  // N line: live notes, "N hz/ms[/vel] ..." (hz 0 = rest). Player stays dumb; the client composes.
+  function encodeN(sc, maxBytes = 250) {
+    const ev = sc.events.filter(e => e.hz !== undefined && !e.k).map(e => ({ hz: e.hz === null ? 0 : Math.round(e.hz), ms: Math.min(9999, e.d), vel: e.vel, t: e.t }));
+    const lines = []; let line = 'N';
+    for (const e of ev) {
+      const tok = ' ' + e.hz + '/' + e.ms;
+      if (line.length + tok.length > maxBytes) { lines.push(line); line = 'N+'; if (lines.length >= 4) break; }
+      line += tok;
+    }
+    if (line.length > 2 && lines.length < 4) lines.push(line);
+    return lines;
+  }
+
+  return {
+    version: '0.2.0', K, INS, GROUPS, EM, QK, TIMBRE, GM, DRUM_A,
+    ARCHETYPES, SOUND_ARCH, fromArchetype, cl, num, rng, gauss, emoT, fixX, nearest, fixQK, charFromJSON, fixL, meaning, pullsOf,
+    generate, hydrate, sched, FEAT, sens, learn, toScore, leadOf,
+    renderScore, render, wav, readWav, midi, tierA, toneAt, zip, crc32, bake, pick, voiceOf, slug, encodeN, cHeader,
+  };
+});
+
+/* Blip listener: turns microphone audio into a rough sense of the situation, and the situation into a reply.
+ *
+ *   audio --Listener--> utterance (blip-heard summary + frames)
+ *   utterance --interpreters--> affect { v, a, cv, ca }   (each source states how sure it is)
+ *   affect + mood + personality --Brain--> decision { reply | murmur | none, target feeling, mimic strength }
+ *   utterance + character --mimic--> a phrase that echoes the speaker's pitch contour and rhythm
+ *
+ * Honest limits are in docs/listener.md. In short: arousal (calm vs. energised) is readable from prosody;
+ * valence (good vs. bad feeling) is mostly not, so it is reported with low confidence unless another
+ * interpreter (text, an LLM, a camera) supplies it.
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory(root.Blip);
+  else root.BlipListen = factory(root.Blip);
+})(typeof self !== 'undefined' ? self : this, function (E) {
+  'use strict';
+  const cl = E.cl, st = hz => 12 * Math.log2(hz / 100);               // semitones above 100 Hz
+  const pct = (a, p) => { if (!a.length) return 0; const s = a.slice().sort((x, y) => x - y); return s[Math.min(s.length - 1, Math.floor(p * (s.length - 1) + .5))]; };
+  const mean = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
+
+  // ------------------------------------------------------------ pitch (normalised autocorrelation)
+  function pitch(buf, off, n, sr) {
+    const lo = Math.floor(sr / 450), hi = Math.min(Math.floor(sr / 70), n - 2);
+    let e0 = 0; for (let i = 0; i < n - hi; i++) e0 += buf[off + i] * buf[off + i];
+    if (e0 < 1e-9) return { f0: 0, r: 0 };
+    const r = new Float32Array(hi + 2);
+    for (let l = lo - 1; l <= hi + 1; l++) {
+      let s = 0, e1 = 0; const m = n - hi;
+      for (let i = 0; i < m; i++) { const b = buf[off + i + l]; s += buf[off + i] * b; e1 += b * b; }
+      r[l] = s / Math.sqrt(e0 * e1 + 1e-12);
+    }
+    let best = lo, bv = -1; for (let l = lo; l <= hi; l++) if (r[l] > bv) { bv = r[l]; best = l; }
+    const half = Math.round(best / 2); if (half >= lo && r[half] > .9 * bv) { best = half; bv = r[half]; }
+    const a = r[best - 1], b = r[best], c = r[best + 1], d = a - 2 * b + c, sh = d ? .5 * (a - c) / d : 0;
+    return { f0: sr / (best + cl(sh, -1, 1)), r: bv };
+  }
+
+  // ------------------------------------------------------------ listener: frames -> utterances
+  function createListener(o = {}) {
+    const sr = o.sr || 16000, hop = Math.round(sr * .02), win = Math.round(sr * .04), hang = (o.hangMs || 500) / 20, minRms = o.minRms || .008, fk = o.floorFactor || 2.8;
+    const h = { utterance: [], start: [], noise: [], frame: [] }; let buf = new Float32Array(0), floor = .005, run = 0, silent = 0, inUtt = false, frames = [], pre = [], t = 0, lastEnd = null;
+    const emit = (k, x) => h[k].forEach(f => f(x));
+    function frame(x, off) {
+      let s = 0; for (let i = 0; i < hop; i++) s += x[off + i] * x[off + i]; const rms = Math.sqrt(s / hop);
+      floor = rms < floor ? floor * .9 + rms * .1 : floor * 1.002;       // fast down, slow up: tracks room noise
+      const speech = rms > Math.max(floor * fk, minRms);
+      let f0 = 0; if (speech) { const p = pitch(x, off, win, sr); if (p.r > .5) f0 = p.f0; }
+      const fr = { rms, f0, speech }; emit('frame', fr);
+      if (!inUtt) {
+        pre.push(fr); if (pre.length > 4) pre.shift(); run = speech ? run + 1 : 0;
+        if (run >= 3) { inUtt = true; frames = pre.slice(); silent = 0; emit('start', { t_ms: t * 20 }); }
+      } else {
+        frames.push(fr); silent = speech ? 0 : silent + 1;
+        if (silent >= hang) {
+          const body = frames.slice(0, frames.length - silent + 3), voiced = body.filter(f => f.f0).length; inUtt = false; run = 0; pre = [];
+          if (voiced >= 5) { lastEnd = t * 20; emit('utterance', { t_ms: (t - body.length) * 20, frames: body, summary: summarize(body) }); } else emit('noise', { frames: body });
+        }
+      }
+      t++;
+    }
+    return {
+      push(chunk) { const m = new Float32Array(buf.length + chunk.length); m.set(buf); m.set(chunk, buf.length); let p = 0; while (p + win <= m.length && p + hop <= m.length) { if (m.length - p < win) break; frame(m, p); p += hop; } buf = m.slice(p); },
+      on(k, f) { h[k].push(f); return this; },
+      get time_ms() { return t * 20; }, get lastEnd_ms() { return lastEnd; }, get noiseFloor() { return floor; },
+    };
+  }
+
+  // blip-heard summary
+  function summarize(frames) {
+    const n = frames.length, v = frames.filter(f => f.f0), sp = frames.filter(f => f.speech);
+    let a = frames.findIndex(f => f.speech), b = n - 1; while (b > 0 && !frames[b].speech) b--;
+    const inner = a >= 0 ? frames.slice(a, b + 1) : [], gaps = inner.filter(f => !f.speech).length;
+    const tr = v.map(f => st(f.f0)), rms = sp.map(f => f.rms);
+    // syllable-ish rate: peaks of smoothed energy
+    const sm = frames.map((f, i) => mean(frames.slice(Math.max(0, i - 1), i + 2).map(g => g.rms)));
+    let peaks = 0, lastP = -9; const th = mean(rms) * .8;
+    for (let i = 2; i < n - 2; i++) if (sm[i] > th && sm[i] >= sm[i - 1] && sm[i] > sm[i + 1] && sm[i] >= sm[i - 2] && sm[i] > sm[i + 2] && i - lastP >= 4) { peaks++; lastP = i; }
+    const dur = n * .02, third = k => mean(tr.slice(Math.floor(k * tr.length / 3), Math.max(Math.floor(k * tr.length / 3) + 1, Math.floor((k + 1) * tr.length / 3))));
+    let contour = 'flat';
+    if (tr.length >= 6) {
+      const d1 = third(1) - third(0), d2 = third(2) - third(1), T = 1.2;
+      contour = d1 > T && d2 < -T ? 'rise-fall' : d1 < -T && d2 > T ? 'fall-rise' : third(2) - third(0) > T ? 'rise' : third(2) - third(0) < -T ? 'fall' : 'flat';
+    }
+    return {
+      n_frames: n, dur_ms: Math.round(dur * 1000), voiced_ratio: +(v.length / n).toFixed(3), pause_ratio: +(inner.length ? gaps / inner.length : 0).toFixed(3),
+      pitch_mean_hz: v.length ? +(100 * 2 ** (mean(tr) / 12)).toFixed(1) : 0, pitch_range_semitones: +(pct(tr, .9) - pct(tr, .1)).toFixed(2),
+      rms_mean: +mean(rms).toFixed(4), rms_range: +(pct(rms, .9) - pct(rms, .1)).toFixed(4), rate_per_s: +(peaks / Math.max(.3, dur)).toFixed(2), contour,
+    };
+  }
+
+  // ------------------------------------------------------------ interpreters (each says how sure it is)
+  // contract: (heard, ctx) => { v, a, cv, ca, src }  (or a Promise of that). v, a in -1..1; cv, ca in 0..1.
+  function prosodyInterpreter() {
+    const prior = { pm: 170, rg: 4, rms: .05, rate: 3.5 }; let n = 0, base = { ...prior };
+    const f = heard => {
+      const s = heard.summary, vf = heard.frames ? heard.frames.filter(x => x.f0).length : 30;
+      const z = [st(s.pitch_mean_hz || base.pm) - st(base.pm), (s.pitch_range_semitones - base.rg) / 1.5, Math.log(s.rms_mean / base.rms + 1e-6) / .6, (s.rate_per_s - base.rate) / 1.5];
+      const A = Math.tanh(.8 * (.3 * z[0] / 2.5 + .2 * z[1] + .3 * z[2] + .2 * z[3]));
+      const known = Math.min(1, n / 6), ca = (.15 + .55 * known) * Math.min(1, vf / 25);
+      const rise = s.contour === 'rise' || s.contour === 'fall-rise', fall = s.contour === 'fall';
+      const V = rise ? .15 : fall && A < 0 ? -.15 : 0;
+      const out = { v: V, a: A, cv: V ? .12 : 0, ca, src: 'prosody', detail: { p: cl(z[0] / 2.5, -1, 1), w: cl(z[1] / 2, -1, 1), l: cl(z[2] / 1.5, -1, 1), r: cl(z[3] / 2, -1, 1) } };
+      // learn this speaker's normal voice so "louder / higher / faster than usual" means something
+      const al = n < 3 ? .5 : .15; n++;
+      base = { pm: base.pm * (1 - al) + (s.pitch_mean_hz || base.pm) * al, rg: base.rg * (1 - al) + s.pitch_range_semitones * al, rms: base.rms * (1 - al) + s.rms_mean * al, rate: base.rate * (1 - al) + s.rate_per_s * al };
+      return out;
+    };
+    f.baseline = () => ({ ...base, n });
+    return f;
+  }
+  // A toy word list so you can see a text interpreter plugged in. Replace it with real speech-to-text + a real model.
+  const POS = 'thanks thank great good love nice awesome happy yes wonderful cool well done hello hi hey friend'.split(' '), NEG = 'no bad hate stop sad angry wrong terrible shut ugh annoying broken die never'.split(' '), HOT = 'now hurry quick fast stop wow no yes go'.split(' ');
+  function lexiconInterpreter(text) {
+    const w = String(text || '').toLowerCase().match(/[a-z']+/g) || [], p = w.filter(x => POS.includes(x)).length, g = w.filter(x => NEG.includes(x)).length, h = w.filter(x => HOT.includes(x)).length + (String(text).match(/!/g) || []).length;
+    const hits = p + g; return { v: hits ? cl((p - g) / hits, -1, 1) : 0, a: cl(h * .35 - .1, -1, 1), cv: Math.min(.6, .25 * hits), ca: h ? Math.min(.4, .15 * h) : 0, src: 'lexicon' };
+  }
+  const llmPrompt = (transcript, s) => `A person said to a small robot: "${transcript}". Their voice: ${s.pitch_mean_hz} Hz average, ${s.pitch_range_semitones} semitone range, rms ${s.rms_mean}, ${s.rate_per_s} syllables/s, contour ${s.contour}. ` +
+    `Reply with only JSON: {"valence": -1..1, "arousal": -1..1, "confidence": 0..1} describing how they seem to feel.`;
+  function parseLLM(text) {
+    const m = String(text).match(/\{[^{}]*\}/); if (!m) return null;
+    try { const j = JSON.parse(m[0]), c = cl(+j.confidence || .5); return { v: cl(+j.valence || 0, -1, 1), a: cl(+j.arousal || 0, -1, 1), cv: .8 * c, ca: .6 * c, src: 'llm' }; } catch (e) { return null; }
+  }
+  // combine whatever sources are available, trusting each by its own confidence
+  function fuse(list) {
+    let sv = 0, wv = 0, sa = 0, wa = 0, nv = 1, na = 1, detail = null; const src = [];
+    for (const e of list) { if (!e) continue; sv += e.v * e.cv; wv += e.cv; sa += e.a * e.ca; wa += e.ca; nv *= 1 - e.cv; na *= 1 - e.ca; src.push(e.src); if (e.detail && !detail) detail = e.detail; }
+    return { v: wv ? sv / wv : 0, a: wa ? sa / wa : 0, cv: 1 - nv, ca: 1 - na, src, detail: detail || { p: 0, w: 0, l: 0, r: 0 } };
+  }
+
+  // ------------------------------------------------------------ temperament: who this character is when someone talks to it
+  // A character does not just echo you. It has moods, taste, a temper and a relationship with you. Everything below is plain
+  // numbers (0..1 unless noted) so it can be designed, saved in the character file, and read by any client.
+  const TEMPER_DEFAULT = {
+    chatty: .55, mirror: .5, empathy: .5, echo: .45, curiosity: .5, tease: .2,        // how it joins in
+    contrary: .15, complain: .2, sulk: .15, patience: .5,                              // how it pushes back
+    moodV: .1, moodA: -.1, inertia: .6, reactivity: .5,                                // its own weather (moodV, moodA in -1..1)
+    delay: .4, wild: .3,                                                               // timing and unpredictability
+    like: { energy: 0, pitch: 0, pace: 0, loud: 0 },                                   // taste in your voice, -1 dislikes high, +1 likes high
+  };
+  const TKEYS = Object.keys(TEMPER_DEFAULT).filter(k => k !== 'like');
+  const SIGNED = { moodV: 1, moodA: 1 };
+  function fixTemperament(o) {
+    const t = { like: {} }; o = o || {};
+    TKEYS.forEach(k => { const v = +o[k]; t[k] = isFinite(v) && o[k] !== null && o[k] !== '' ? cl(v, SIGNED[k] ? -1 : 0, 1) : TEMPER_DEFAULT[k]; });
+    Object.keys(TEMPER_DEFAULT.like).forEach(k => { const v = o.like && +o.like[k]; t.like[k] = isFinite(v) ? cl(v, -1, 1) : 0; });
+    return t;
+  }
+  // starting temperaments for the twelve archetypes (each overrides the defaults)
+  const L0 = (e, p, r, l) => ({ energy: e || 0, pitch: p || 0, pace: r || 0, loud: l || 0 });
+  const ARCH_TEMPER = {
+    Innocent: { chatty: .7, mirror: .7, empathy: .7, echo: .6, curiosity: .8, tease: .15, contrary: .02, complain: .05, sulk: .2, moodV: .5, moodA: .15, like: L0(.3, .3) },
+    Everyman: { chatty: .5, mirror: .6, empathy: .6, echo: .4, curiosity: .5, tease: .2, contrary: .1, complain: .15, moodV: .2 },
+    Hero: { chatty: .55, mirror: .5, empathy: .7, echo: .3, curiosity: .4, tease: .15, contrary: .25, complain: .2, sulk: .05, patience: .4, moodV: .3, moodA: .3, like: L0(.4, 0, 0, .2) },
+    Caregiver: { chatty: .6, mirror: .45, empathy: .95, echo: .3, curiosity: .6, tease: .1, contrary: .02, complain: .05, sulk: .15, inertia: .7, moodV: .35, moodA: -.1, like: L0(-.4, 0, 0, -.5) },
+    Explorer: { chatty: .65, mirror: .4, empathy: .4, echo: .5, curiosity: .95, tease: .3, contrary: .2, complain: .1, moodV: .3, moodA: .3, wild: .5 },
+    Rebel: { chatty: .55, mirror: .25, empathy: .2, echo: .35, curiosity: .3, tease: .45, contrary: .75, complain: .65, sulk: .2, patience: .25, moodV: -.05, moodA: .25, wild: .6, like: L0(.4, 0, .3, .5) },
+    Lover: { chatty: .55, mirror: .65, empathy: .8, echo: .6, curiosity: .5, tease: .4, contrary: .1, complain: .1, sulk: .45, inertia: .4, reactivity: .8, moodV: .3, like: L0(-.2, -.3, -.5) },
+    Creator: { chatty: .6, mirror: .3, empathy: .4, echo: .7, curiosity: .8, tease: .35, contrary: .3, complain: .2, sulk: .1, moodV: .25, wild: .7 },
+    Jester: { chatty: .85, mirror: .7, empathy: .4, echo: .85, curiosity: .6, tease: .85, contrary: .35, complain: .15, sulk: .1, patience: .3, moodV: .5, moodA: .45, wild: .7, like: L0(.6, .3, .5) },
+    Sage: { chatty: .3, mirror: .15, empathy: .6, echo: .1, curiosity: .6, tease: .1, contrary: .35, complain: .2, sulk: .1, inertia: .85, patience: .85, delay: .8, moodV: .15, moodA: -.35, like: L0(-.4, 0, -.6, -.4) },
+    Magician: { chatty: .45, mirror: .35, empathy: .45, echo: .5, curiosity: .7, tease: .35, contrary: .3, complain: .15, sulk: .2, moodV: .2, delay: .6, wild: .8 },
+    Ruler: { chatty: .35, mirror: .1, empathy: .3, echo: .1, curiosity: .3, tease: .05, contrary: .6, complain: .6, sulk: .3, inertia: .8, patience: .35, delay: .7, moodV: 0, moodA: -.1, like: L0(-.3, 0, -.3, -.5) },
+  };
+  const temperamentFor = arch => fixTemperament(Object.assign({}, ARCH_TEMPER[arch] || {}));
+
+  // The questions of the response wizard. Each option sets a few numbers; the sliders below the wizard fine-tune them.
+  const TEMPER_TRAITS = [
+    { id: 'upset', q: 'When you sound upset, it…', opts: [
+      { label: 'Soothes you', over: { empathy: .9, contrary: .03, complain: .05, sulk: .1 } },
+      { label: 'Feels it too', over: { mirror: .8, empathy: .6, sulk: .3 } },
+      { label: 'Sulks', over: { sulk: .8, mirror: .35, empathy: .4 } },
+      { label: 'Snaps back', over: { complain: .75, contrary: .55, empathy: .2 } }] },
+    { id: 'excited', q: 'When you sound excited, it…', opts: [
+      { label: 'Joins in', over: { mirror: .85, tease: .25 } },
+      { label: 'Teases you', over: { tease: .85, mirror: .5, echo: .75 } },
+      { label: 'Stays cool', over: { mirror: .15, contrary: .45 } },
+      { label: 'Gets overwhelmed', over: { complain: .55, patience: .3 } }] },
+    { id: 'talk', q: 'How talkative is it?', opts: [
+      { label: 'Silent type', over: { chatty: .15, patience: .85, delay: .8 } },
+      { label: 'Quiet', over: { chatty: .4, patience: .65, delay: .6 } },
+      { label: 'Chatty', over: { chatty: .72, patience: .4, delay: .3 } },
+      { label: 'Never stops', over: { chatty: .95, patience: .2, delay: .15 } }] },
+    { id: 'echo', q: 'Does it copy how you talk?', opts: [
+      { label: 'Never', over: { echo: 0 } }, { label: 'A little', over: { echo: .3 } },
+      { label: 'Often', over: { echo: .65 } }, { label: 'Like a parrot', over: { echo: .95 } }] },
+    { id: 'push', q: 'Does it ever disagree?', opts: [
+      { label: 'Never', over: { contrary: 0, complain: .03 } }, { label: 'Gently', over: { contrary: .3, complain: .2 } },
+      { label: 'Openly', over: { contrary: .6, complain: .5 } }, { label: 'Constantly', over: { contrary: .85, complain: .75 } }] },
+    { id: 'mood', q: 'What is its own mood like?', opts: [
+      { label: 'Sunny', over: { moodV: .55, moodA: .2, inertia: .6 } }, { label: 'Even', over: { moodV: .1, moodA: -.1, inertia: .6 } },
+      { label: 'Moody', over: { moodV: 0, moodA: .05, inertia: .25, reactivity: .85, wild: .6 } }, { label: 'Gloomy', over: { moodV: -.35, moodA: -.3, inertia: .75 } }] },
+    { id: 'taste', q: 'What does it like in your voice?', opts: [
+      { label: 'Calm and soft', over: { like: { energy: -.7, loud: -.6, pitch: 0, pace: -.2 } } },
+      { label: 'Lively and bright', over: { like: { energy: .7, pitch: .4, pace: .3, loud: .2 } } },
+      { label: 'Slow and low', over: { like: { pace: -.7, pitch: -.6, energy: -.3, loud: -.2 } } },
+      { label: 'Quick and high', over: { like: { pace: .7, pitch: .6, energy: .3, loud: 0 } } }] },
+  ];
+  function applyTrait(t, trait, optIndex) { const o = TEMPER_TRAITS.find(x => x.id === trait).opts[optIndex].over, n = fixTemperament(t); Object.keys(o).forEach(k => { if (k === 'like') Object.assign(n.like, o.like); else n[k] = o[k]; }); return n; }
+
+  // ------------------------------------------------------------ brain: what to do about it
+  // Each reaction mode gets a score from the character's temperament and what just happened; one is chosen (with some
+  // randomness from "wild"), and `why` explains. Modes: match, soothe, cheer, tease, contradict, complain, sulk, perk,
+  // backchannel, own (speaks from its own mood), silent.
+  const MODES = ['match', 'soothe', 'cheer', 'tease', 'contradict', 'complain', 'sulk', 'perk', 'backchannel', 'own', 'silent'];
+  const MODE_NAME = { match: 'Matches you', soothe: 'Soothes you', cheer: 'Cheers you up', tease: 'Teases you', contradict: 'Disagrees', complain: 'Grumbles', sulk: 'Sulks', perk: 'Perks up', backchannel: 'Quick reply', own: 'Says its own thing', silent: 'Stays quiet' };
+  function createBrain(o = {}) {
+    const T = fixTemperament(o.temperament), r = o.rng || Math.random, st0 = o.state || {};
+    let mood = { v: cl(+st0.moodV, -1, 1) || T.moodV, a: cl(+st0.moodA, -1, 1) || T.moodA }, bond = cl(+st0.bond || 0, -1, 1);
+    let lastSpeech = null, lastAct = -1e9, idleAt = null, unanswered = 0, recent = [];
+    const fin = (v, a) => [cl(v * .75 + mood.v * .25, -1, 1), cl(a * .75 + mood.a * .25, -1, 1)];
+    return {
+      temperament: T, state: () => ({ moodV: +mood.v.toFixed(3), moodA: +mood.a.toFixed(3), bond: +bond.toFixed(3) }),
+      mood: () => ({ ...mood }), bond: () => bond,
+      // an utterance just ended at time `now` (ms). Returns a decision: { kind: 'reply'|'none', mode, v, a, mimic, ... }
+      onUtterance(heard, affect, now) {
+        const s = heard.summary, d = affect.detail || { p: 0, w: 0, l: 0, r: 0 }, uv = affect.v, ua = affect.a, cv = affect.cv, ca = affect.ca, why = {};
+        const gap = lastSpeech === null ? 1e9 : now - lastSpeech; lastSpeech = now;
+        const isQ = s.contour === 'rise' || s.contour === 'fall-rise', secs = (s.dur_ms || 0) / 1000, long = secs > 2 + 8 * T.patience, short = (s.dur_ms || 0) < 450;
+        // taste: how much it likes how you sounded
+        const L = T.like, lw = Math.abs(L.energy) + Math.abs(L.pitch) + Math.abs(L.pace) + Math.abs(L.loud);
+        const pleasure = lw ? cl((L.energy * ua * ca + L.pitch * d.p + L.pace * d.r + L.loud * d.l) / Math.max(.6, lw) * 1.6, -1, 1) : 0;
+        // its own mood and its feeling for you move, slowly
+        const k = T.reactivity * (1 - T.inertia) + .06;
+        mood.v += k * (cl(T.moodV + .5 * pleasure + .35 * uv * cv + .2 * bond, -1, 1) - mood.v);
+        mood.a += k * (cl(T.moodA + T.mirror * ca * ua * .6, -1, 1) - mood.a);
+        bond = cl((bond + .06 * pleasure + .04 * uv * cv) * .995, -1, 1);
+        recent.push(ua * ca); if (recent.length > 4) recent.shift();
+        const loudStreak = recent.length >= 3 && recent.slice(-3).every(x => x > .4);
+        const upset = Math.max(0, -uv * cv) + .25 * Math.max(0, ua * ca - .6), neglect = Math.min(1, unanswered / 3);
+        // reasons are collected as we score so the explanation matches the decision
+        const sc = {}, rs = {}; const add = (m, w, text) => { if (w > .02) { sc[m] = (sc[m] || 0) + w; (rs[m] = rs[m] || []).push([w, text]); } };
+        add('match', T.mirror * (.2 + .6 * ca) * (1 - .8 * upset), 'it likes to follow your energy');
+        add('soothe', T.empathy * 2.2 * upset, 'you sounded upset and it cares');
+        add('cheer', T.empathy * .7 * Math.max(0, -ua * ca - .3) * (mood.v > -.3 ? 1 : .3), 'you sounded low and it wants to lift you');
+        add('tease', T.tease * (ua > -.3 && uv > -.1 ? .8 : .15) * (1 + Math.max(0, bond)) * (1 - upset), 'you sounded fine and it likes poking fun');
+        add('perk', T.curiosity * (isQ ? 1.1 : .2), isQ ? 'that sounded like a question' : 'it is curious');
+        add('contradict', T.contrary * 1.3 * (.15 + .5 * Math.abs(ua) * ca + (cv > .3 ? .35 * Math.abs(uv) : 0)), 'it tends to push the other way');
+        add('complain', T.complain * 1.5 * (.5 * Math.max(0, ua * ca) + .6 * Math.max(0, -pleasure) + (long ? .45 : 0) + .3 * Math.max(0, -bond) + .3 * Math.max(0, -mood.v) + (loudStreak ? .4 : 0)),
+          pleasure < -.15 ? 'it does not like how you sounded' : long ? 'you went on for a long time' : 'it is out of sorts');
+        add('sulk', T.sulk * (.6 * upset + .6 * neglect + .3 * Math.max(0, -bond)), neglect > .3 ? 'you keep talking without it getting a word in' : 'it takes bad feeling to heart');
+        add('backchannel', short || secs < .9 ? .55 * T.chatty : 0, 'short remark, short answer');
+        add('own', (1 - T.mirror) * .45 + .12, 'it follows its own mood');
+        add('silent', (1 - T.chatty) * .9 + (short ? .25 : 0) + (now - lastAct < 1200 ? 2 : 0), now - lastAct < 1200 ? 'it just spoke' : 'it is not much of a talker');
+        if (pleasure > .3) rs.match && rs.match.push([pleasure * .3, 'it likes the way you sound']);
+        const noise = .1 + T.wild * .3, names = Object.keys(sc), w = names.map(m => Math.exp(sc[m] / noise)), tot = w.reduce((a, b) => a + b, 0);
+        let x = r() * tot, pick = names[names.length - 1]; for (let i = 0; i < names.length; i++) { x -= w[i]; if (x <= 0) { pick = names[i]; break; } }
+        const reasons = (rs[pick] || []).sort((a, b) => b[0] - a[0]).slice(0, 2).map(a => a[1]);
+        const scores = names.map(m => [m, +sc[m].toFixed(2)]).sort((a, b) => b[1] - a[1]);
+        const base = { why: reasons.join('; '), scores, pleasure: +pleasure.toFixed(2), state: this.state() };
+        if (pick === 'silent') { unanswered++; return { kind: 'none', mode: pick, ...base }; }
+        unanswered = 0; lastAct = now;
+        const echo = T.echo, bc = pick === 'backchannel';
+        let v, a, mimic, exag = 2, len = bc ? 'short' : 'normal', tags = [], delay = 250 + 650 * T.delay * (.4 + r() * .6);
+        if (pick === 'match') { v = uv * Math.max(.3, cv) + .1; a = ua * ca * .9; mimic = echo; }
+        else if (pick === 'soothe') { v = .25 + .25 * T.empathy; a = Math.min(-.15, ua * ca * .3 - .3); mimic = echo * .3; tags = ['Calm', 'Tender']; }
+        else if (pick === 'cheer') { v = .65; a = .45; mimic = echo * .3; tags = ['Playful']; }
+        else if (pick === 'tease') { v = .5; a = .55; mimic = echo > .05 ? .85 : 0; exag = 3; tags = ['Playful', 'Teasing']; delay *= .5; }
+        else if (pick === 'perk') { v = .15; a = .35; mimic = echo * .8; exag = 2.4; tags = ['Question']; }
+        else if (pick === 'contradict') { v = -uv * .4 * Math.min(1, cv * 1.5); a = -ua * ca * .8; mimic = 0; tags = ['Disagree']; }
+        else if (pick === 'complain') { v = -.55; a = .45; mimic = echo * .2; tags = ['Annoyed']; len = 'normal'; }
+        else if (pick === 'sulk') { v = -.55; a = -.6; mimic = 0; len = 'short'; tags = ['Sad']; delay += 600; }
+        else if (bc) { v = uv * cv * .6 + .1; a = ua * ca * .5; mimic = echo * .6; }
+        else { v = mood.v; a = mood.a; mimic = 0; }
+        if (isQ) tags.push('Question'); if (gap > 60000) tags.push('Greeting');
+        [v, a] = fin(v, a);
+        return { kind: 'reply', mode: pick, label: MODE_NAME[pick], v, a, tags, mimic: cl(mimic), exaggerate: exag, len, delay_ms: Math.round(delay), ...base };
+      },
+      // call about once a second while nothing is being said. Now and then it returns something to do on its own.
+      onIdle(now) {
+        if (now - lastAct < 15000) return null;
+        if (idleAt === null) idleAt = now + (25000 + r() * 50000) / (.3 + T.chatty);
+        if (now < idleAt) return null; idleAt = null; lastAct = now;
+        mood.a += (T.moodA - mood.a) * .2;
+        const lonely = T.sulk > .35 && unanswered === 0 && lastSpeech !== null && now - lastSpeech > 120000, fond = bond > .35 && T.curiosity > .4;
+        const [v, a] = lonely ? fin(-.5, -.5) : fond ? fin(.3, .25) : fin(mood.v * .6, -.45 + .2 * r());
+        return { kind: 'murmur', mode: lonely ? 'sulk' : fond ? 'perk' : 'own', label: lonely ? 'Misses you' : fond ? 'Wants attention' : 'Murmurs', v, a, tags: ['Idle chatter'], mimic: 0, exaggerate: 2, len: 'short', delay_ms: 0, why: lonely ? 'you have been quiet for a long while' : fond ? 'it is fond of you and curious' : 'quiet for a while', scores: [], state: this.state() };
+      },
+    };
+  }
+
+  // A fake utterance for trying reactions without a microphone. `kind` names a way someone might talk.
+  const SIM = {
+    happy: { dur: 1.4, f0: p => 190 + 40 * Math.sin(p * 9), rate: 4.2, rms: .08, v: .7, a: .4, d: { p: .3, w: .4, l: .2, r: .2 }, c: 'rise-fall' },
+    excited: { dur: 1.6, f0: p => 230 + 60 * Math.sin(p * 14), rate: 6, rms: .16, v: .5, a: .85, d: { p: .7, w: .7, l: .7, r: .8 }, c: 'rise' },
+    calm: { dur: 1.8, f0: p => 150 - 10 * p, rate: 2.4, rms: .035, v: .2, a: -.55, d: { p: -.3, w: -.5, l: -.6, r: -.6 }, c: 'flat' },
+    sad: { dur: 1.7, f0: p => 140 - 25 * p, rate: 2, rms: .03, v: -.65, a: -.5, d: { p: -.5, w: -.6, l: -.7, r: -.7 }, c: 'fall' },
+    angry: { dur: 1.3, f0: p => 200 + 30 * Math.sin(p * 20), rate: 5.2, rms: .22, v: -.7, a: .85, d: { p: .4, w: .5, l: .9, r: .6 }, c: 'flat' },
+    question: { dur: 1.1, f0: p => 160 + 90 * p, rate: 4, rms: .07, v: .1, a: .2, d: { p: .2, w: .5, l: 0, r: .1 }, c: 'rise' },
+    ramble: { dur: 6.5, f0: p => 165 + 25 * Math.sin(p * 30), rate: 4, rms: .06, v: 0, a: .1, d: { p: 0, w: .1, l: 0, r: .1 }, c: 'flat' },
+    whisper: { dur: 1.2, f0: p => 170, rate: 3, rms: .012, v: 0, a: -.7, d: { p: -.1, w: -.6, l: -.9, r: -.3 }, c: 'flat' },
+    shout: { dur: .8, f0: p => 260 - 40 * p, rate: 3, rms: .3, v: -.2, a: .95, d: { p: .8, w: .6, l: 1, r: .4 }, c: 'fall' },
+    hello: { dur: .9, f0: p => 180 + 50 * Math.sin(p * 5), rate: 3, rms: .07, v: .4, a: .2, d: { p: .2, w: .3, l: .1, r: 0 }, c: 'rise-fall' },
+  };
+  function fakeUtterance(kind, o = {}) {
+    const k = SIM[kind]; if (!k) throw new Error('kinds: ' + Object.keys(SIM).join(', '));
+    const n = Math.round(k.dur / .02), frames = [], per = 50 / k.rate; // frames per syllable
+    for (let i = 0; i < n; i++) { const ph = i / n, pulse = Math.pow(Math.max(0, Math.sin(Math.PI * i / per)), .6), sp = pulse > .12; frames.push({ rms: sp ? k.rms * (.5 + pulse * .6) : .002, f0: sp ? k.f0(ph) : 0, speech: sp }); }
+    const tr = frames.filter(f => f.f0).map(f => st(f.f0)), sp = frames.filter(f => f.speech);
+    const summary = { n_frames: n, dur_ms: Math.round(k.dur * 1000), voiced_ratio: +(tr.length / n).toFixed(3), pause_ratio: .2, pitch_mean_hz: +(100 * 2 ** (mean(tr) / 12)).toFixed(1), pitch_range_semitones: +(pct(tr, .9) - pct(tr, .1)).toFixed(2), rms_mean: +mean(sp.map(f => f.rms)).toFixed(4), rms_range: +k.rms.toFixed(3), rate_per_s: k.rate, contour: k.c };
+    const known = o.knowsMood !== false;
+    return { summary, frames, affect: { v: known ? k.v : 0, a: k.a, cv: known ? .7 : 0, ca: .7, src: ['simulated'], detail: k.d } };
+  }
+
+  // ------------------------------------------------------------ mimic: echo the speaker in the character's voice
+  const PE = [0, 2, 4, 7, 9, 12];
+  function contourNotes(heard) {
+    const fr = heard.frames, sm = fr.map((f, i) => mean(fr.slice(Math.max(0, i - 1), i + 2).map(g => g.rms))), sp = fr.filter(f => f.speech), th = mean(sp.map(f => f.rms)) * .8;
+    const ph = fr.map(f => f.f0 ? st(f.f0) : null), med = pct(ph.filter(x => x !== null), .5), pk = [];
+    for (let i = 1; i < fr.length - 1; i++) if (fr[i].speech && sm[i] > th && sm[i] >= sm[i - 1] && sm[i] > sm[i + 1] && (!pk.length || i - pk[pk.length - 1] >= 4)) pk.push(i);
+    if (!pk.length) pk.push(Math.max(0, fr.findIndex(f => f.speech)));
+    const notes = pk.map((i, k) => {
+      let s = null; for (let d = 0; d < 6 && s === null; d++) s = ph[i + d] ?? ph[i - d] ?? null; if (s === null) s = med;
+      const next = k + 1 < pk.length ? pk[k + 1] : Math.min(fr.length - 1, i + 8), gap = (next - i) * .02;
+      return { st: s - med, dur: cl(gap, .09, .6), rest: k + 1 < pk.length ? Math.max(0, gap - .6) : 0, vel: sm[i] };
+    });
+    const mv = mean(notes.map(n => n.vel)) || 1; notes.forEach(n => n.vel = cl(n.vel / mv, .3, 1.8));
+    return notes;
+  }
+  // strength 0 = the character's own phrase, 1 = pure echo of the speaker's contour and rhythm (in the character's timbre)
+  function mimic(o) {
+    const strength = cl(o.strength === undefined ? .6 : o.strength), exag = o.exaggerate || 2, c = o.char;
+    const base = o.len === 'short' ? Object.assign({}, c, { minN: 2, maxN: 5 }) : c;
+    const gen = E.generate({ char: base, v: o.v || 0, a: o.a || 0, seed: o.seed | 0, depth: o.depth || 0, pulls: o.pulls || [], par: o.par });
+    if (strength <= 0 || !o.heard || !o.heard.frames) return gen;
+    const mn = contourNotes(o.heard), u = 60 / (40 + 160 * gen.x.tempo) / 2, center = Math.exp(gen.notes.reduce((a, b) => a + Math.log(b), 0) / gen.notes.length);
+    const nG = gen.notes.length, nM = mn.length, n = Math.max(1, Math.round(nG + (nM - nG) * strength)), lerp = (a, b, k) => a + (b - a) * k;
+    const idx = (i, m) => n === 1 ? 0 : Math.round(i * (m - 1) / (n - 1)), notes = [], durs = [], vel = [], rest = [], first = [], last = [], hit = [];
+    let total = 0;
+    for (let i = 0; i < n; i++) {
+      const g = idx(i, nG), m = mn[idx(i, nM)], gs = 12 * Math.log2(gen.notes[g] / center), ms = m.st * exag;
+      let q = lerp(gs, ms, strength), sec = lerp(gen.durs[g] * u, m.dur, strength);
+      if (gen.sn) { const oc = Math.floor(q / 12), r = q - oc * 12; let bm = 0, bd = 99; for (const p of PE) if (Math.abs(p - r) < bd) { bd = Math.abs(p - r); bm = p; } q = oc * 12 + bm; }
+      notes.push(cl(center * 2 ** (q / 12), 50, 3200)); durs.push(sec / u); vel.push(lerp(gen.vel[g], m.vel, strength)); total += sec;
+      rest.push(strength > .5 ? false : gen.rest[g]); hit.push(strength > .5 ? 0 : gen.hit[g]); first.push(i === 0); last.push(i === n - 1);
+    }
+    const cap = o.maxSeconds || 3.5; if (total > cap) durs.forEach((d, i) => durs[i] = d * cap / total);
+    return Object.assign({}, gen, { notes, durs, vel, rest, hit, first, last, mimic: strength });
+  }
+
+  return { pitch, createListener, summarize, prosodyInterpreter, lexiconInterpreter, llmPrompt, parseLLM, fuse, createBrain, contourNotes, mimic, fixTemperament, temperamentFor, applyTrait, TEMPER_DEFAULT, TEMPER_TRAITS, ARCH_TEMPER, MODES, MODE_NAME, SIM, fakeUtterance };
+});
+
+/* TemperUI: the "who is it when you talk to it" editor, shared by the all-in-one app and the Listen page.
+ *   TemperUI.mount(el, { get: () => temperament, set: t => {}, onChange: () => {} })
+ * Needs BlipListen (fixTemperament, TEMPER_TRAITS, applyTrait). Styles live in app/temper-ui.css. */
+const TemperUI = (function () {
+  const GROUPS = [
+    ['How it joins in', 'var(--acc)', [
+      ['mirror', 'Follows your energy', 'Gets livelier when you do, calmer when you do.'],
+      ['empathy', 'Cares how you feel', 'Soothes you when you sound upset, cheers you up when you sound low.'],
+      ['echo', 'Copies your voice', 'How closely its answers echo your melody and rhythm.'],
+      ['curiosity', 'Curiosity', 'Perks up at questions and anything new.'],
+      ['tease', 'Teasing', 'Playfully mocks or pokes when you sound fine.']]],
+    ['How it pushes back', 'var(--bad)', [
+      ['contrary', 'Contrary', 'Leans the other way: calm when you are lively, glum when you are glad.'],
+      ['complain', 'Grumbling', 'Complains when you are too loud, go on too long, or it dislikes your voice.'],
+      ['sulk', 'Sulking', 'Goes quiet and low when hurt or ignored.'],
+      ['patience', 'Patience', 'How long you can talk before it gets restless.']]],
+    ['Its own weather', 'var(--acc2)', [
+      ['moodV', 'Mood (low ↔ happy)', 'Its usual mood when nothing is happening.', 1],
+      ['moodA', 'Energy (sleepy ↔ lively)', 'Its usual energy.', 1],
+      ['inertia', 'Moods last', 'High: slow to change. Low: swings quickly.'],
+      ['reactivity', 'Takes things to heart', 'How strongly you move its mood.']]],
+    ['Rhythm of talking', 'var(--good)', [
+      ['chatty', 'Talkative', 'How often it answers at all.'],
+      ['delay', 'Takes its time', 'Pause before it answers.'],
+      ['wild', 'Unpredictable', 'How often it surprises you with a reaction that does not fit.']]],
+    ['What it likes in your voice', 'var(--acc)', [
+      ['like.energy', 'Lively ↔ calm', 'Left: likes calm voices. Right: likes lively ones.', 1],
+      ['like.pitch', 'Low ↔ high', 'Which pitch it finds pleasant.', 1],
+      ['like.pace', 'Slow ↔ fast', 'Which speed it likes.', 1],
+      ['like.loud', 'Soft ↔ loud', 'Which loudness it likes.', 1]]],
+  ];
+  const getv = (t, k) => k.startsWith('like.') ? t.like[k.slice(5)] : t[k];
+  const setv = (t, k, v) => { if (k.startsWith('like.')) t.like[k.slice(5)] = v; else t[k] = v; };
+  function activeOpt(tr, t) { // the option whose numbers are closest to the current ones
+    let best = 0, bd = 9;
+    tr.opts.forEach((o, i) => { let d = 0, n = 0; Object.entries(o.over).forEach(([k, v]) => { if (k === 'like') Object.entries(v).forEach(([a, b]) => { d += Math.abs(t.like[a] - b); n++; }); else { d += Math.abs(t[k] - v); n++; } }); d /= n; if (d < bd) { bd = d; best = i; } });
+    return bd < .22 ? best : -1;
+  }
+  function mount(el, api) {
+    const L = BlipListen; el.innerHTML = '';
+    const wiz = document.createElement('div'), tune = document.createElement('div'); el.append(wiz, tune);
+    function paintWiz() {
+      const t = L.fixTemperament(api.get());
+      wiz.innerHTML = L.TEMPER_TRAITS.map(tr => { const on = activeOpt(tr, t); return `<div class="tp-q"><b>${tr.q}</b><div class="tp-opts">${tr.opts.map((o, i) => `<button class="tp-o${on === i ? ' on' : ''}" data-t="${tr.id}" data-i="${i}">${o.label}</button>`).join('')}</div></div>`; }).join('');
+    }
+    function paintTune() {
+      const t = L.fixTemperament(api.get()), open = [...tune.querySelectorAll('details')].map(d => d.open);
+      tune.innerHTML = `<p class="tp-note">Those answers set the numbers below. Fine-tune any of them here.</p>` + GROUPS.map(([name, col, rows], gi) => `<details class="tp-g" style="--gc:${col}"${open[gi] ? ' open' : ''}><summary>${name}</summary>${rows.map(([k, label, help, signed]) => { const v = getv(t, k); return `<div class="tp-s"><span>${label}</span><input type="range" data-k="${k}" min="${signed ? -100 : 0}" max="100" value="${Math.round(v * 100)}" aria-label="${label}"><output>${signed ? (v > 0 ? '+' : '') + Math.round(v * 100) : Math.round(v * 100)}</output><small>${help}</small></div>`; }).join('')}</details>`).join('');
+    }
+    const paint = () => { paintWiz(); paintTune(); };
+    wiz.onclick = e => { const b = e.target.closest('.tp-o'); if (!b) return; api.set(L.applyTrait(api.get(), b.dataset.t, +b.dataset.i)); paint(); api.onChange && api.onChange(); };
+    tune.oninput = e => { const r = e.target.closest('input[type=range]'); if (!r) return; const t = L.fixTemperament(api.get()); setv(t, r.dataset.k, r.value / 100); api.set(t); const o = r.nextElementSibling, signed = +r.min < 0; o.textContent = (signed && r.value > 0 ? '+' : '') + r.value; api.onChange && api.onChange(true); };
+    tune.onchange = () => paintWiz();
+    paint(); return { repaint: paint };
+  }
+  return { mount };
+})();
+
+const $=s=>document.getElementById(s),cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const PAL=['#ff9a3c','#9b7bff','#ff78c4','#3cc8e0','#b6dc3a','#d9a86c'],MC={match:'#3cc8e0',soothe:'#9ee0a8',cheer:'#ffc928',tease:'#ff78c4',contradict:'#ff9a3c',complain:'#ff6a55',sulk:'#8f8fc9',perk:'#b6dc3a',backchannel:'#d9d3c4',own:'#c4a8ff',silent:'#cfcfcf'};
+const LAB={happy:'😊 Happy',excited:'🤩 Excited',calm:'😌 Calm',sad:'😢 Sad',angry:'😠 Angry',question:'❓ Question',ramble:'🗣 Rambling',whisper:'🤫 Whisper',shout:'📢 Shout',hello:'👋 Hello'};
+const CHIRP={"format":"blip-character","version":1,"name":"Chirp","color":0,"octave":0,"seed":424242,"gain":0.8,"params":{"pitch":{"mu":0.78,"sd":0.06},"tempo":{"mu":0.68,"sd":0.07},"chip":{"mu":0.9,"sd":0.05},"flute":{"mu":0.05,"sd":0.05},"piano":{"mu":0.1,"sd":0.05},"vib":{"mu":0.55,"sd":0.08},"gliss":{"mu":0.5,"sd":0.08},"bendZ":{"mu":0.78,"sd":0.06},"drum":{"mu":0.12,"sd":0.05},"leap":{"mu":0.3,"sd":0.08}},"minN":4,"maxN":10,"quirk":{"amt":0.15,"types":{"stutter":true,"squeak":true,"hiccup":false,"waver":false}}};
+// characters: built-in archetypes, ones saved by the designer in this browser, and loaded files
+let list=[],cur=0,ctx,vol=.8,deaf=0,listening=false,ls=null,seq=0,tui=null;const pi=BlipListen.prosodyInterpreter(),H={ff:2.8,hang:500,echo:1,guard:true,know:true};
+const mkItem=(o,src)=>{const c=Blip.charFromJSON(o);c.id=list.length+1;c.col=list.length%6;return{c,src,arch:c.archetype,temp:c.temperament,rel:c.relationship,brain:null}};
+function init0(){list.push(mkItem(CHIRP,'built-in'));Object.keys(Blip.ARCHETYPES).forEach(a=>list.push(mkItem(Blip.fromArchetype(a),'archetype')));
+ try{const sv=JSON.parse(localStorage.getItem('blip5')||'null');if(sv&&Array.isArray(sv.chars))sv.chars.forEach(o=>{try{list.push(mkItem(o,'designer'))}catch(e){}})}catch(e){}
+ try{const mine=JSON.parse(localStorage.getItem('blipListenChars')||'[]');mine.forEach(o=>list.push(mkItem(o,'file')))}catch(e){}}
+const item=()=>list[cur],tempOf=it=>BlipListen.fixTemperament(it.temp||BlipListen.temperamentFor(it.arch));
+function brain(){const it=item(),key=JSON.stringify(it.temp||it.arch||'');if(!it.brain||it.brain.key!==key){const b=BlipListen.createBrain({temperament:tempOf(it),state:it.rel||undefined});b.key=key;it.brain=b}return it.brain}
+function chips(){$('chars').innerHTML=list.map((it,i)=>`<button class="chip${i===cur?' act':''}" data-i="${i}" style="--c:${PAL[it.c.col]}" title="${it.src}"><span class="av" style="--c:${PAL[it.c.col]}">${it.c.name.slice(0,1).toUpperCase()}</span>${it.c.name}</button>`).join('');$('who').textContent=item().c.name;const a=$('chars').querySelector('.act');a&&a.scrollIntoView({inline:'center',block:'nearest'})}
+function pick(i){cur=i;chips();mountTui();try{play(preview())}catch(e){}}
+$('chars').onclick=e=>{const b=e.target.closest('button');if(b)pick(+b.dataset.i)};
+function mountTui(){const it=item();tui=TemperUI.mount($('tui'),{get:()=>it.temp||tempOf(it),set:t=>{it.temp=t;it.brain=null},onChange:()=>{}})}
+const log=t=>{const d=document.createElement('div');d.textContent=new Date().toLocaleTimeString()+'  '+t;$('log').prepend(d);while($('log').children.length>50)$('log').lastChild.remove()};
+const setSt=(k,t,s)=>{$('orb').className='orb '+(k||'');$('st').textContent=t;$('sub').textContent=s||''};
+const bar=(id,v)=>{const p=50+50*v;$(id+'I').style.left=`calc(${p}% - 3px)`;const b=$(id+'B');b.style.left=Math.min(50,p)+'%';b.style.right=(100-Math.max(50,p))+'%'};
+// sound out
+const preview=()=>BlipListen.mimic({heard:null,char:item().c,v:.3,a:.25,seed:item().c.seed+3,strength:0});
+function play(s){ctx=ctx||new AudioContext();if(ctx.state==='suspended')ctx.resume();const sr=24000,d=Blip.renderScore(Blip.toScore(s),{sr:sr,volume:Math.max(.05,vol*1.6)}),b=ctx.createBuffer(1,d.length,sr);b.copyToChannel(d,0);try{play.src&&play.src.stop()}catch(e){}const src=ctx.createBufferSource();src.buffer=b;src.connect(ctx.destination);src.start();play.src=src;return Blip.sched(s).T}
+function say(s){const T=play(s);deaf=performance.now()+T*1000+600;setSt('talk','Answering',Math.round(T*1000)+' ms');setTimeout(()=>setSt(listening?'idle':'',listening?'Listening':'Not listening',''),T*1000+100)}
+function decisionHtml(d,via){const N=BlipListen.MODE_NAME,rows=(d.scores||[]).slice(0,6),mx=Math.max(.01,...rows.map(r=>r[1]));
+ return `<span class="mode" style="--m:${MC[d.mode]||'#ccc'}">${d.label||N[d.mode]}</span> <span class="help">${via}${d.kind==='none'?': it chose not to answer':''}</span><p style="margin:8px 0 2px"><b>Why:</b> ${d.why||'—'}.</p>${d.kind!=='none'?`<p class="help" style="margin:2px 0">Answers with energy <b>${d.a.toFixed(2)}</b>, mood <b>${d.v.toFixed(2)}</b>, copying you <b>${Math.round(d.mimic*H.echo*100)}%</b>, after ${d.delay_ms} ms.</p>`:''}<div class="bars">${rows.map(([m,s])=>`<div class="bar" style="--m:${MC[m]}"><span>${N[m]}</span><i style="--w:${Math.round(100*s/mx)}%"></i><span>${s.toFixed(2)}</span></div>`).join('')}</div>`}
+function heardHtml(u,aff){const s=u.summary;$('heard').innerHTML=[['Length',s.dur_ms+' ms'],['Pitch',s.pitch_mean_hz+' Hz'],['Pitch range',s.pitch_range_semitones+' semitones'],['Loudness',s.rms_mean],['Speed',s.rate_per_s+' beats/s'],['Shape',s.contour]].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');bar('a',aff.a);bar('v',aff.v);$('aN').textContent=aff.a.toFixed(2)+' (sure '+Math.round(aff.ca*100)+'%)';$('vN').textContent=aff.v.toFixed(2)+' (sure '+Math.round(aff.cv*100)+'%)'}
+function react(u,aff,via){const it=item(),b=brain(),d=b.onUtterance({summary:u.summary},aff,performance.now());it.rel=b.state();saveRel();$('dec').innerHTML=decisionHtml(d,via);heardHtml(u,aff);log(via+': '+(d.kind==='none'?'silent':d.label)+' ('+d.why+')');
+ if(d.kind!=='reply'){setSt(listening?'idle':'',listening?'Listening':'Not listening','It chose to stay quiet.');return}
+ const s=BlipListen.mimic({heard:u,char:it.c,v:d.v,a:d.a,seed:(it.c.seed+seq++)|0,strength:Math.min(1,d.mimic*H.echo),exaggerate:d.exaggerate,len:d.len});setTimeout(()=>say(s),d.delay_ms)}
+function saveRel(){try{const mine=list.filter(i=>i.src==='file').map(i=>({...i.raw,temperament:i.temp||undefined,relationship:i.rel||undefined}));if(mine.length)localStorage.setItem('blipListenChars',JSON.stringify(mine))}catch(e){}}
+// mic
+async function start(){try{ctx=ctx||new AudioContext();const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});await ctx.resume();const k=Math.max(1,Math.round(ctx.sampleRate/16000)),sr=ctx.sampleRate/k;
+ build(sr);const src=ctx.createMediaStreamSource(stream),mute=ctx.createGain();mute.gain.value=0;mute.connect(ctx.destination);let on=()=>{};
+ try{const code="class T extends AudioWorkletProcessor{process(i){const c=i[0][0];if(c)this.port.postMessage(c.slice());return true}}registerProcessor('tap',T)";await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([code],{type:'application/javascript'})));const n=new AudioWorkletNode(ctx,'tap');src.connect(n);n.connect(mute);n.port.onmessage=e=>on(e.data)}
+ catch(w){const sp=ctx.createScriptProcessor(2048,1,1);src.connect(sp);sp.connect(mute);sp.onaudioprocess=e=>on(new Float32Array(e.inputBuffer.getChannelData(0)));log('using script-processor fallback')}
+ let acc=[],cnt=0;on=c=>{if(H.guard&&performance.now()<deaf)return;const o=new Float32Array(Math.floor(c.length/k));for(let i=0;i<o.length;i++){let s=0;for(let j=0;j<k;j++)s+=c[i*k+j];o[i]=s/k}acc.push(o);cnt+=o.length;if(cnt>=800){const m=new Float32Array(cnt);let p=0;acc.forEach(a=>{m.set(a,p);p+=a.length});acc=[];cnt=0;ls&&ls.push(m)}};
+ listening=true;H.sr=sr;setSt('idle','Listening','Say something.');log('listening as '+item().c.name);
+ setInterval(()=>{if(!listening||performance.now()<deaf)return;const d=brain().onIdle(performance.now());if(d){log('on its own: '+d.label);$('dec').innerHTML=decisionHtml(d,'By itself');say(BlipListen.mimic({heard:null,char:item().c,v:d.v,a:d.a,seed:(item().c.seed+seq++)|0,strength:0,len:'short'}))}},1000)
+ }catch(e){setSt('','Cannot listen',String(e.message||e));log('error: '+e.message);$('go').textContent='🎤 Start listening'}}
+function build(sr){sr=sr||H.sr;ls=BlipListen.createListener({sr,hangMs:H.hang,floorFactor:H.ff});ls.on('utterance',u=>{setSt('think','Thinking','');const est=[pi(u)],t=$('txt').value.trim();if(t)est.push(BlipListen.lexiconInterpreter(t));react(u,BlipListen.fuse(est),'You')}).on('start',()=>setSt('hear','Hearing you','')).on('noise',()=>setSt('idle','Listening','')).on('frame',f=>{$('lv').style.width=Math.min(100,f.rms*400)+'%'})}
+$('go').onclick=()=>{if(listening)location.reload();else{$('go').textContent='■ Stop listening';start()}};
+$('hello').onclick=()=>{const u=BlipListen.fakeUtterance('hello');react(u,u.affect,'You (simulated hello)')};
+$('sim').innerHTML=Object.keys(BlipListen.SIM).map(k=>`<button data-k="${k}">${LAB[k]}</button>`).join('');$('sim').onclick=e=>{const b=e.target.closest('button');if(!b)return;const u=BlipListen.fakeUtterance(b.dataset.k,{knowsMood:$('know').checked});react(u,u.affect,'You (simulated): '+b.textContent.replace(/^\S+\s/,''))};
+$('sens').oninput=e=>{H.ff=e.target.value/10;$('senso').textContent=H.ff.toFixed(1)+'×';if(listening)build()};$('hang').oninput=e=>{H.hang=+e.target.value;$('hango').textContent=H.hang+' ms';if(listening)build()};
+$('echo').oninput=e=>{H.echo=e.target.value/100;$('echoo').textContent=e.target.value+'%'};$('vol').oninput=e=>{vol=e.target.value/100;$('vo').textContent=e.target.value};$('guard').onchange=e=>H.guard=e.target.checked;
+$('senso').textContent='2.8×';$('hango').textContent='500 ms';$('echoo').textContent='100%';$('vo').textContent='80';
+// loading character files: button, or drag and drop anywhere on the page
+async function loadFiles(files){let n=0;for(const f of files){try{const o=JSON.parse(await f.text()),arr=o.format==='blip-project'?o.chars:[o];for(const x of arr){if(x&&x.format==='blip-character'){const it=mkItem(x,'file');it.raw=x;list.push(it);n++}}}catch(e){log('could not read '+f.name)}}
+ if(n){cur=list.length-1;chips();mountTui();log('loaded '+n+' character'+(n>1?'s':''));try{const mine=list.filter(i=>i.src==='file').map(i=>i.raw);localStorage.setItem('blipListenChars',JSON.stringify(mine))}catch(e){}}}
+$('chf').onchange=async e=>{await loadFiles([...e.target.files]);e.target.value=''};
+document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();loadFiles([...e.dataTransfer.files])});
+init0();chips();mountTui();
+window.__blip={get listening(){return listening},log:()=>[...$('log').children].map(d=>d.textContent),chars:()=>list.map(i=>i.c.name+':'+i.src),react};
+</script></body></html>

@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blip Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@500;700&display=swap">
+<style>
+:root{--bg:#fff1d6;--card:#fffaf0;--ink:#1b1b1f;--play:#3b63ff;--like:#14b88f;--nope:#ff4d3d;--save:#ffc928;--ch:#ff9a3c;--dots:#1b1b1f1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16121f;--card:#241e33;--ink:#fff1d6;--dots:#fff1d61c}}
+:root[data-theme="dark"]{--bg:#16121f;--card:#241e33;--ink:#fff1d6;--dots:#fff1d61c}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 12.5px/1.35 "DM Sans",system-ui,sans-serif;background-image:radial-gradient(var(--dots) 1.5px,transparent 2px);background-size:18px 18px;overflow-x:hidden}
+h1,h2,h3{font-family:Unbounded,"Arial Black",sans-serif;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:8px 12px 50px}
+header{display:flex;align-items:center;gap:12px;padding:6px 0 10px}
+h1{font-size:24px;letter-spacing:-.04em;font-weight:800;cursor:pointer}
+h1 i{font-style:normal;background:var(--nope);color:#1b1b1f;border:2.5px solid var(--ink);padding:0 .12em;border-radius:38%;display:inline-block;transform:rotate(-4deg);margin-left:3px}
+header p{margin:0;font-weight:700;opacity:.85;max-width:60ch}
+.card{background:var(--card);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:11px;position:relative;border-radius:22px;corner-shape:squircle;margin-bottom:12px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;flex-wrap:wrap;gap:7px;align-items:center;box-shadow:5px 5px 0 var(--ch);padding:8px 10px;margin-bottom:12px}
+.speak{font:800 18px Unbounded,sans-serif;min-height:44px;padding:5px 20px;background:var(--play);color:#fff;border-radius:20px}
+.speak small{font:600 10px "DM Sans";opacity:.8;margin-left:5px}
+.like{background:var(--like)}.nope{background:var(--nope)}.save{background:var(--save)}.del{background:var(--card);border-color:var(--nope);color:var(--nope);box-shadow:3px 3px 0 var(--nope)}
+.oct{display:inline-flex;gap:4px;align-items:center;font-weight:800}
+.chars{display:flex;gap:5px;flex-wrap:wrap;flex:1 1 100%}
+.chars{gap:8px}.chr{display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:800;padding:4px 18px 4px 5px;border-radius:999px}
+.chr .cav{width:34px;height:34px;border-radius:50%;border:2.5px solid var(--ink);background:var(--c) center/cover;display:grid;place-items:center;font:800 13px Unbounded,sans-serif;color:#1b1b1f;flex:none;overflow:hidden}.chr .cav img{width:100%;height:100%;object-fit:cover}
+.chr.act{background:var(--c);box-shadow:inset 0 0 0 3px var(--ink),4px 4px 0 var(--ink)}
+.wz{max-width:680px}.wz .lead{font-size:12.5px;font-weight:700;background:color-mix(in srgb,var(--save) 35%,var(--card));border:2.5px solid var(--ink);border-radius:14px;padding:7px 11px;margin:8px 0}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:7px;margin:6px 0 10px}
+.acard{display:block;text-align:left;border:2.5px solid var(--ink);border-radius:14px;padding:6px 9px;background:var(--card);cursor:pointer;box-shadow:2px 2px 0 var(--ink)}.acard b{display:block;font-size:13px}.acard span{font-size:11px;font-weight:600;opacity:.8}
+.acard.on{background:color-mix(in srgb,var(--ch) 40%,var(--card));box-shadow:inset 0 0 0 2.5px var(--ink),3px 3px 0 var(--ink)}
+.sub{font:800 12px Unbounded,sans-serif;margin:12px 0 2px}
+select.exc,select.sh{font:700 12px "DM Sans",sans-serif;width:100%;border:2.5px solid var(--ink);border-radius:11px;padding:6px 8px;background:var(--card);color:var(--ink);margin-top:6px}
+.pair select.exc{border-style:dashed}
+.shg{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px}@media(max-width:520px){.shg{grid-template-columns:1fr}}.shg label{font-weight:800;font-size:12px}
+.emo{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:8px 0}.emo button.on{background:var(--save)}
+.nowp{border:2.5px solid var(--ink);border-radius:14px;padding:8px 11px;margin:6px 0;background:var(--card);font-size:12.5px;min-height:3.2em}.nowp b{font-family:Unbounded,sans-serif;font-size:12px}
+.nflav{font-size:11.5px;opacity:.85;margin:2px 0 0}
+.hear{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}.hear select{font:700 12px "DM Sans",sans-serif;border:2.5px solid var(--ink);border-radius:11px;padding:5px 7px;background:var(--card);color:var(--ink)}.hear button.on{background:var(--like)}
+.emo.subs{margin-top:-2px}.emo.subs button{font-size:11.5px;background:color-mix(in srgb,var(--ch) 18%,var(--card))}
+.dr{display:grid;grid-template-columns:118px 1fr auto;gap:4px 10px;align-items:center;margin:8px 0}.dr .drl{font-weight:800;font-size:12px}.dr output{grid-column:2;font-size:11.5px;font-weight:700;opacity:.85;margin-top:-2px}.dr .drx{grid-row:1;grid-column:3;padding:1px 8px}
+.dr .drt{position:relative;height:24px;min-height:24px}.drt::before{content:"";box-sizing:border-box;position:absolute;left:0;right:0;top:5px;height:14px;border:2.5px solid var(--ink);border-radius:8px;background:var(--card)}.drf{box-sizing:border-box;position:absolute;top:5px;height:14px;border:2.5px solid var(--ink);border-radius:8px;background:var(--ch)}
+.dr .drt input[type=range]{position:absolute;left:0;top:0;width:100%;height:24px;margin:0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;pointer-events:none;-webkit-appearance:none;appearance:none}
+.drt input::-webkit-slider-runnable-track{background:none;border:0}.drt input::-moz-range-track{background:none;border:0}
+.drt input::-webkit-slider-thumb{pointer-events:auto;-webkit-appearance:none;width:20px;height:24px;border:2.5px solid var(--ink);border-radius:8px;background:var(--play);cursor:grab;transition:transform .3s var(--spring)}.drt input::-moz-range-thumb{pointer-events:auto;width:16px;height:20px;border:2.5px solid var(--ink);border-radius:8px;background:var(--play);cursor:grab}
+.drt input:hover::-webkit-slider-thumb{transform:scale(1.2) rotate(-6deg)}.drt input.hi::-webkit-slider-thumb{background:var(--save)}
+/* playful motion: slow, springy, transform-only, and off for people who ask for less motion */
+:root{--spring:cubic-bezier(.34,1.56,.64,1)}
+button,.btn,.acard,.gc,.pchoice label,.sw,.chr,.fc{transition:transform .45s var(--spring),box-shadow .45s ease,background-color .5s ease}
+@media(hover:hover){button:not(:disabled):hover,.btn:hover,.acard:hover,.gc:hover,.chr:hover{transform:translate(-2px,-4px) rotate(-1.5deg) scale(1.05);box-shadow:5px 7px 0 var(--ink)}
+button:not(:disabled):nth-of-type(even):hover,.acard:nth-child(even):hover,.gc:nth-child(even):hover,.chr:nth-child(even):hover{transform:translate(-2px,-4px) rotate(1.5deg) scale(1.05)}
+.pchoice label:hover{transform:translateX(5px) rotate(-1deg)}.sw:hover{transform:scale(1.35) rotate(14deg)}.fc:hover{transform:translateY(-3px) rotate(-.6deg)}}
+button:not(:disabled):active,.btn:active,.acard:active,.chr:active{transform:translate(2px,3px) scale(.92) rotate(1deg)!important;box-shadow:0 0 0 var(--ink)!important;transition-duration:.12s}
+@keyframes popin{0%{opacity:0;transform:translateY(20px) rotate(-1.4deg) scale(.97)}60%{opacity:1;transform:translateY(-5px) rotate(.7deg)}100%{opacity:1;transform:none}}
+.card{animation:popin .75s var(--spring) both}.card:nth-child(2){animation-delay:.07s}.card:nth-child(3){animation-delay:.14s}.card:nth-child(4){animation-delay:.21s}.card:nth-child(5){animation-delay:.28s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px) scale(1.15)}}.dots i.on{animation:bob 2.2s ease-in-out infinite}.dots i.on:nth-child(2){animation-delay:.2s}.dots i.on:nth-child(3){animation-delay:.4s}.dots i.on:nth-child(4){animation-delay:.6s}
+.gs.done b{animation:popin .6s var(--spring) both}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+.app{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:1000px){.app{grid-template-columns:290px minmax(0,1fr)}}
+h2{font-size:12px;margin-bottom:6px}
+h2 span{background:var(--save);color:#1b1b1f;padding:1px 8px;border-radius:10px;border:2px solid var(--ink)}
+button,.btn{font:700 12px "DM Sans",sans-serif;color:#1b1b1f;background:var(--card);border:2.5px solid var(--ink);padding:4px 9px;cursor:pointer;border-radius:12px;corner-shape:squircle;box-shadow:3px 3px 0 var(--ink);transition:transform .08s}
+button:active{transform:translate(3px,3px);box-shadow:none}button:disabled{opacity:.4}
+button:focus-visible,input:focus-visible,.track:focus-visible,#wheel:focus-visible{outline:3px dashed var(--play);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ctl{display:grid;grid-template-columns:74px 1fr 30px;gap:6px;align-items:center;margin:5px 0}
+input[type=range]{-webkit-appearance:none;appearance:none;height:11px;background:var(--card);border:2.5px solid var(--ink);border-radius:8px;width:100%;margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--play);border:2.5px solid var(--ink);border-radius:38%}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--play);border:2.5px solid var(--ink);border-radius:38%}
+input[type=checkbox],input[type=radio]{-webkit-appearance:none;appearance:none;width:17px;height:17px;margin:0;border:2.5px solid var(--ink);background:var(--card);border-radius:36%;cursor:pointer;display:inline-grid;place-content:center;flex:none}
+input[type=radio]{border-radius:50%}input:checked{background:var(--like)}
+input[type=checkbox]:checked::after{content:"";width:7px;height:7px;background:var(--ink);border-radius:30%;transform:rotate(45deg)}
+input[type=radio]:checked::after{content:"";width:7px;height:7px;background:var(--ink);clip-path:polygon(50% 0,100% 100%,0 100%)}
+label.k{display:inline-flex;gap:5px;align-items:center;font-weight:700;cursor:pointer;font-size:11.5px}
+input[type=text]{font:700 12px "DM Sans",sans-serif;color:var(--ink);background:var(--card);border:2.5px solid var(--ink);border-radius:12px;padding:4px 8px;width:120px}
+textarea{width:100%;height:60px;margin-top:6px;font:11px monospace;color:var(--ink);background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:6px}
+#wheel{width:100%;max-width:230px;display:block;margin:2px auto 0;touch-action:none;cursor:crosshair}
+svg text{fill:var(--ink);font:700 9px "DM Sans",sans-serif}.anc{cursor:pointer}
+.sw{width:17px;height:17px;padding:0;border-radius:6px;background:var(--c)}.sw.act{box-shadow:inset 0 0 0 3px var(--ink)}
+.meter{height:11px;border:2.5px solid var(--ink);border-radius:8px;overflow:hidden;background:var(--card)}.meter i{display:block;height:100%;background:var(--ch);width:0;transition:width .4s}
+.gs{display:flex;gap:7px;padding:4px 5px;border-radius:12px;margin:1px 0}.gs>b{width:17px;height:17px;flex:none;border:2.5px solid var(--ink);border-radius:7px;display:grid;place-items:center;font-size:10px}.gs.done>b{background:var(--like)}
+.gs p{margin:0;opacity:.8;font-size:11px}.gs strong{font-size:12px}
+details.g{border:2.5px dashed var(--ink);border-radius:12px;padding:4px 8px;margin-top:6px}details.g summary{cursor:pointer;font-weight:800;font-size:11.5px}details.g[open] summary{margin-bottom:4px}
+.stage svg{display:block}.stats{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.st{border:2px solid var(--ink);border-radius:9px;padding:0 6px;font-weight:800;background:var(--card)}.st i{font-style:normal;font-weight:500;opacity:.7;margin-right:4px}
+.note{font-size:12px;opacity:.9;margin:5px 0 0}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}.tab{border-radius:13px;padding:6px 16px;font-size:12.5px}.tab.act{background:var(--ink);color:var(--bg)}
+.subs{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}.sub{font-size:11.5px}.sub.act{background:var(--ch)}
+.racks{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.grp{border:2.5px solid var(--ink);border-radius:14px;corner-shape:squircle;padding:6px 9px;background:color-mix(in srgb,var(--gc) 24%,var(--card))}
+.grp h3{font-size:10.5px;margin-bottom:2px;flex:1}.gsum{font-size:10px;font-weight:600;opacity:.75}
+.drow{display:grid;grid-template-columns:80px 1fr 28px 16px 16px;gap:5px;align-items:center;margin:4px 0}.drow.locked{opacity:.5}.drow.off{opacity:.35}.dn{font-size:11px;font-weight:700}
+.drow.flash{animation:fl 1s}@keyframes fl{0%{background:var(--nope)}100%{background:transparent}}
+.track{position:relative;height:26px;border:2.5px solid var(--ink);border-radius:9px;background:var(--card);touch-action:none;cursor:pointer;overflow:visible}.track.off{pointer-events:none}
+.grip{position:absolute;top:-2px;bottom:-2px;width:11px;margin-left:-5.5px;background:var(--ink);border-radius:5px;cursor:ew-resize;opacity:.85;z-index:2}.grip::after{content:'';position:absolute;left:3px;top:6px;bottom:6px;width:5px;border-left:2px solid var(--card);border-right:2px solid var(--card)}
+.b2,.band,.ctr{position:absolute;top:0;bottom:0}.b2{background:var(--gc);opacity:.4}.band{background:var(--gc);opacity:.9;border-left:2px dashed var(--ink);border-right:2px dashed var(--ink)}
+.ctr{width:2px;margin-left:-1px;background:var(--ink);opacity:.5}
+.dot{position:absolute;top:1px;width:9px;height:9px;margin-left:-4.5px;background:var(--ink);border-radius:36%}
+.smp{position:absolute;bottom:1px;width:8px;height:8px;margin-left:-4px;background:var(--nope);border:2px solid var(--ink);border-radius:50%;display:none}
+.imp{height:7px;border:2px solid var(--ink);border-radius:5px;overflow:hidden;background:var(--card)}.imp i{display:block;height:100%;background:var(--ink)}
+.rangebox{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;font-size:11.5px;font-weight:700}.rangebox input[type=number]{width:52px;font:700 12px "DM Sans";border:2.5px solid var(--ink);border-radius:10px;padding:3px 6px;background:var(--card);color:var(--ink)}
+#dhelp{min-height:30px;border:2.5px solid var(--ink);border-radius:12px;padding:4px 8px;margin-bottom:8px;background:color-mix(in srgb,var(--ch) 18%,var(--card));font-size:11.5px}
+.list{display:grid;gap:7px}.snd{border:2.5px solid var(--ink);border-left:8px solid var(--ch);padding:6px 8px;border-radius:13px;background:var(--card);box-shadow:3px 3px 0 var(--ch);cursor:pointer}
+.snd.sel{outline:3px solid var(--ink);outline-offset:1px}.snd .top{display:flex;justify-content:space-between;font-weight:800;font-size:11px}.snd .top span{font-weight:500;opacity:.8}
+.mini{display:flex;gap:5px;margin-top:4px}.mini button{padding:1px 8px;box-shadow:2px 2px 0 var(--ink)}
+.qbox{border:2.5px solid var(--ink);border-radius:18px;padding:10px;background:color-mix(in srgb,var(--ch) 14%,var(--card));margin-bottom:10px}
+.qplay{font:800 14px Unbounded,sans-serif;background:var(--play);color:#fff;padding:6px 16px;border-radius:14px}
+.ch{padding:3px 11px;font-size:12.5px;box-shadow:2px 2px 0 var(--ink);border-radius:11px}.ch[data-y="1"]{background:var(--like)}.ch[data-y="-1"]{background:var(--nope);text-decoration:line-through}
+.lab{border:2.5px solid var(--ink);border-radius:13px;padding:5px 8px;margin:5px 0;background:var(--card)}.lab.on{background:color-mix(in srgb,var(--play) 20%,var(--card))}
+.lh{display:flex;gap:5px;align-items:center}.lh strong{flex:1;font-size:12px}.lh input[type=range]{width:55px}.ld{font-size:11px;opacity:.85;margin-top:2px}.x{padding:0 7px;box-shadow:2px 2px 0 var(--ink)}
+.depthbar{display:flex;align-items:center;gap:6px;margin-top:6px}.depthbar input{writing-mode:horizontal-tb}
+#toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140px);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:16px;font-weight:700;transition:transform .25s;z-index:9;max-width:90vw}#toast.show{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.gal{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-top:10px}
+.gc{border:3px solid var(--ink);border-radius:20px;padding:10px;text-align:center;background:var(--card);box-shadow:4px 4px 0 var(--gc);cursor:pointer}
+.gc.new{border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:150px}
+.av{width:64px;height:64px;border-radius:38%;border:3px solid var(--ink);margin:0 auto 6px;background:var(--gc);display:flex;align-items:center;justify-content:center;font:800 22px Unbounded,sans-serif;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.gc h3{font-size:13px}.gc p{font-size:11px;opacity:.75;margin:2px 0 6px}
+.wz{max-width:520px;margin:10px auto 0}
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:12px}.dots i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);background:var(--card);display:block}.dots i.on{background:var(--ch)}
+.pair{border:2.5px solid var(--ink);border-radius:16px;padding:8px 10px;margin:8px 0}
+.pair .q{font-weight:800;font-size:12px;margin-bottom:5px}
+.pchoice{display:flex;gap:6px;flex-wrap:wrap}.pchoice label{display:flex;gap:5px;align-items:center;flex:1 1 40%;font-weight:700;cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px 6px;font-size:11.5px}
+.pchoice label.on{border-color:var(--ink);background:color-mix(in srgb,var(--ch) 22%,var(--card))}
+.feelg{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.fc{border:2.5px solid var(--ink);border-radius:14px;padding:7px;text-align:center;background:var(--card)}
+.fc b{display:block;font-size:12px;margin-bottom:4px}.fscore{font-size:16px}.fn{font-size:10px;opacity:.7}
+.fdots{display:flex;gap:2px;justify-content:center;margin:3px 0}.fdots i{width:6px;height:6px;border-radius:50%;background:var(--ink);opacity:.25}.fdots i.y{background:var(--like);opacity:1}.fdots i.n{background:var(--nope);opacity:1}
+@keyframes fgood{0%{background:var(--like)}100%{background:transparent}}@keyframes fbad{0%{background:var(--nope)}100%{background:transparent}}.fc.gflash{animation:fgood .7s}.fc.nflash{animation:fbad .7s}
+.quirkbox label.k{display:flex;margin:3px 0}
+
+</style></head><body>
+
+<div class="wrap">
+<header><h1>BLIP<i>LAB</i></h1><p>Design robot voices in three moves: pick a feeling, shape the dials, teach it with Like, Nope, and quick labels.</p></header>
+<div id="view-gallery"><p class="note">Pick a character to open, or make a new one. You can add a photo any time.</p><div class="gal" id="gal"></div></div>
+<div id="view-wizard" hidden><div class="wz card">
+<div class="dots" id="wzdots"></div>
+<div id="wzbody"></div>
+</div></div>
+<div id="view-studio" hidden>
+
+<div class="bar card">
+<button id="tochars" title="G">◀ Characters</button>
+<button class="speak" id="speak">▶ Speak<small>space</small></button>
+<button id="replay" title="R">Replay</button><button class="like" id="like" title="L">Like</button><button class="nope" id="nope" title="N">Nope</button><button id="undo" title="U">Undo</button>
+<span class="oct">Octave <button id="octd" title="[">−</button><output id="octo">0</output><button id="octu" title="]">+</button></span>
+<span class="oct">Vol <input type="range" id="vol" min="0" max="100" value="70" style="width:80px" aria-label="Volume"><button id="mute" title="M">Mute</button></span>
+<div class="chars" id="chars"></div>
+</div>
+
+<div class="app">
+<aside class="col a">
+<section class="card"><h2><span>Feeling</span></h2>
+<svg id="wheel" viewBox="-120 -118 240 236" tabindex="0" role="img" aria-label="Feeling map. Drag, or use arrow keys."></svg>
+<p class="note" id="va"></p>
+<div class="depthbar"><span style="font-weight:800;font-size:11px">Shallow</span><input type="range" id="depth" min="-100" max="100" value="0" aria-label="Shallow to deep"><span style="font-weight:800;font-size:11px">Deep</span></div>
+<div class="ctl"><span>Wildness</span><input type="range" id="adv" min="20" max="200" value="100"><output id="advo">1.0</output></div>
+<div class="row" style="gap:8px"><span id="par"></span><label class="k"><input type="checkbox" id="snap" checked>Snap</label><label class="k"><input type="checkbox" id="aud" checked>Auto-play</label></div></section>
+
+<section class="card"><h2><span>Character</span></h2>
+<div class="row"><input type="text" id="cname" maxlength="18" aria-label="Name"><span class="row" id="sws"></span></div>
+<div class="row" style="margin:6px 0"><button id="cnew">New</button><button id="cclone">Clone</button><button id="creroll">Re-roll</button><button id="cfreeze">Freeze all</button><button class="del" id="cdel">Delete</button></div>
+<div class="ctl"><span>Feeling pull</span><input type="range" id="gain" min="0" max="100"><output id="gaino"></output></div>
+<div class="ctl"><span>Steadiness</span><div class="meter"><i id="cons"></i></div><output id="conso"></output></div>
+<p class="note" id="csum"></p>
+<details class="g" id="guideD"><summary>Getting started guide</summary><div id="guide"></div></details></section>
+<section class="card"><h2><span>Feelings check</span></h2><p class="note" style="margin:0 0 6px">Play this character at each feeling and rate how convincing it is. This is a scorecard, separate from Like/Nope.</p><div class="feelg" id="feel"></div></section>
+<section class="card"><h2><span>Quirks</span></h2><p class="note" style="margin:0 0 6px">Small random glitches that make a voice feel alive and a bit unpredictable, on top of the dials.</p>
+<div class="ctl"><span>Quirkiness</span><input type="range" id="qamt" min="0" max="100"><output id="qamto"></output></div>
+<div class="quirkbox row" id="qtypes"></div>
+<button id="redosetup" style="margin-top:8px">Redo trait setup</button></section>
+</aside>
+
+<main class="col b">
+<section class="card stage"><svg id="roll" viewBox="0 0 600 120" width="100%" role="img" aria-label="Note view"></svg>
+<div class="stats" id="stats"></div><p class="note" id="info"></p><p class="note" id="learn"></p></section>
+
+<div class="tabs" id="tabs"><button class="tab act" data-t="voice">Voice</button><button class="tab" data-t="label">Label it</button><button class="tab" data-t="sounds">Sounds</button><button class="tab" data-t="save">Save / load</button></div>
+
+<section id="pane-voice">
+<div class="rangebox"><span>Phrase length: </span><input type="number" id="minn" min="2" max="28" step="1">to<input type="number" id="maxn" min="4" max="30" step="1">notes <span class="note" style="margin:0">(the Length dial picks a count in this range)</span></div>
+<div class="racks" id="rack"></div>
+<div id="dhelp">Drag anywhere on a track to set the center. Drag the small black handle to set the spread. Red dot = last sound, thin line = where the feeling puts it, bar on the right = how much this dial actually changes the sound, L = lock the value, O = turn the dial off.</div>
+<details class="g"><summary>How the math works</summary>
+<p class="note">Each sound draws every dial from a bell curve: center (your setting, shifted by the feeling and depth, pulled by any active label) and spread. The dark band is 68% of sounds, light band 95%.</p>
+<p class="note">Like or Nope is a reward of +1 or −1 minus a running average. Each unlocked dial's center moves toward sounds that scored well, and its spread shrinks once good sounds agree (a small reinforcement-learning rule called REINFORCE with a baseline).</p>
+<p class="note">A label's meaning is the average of the sounds tagged + for it, pulled toward neutral until there is enough evidence, and weighted more where the examples agree and differ from the − sounds. Its impact bar on each dial reflects how far that dial's average sits from neutral.</p></details>
+</section>
+
+<section id="pane-label" hidden>
+<div class="qbox"><div class="row" style="justify-content:space-between"><strong id="atitle">Nothing to label yet</strong><span class="row"><button class="qplay" id="aplay">▶ Play</button><button id="arand">🎲 New random sound</button></span></div>
+<p class="note" style="margin-top:6px">Tap a word once for <b>yes</b>, again for <b>no</b>, a third time to clear. This teaches the label what it means for this voice.</p></div>
+<div class="subs" id="subs"></div>
+<div class="row" id="chips" style="margin-bottom:8px"></div>
+<div class="row"><input type="text" id="lname" placeholder="add your own word" maxlength="16" aria-label="Custom label"><button id="ladd">Add</button></div>
+<details class="g"><summary>Learned meanings</summary><div id="labs"></div></details>
+</section>
+
+<section id="pane-sounds" hidden>
+<div class="row" style="margin-bottom:8px"><button id="mk6" class="save">Make 6 variations</button><button id="vcheck">Voice check (6 feelings)</button><button id="clr" class="del">Clear recent</button></div>
+<p class="note">Each card is one generated sound. The wavy line is its melody (pitch over time): <b style="color:var(--nope)">●</b> a sung note, <b style="color:var(--like)">●</b> a drum hit, a gap in the line is a rest. Bigger dots are louder notes.</p>
+<h4 class="note" style="font-weight:800">Recent</h4><div class="list" id="hist"></div>
+<h4 class="note" style="font-weight:800;margin-top:10px">Phrasebook (kept forever)</h4><div class="list" id="book"></div>
+</section>
+
+<section id="pane-save" hidden>
+<div class="row"><button class="save" id="sv1">Save character</button><button class="save" id="sv2">Save all</button><label class="btn">Load file<input type="file" id="file" accept=".json,application/json" hidden></label><button id="ldtxt">Load box</button><button class="del" id="reset">Reset</button><button id="theme">Theme</button></div>
+<div class="row"><button class="save" id="xsnd">Export last sound</button><button class="save" id="xbank">Bake voice bank</button></div>
+<p class="note">Export last sound: WAV + MIDI + score JSON of the sound you just played. Bake voice bank: this character as a ready palette (3 sounds per feeling, WAVs, MIDI, scores, and a C header for the Arduino player). Inside the Claude page the files arrive as one .zip.</p>
+<textarea id="json" placeholder="JSON appears here. Paste JSON and press Load box." aria-label="JSON"></textarea>
+<p class="note">Files: <b>blip-character v1</b> (dials, locks, octave, color, phrasebook) and <b>blip-project v1</b> (characters plus every label and its examples).</p>
+</section>
+</main>
+</div></div></div><div id="toast" role="status"></div>
+
+<script>
+/* Blip engine: one source of truth for the voice generator, the renderer and the exporters.
+ * Runs unchanged in browsers, Node, Deno and Bun. No dependencies.
+ *
+ *   character + feeling + seed  --generate-->  sound  --toScore-->  blip-score (plain JSON)
+ *   blip-score  --renderScore-->  samples  --wav-->  .wav        (plain-code synth, no Web Audio)
+ *   blip-score  --midi-->  .mid           (lossy: no choir, noise or distortion)
+ *   blip-score  --tierA-->  tone timeline  (what a one-buzzer player must do)
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.Blip = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  // ---------------------------------------------------------------- basics
+  const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const num = (x, d) => (typeof x === 'number' && isFinite(x) ? x : d);
+  function rng(s) {
+    return () => {
+      s |= 0; s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const gauss = r => Math.sqrt(-2 * Math.log(r() || 1e-9)) * Math.cos(6.2832 * r());
+
+  // ---------------------------------------------------------------- dials
+  const GROUPS = [
+    ['Melody', ['pitch', 'slope', 'wobble', 'span', 'leap', 'len']],
+    ['Time', ['tempo', 'pause', 'meter', 'swing', 'chaos', 'noteLen']],
+    ['Bend', ['gliss', 'bendA', 'bendZ', 'vib']],
+    ['Timbre', ['chip', 'flute', 'bass', 'trump', 'piano', 'choir']],
+    ['Grit', ['noise', 'drive']],
+    ['Drums', ['drum', 'kit']],
+    ['Volume', ['dyn', 'swell', 'accent']],
+  ];
+  const K = GROUPS.flatMap(g => g[1]);
+  const INS = ['chip', 'flute', 'bass', 'trump', 'piano'];
+  const EM = { Sad: [-.7, -.6], Happy: [.8, .4], Curious: [.1, .25], Excited: [.7, .9], Grumpy: [-.6, .6], Sleepy: [.2, -.8] };
+  const QK = { stutter: 'repeats a note', squeak: 'a note jumps an octave', hiccup: 'a note drops out', waver: 'a note detunes briefly' };
+
+  // Feeling (valence v, arousal a, depth d) -> a target for every dial.
+  function emoT(v, a, d = 0) {
+    const m = Math.max, dp = cl(d, -1, 1), o = {
+      pitch: .5 + .22 * v + .2 * a - .12 * dp, tempo: .5 + .42 * a - .12 * dp,
+      pause: .5 - .38 * a - .1 * v + .15 * m(dp, 0),
+      vib: .2 + .3 * Math.abs(a) + .15 * m(v, 0) - .12 * dp, slope: .5 + .4 * v,
+      wobble: .2 + .5 * (1 - Math.abs(v)) * (.4 + .3 * (a + 1)), span: .45 + .2 * a + .15 * m(dp, 0),
+      leap: .1 + .25 * (a + 1) / 2 * (v > 0 ? 1 : .5), gliss: .25 + .3 * (1 - Math.abs(v)) + .1 * a,
+      bendA: .5 - .25 * v, bendZ: .5 + .3 * v, meter: .3 + .4 * (1 - Math.abs(v)) + .1 * a,
+      len: .5 + .25 * a, noteLen: .5 - .18 * a,
+      swing: .15 + .4 * m(v, 0) * (a + 1) / 2, chaos: .1 + .35 * m(-v, 0) * (a + 1) / 2,
+      drum: .05 + .3 * m(a, 0), kit: .5 - .3 * v,
+      noise: .05 + .3 * m(-v, 0) * (a + 1) / 2 - .1 * m(dp, 0),
+      drive: .08 + .4 * m(a, 0) * (v < 0 ? 1 : .3) + .1 * m(dp, 0),
+      choir: .2 + .3 * m(v, 0) * (1 - a) / 2 + .25 * m(dp, 0),
+      flute: .25 - .15 * a + .2 * v - .15 * m(dp, 0), bass: .25 - .3 * v + .1 * a + .35 * m(dp, 0),
+      trump: .2 + .35 * a + .2 * v, piano: .35 + .1 * v, chip: .3 - .3 * m(dp, 0),
+      dyn: .2 + .25 * Math.abs(a), swell: .5 + .2 * v + .1 * dp, accent: .25 + .3 * m(a, 0),
+    };
+    K.forEach(k => o[k] = cl(o[k]));
+    return o;
+  }
+  const fixX = t => { const b = emoT(0, 0), o = {}; K.forEach(k => o[k] = cl(num(t && t[k], b[k]))); return o; };
+  function nearest(v, a) {
+    let best = 'Custom', d = .55;
+    for (const [k, [x, y]] of Object.entries(EM)) { const q = Math.hypot(x - v, y - a); if (q < d) { d = q; best = k; } }
+    return best;
+  }
+  const fixQK = q => {
+    const t = {}; Object.keys(QK).forEach(k => t[k] = !!(q && q.types && q.types[k]));
+    return { amt: cl(num(q && q.amt, .12)), types: t };
+  };
+
+  // ---------------------------------------------------------------- characters (plain data, no UI)
+  // Accepts a saved blip-character (v1) object and returns what generate() needs.
+  function charFromJSON(o) {
+    const base = emoT(0, 0), mu = {}, sd = {}, lock = {}, off = {};
+    K.forEach(k => {
+      const p = (o.params || {})[k] || {};
+      mu[k] = cl(num(p.mu, base[k])); sd[k] = cl(num(p.sd, .08), .01, .4); lock[k] = !!p.lock; off[k] = !!p.off;
+    });
+    const minN = cl(Math.round(num(o.minN, 4)), 2, 24);
+    return {
+      name: String(o.name || 'Unnamed').slice(0, 18), mu, sd, lock, off,
+      pull: cl(num(o.pull !== undefined ? o.pull : o.gain, .8)),   // "gain" in v1 files; renamed to avoid clashing with volume
+      oct: cl(Math.round(num(o.octave, 0)), -2, 2), seed: num(o.seed, 1),
+      minN, maxN: cl(Math.round(num(o.maxN, 14)), minN + 2, 30), quirk: fixQK(o.quirk),
+      book: Array.isArray(o.book) ? o.book : [],
+      archetype: typeof o.archetype === 'string' ? o.archetype.slice(0, 20) : null,
+      temperament: o.temperament && typeof o.temperament === 'object' ? o.temperament : null,   // validated by blip-listen's fixTemperament
+      relationship: o.relationship && typeof o.relationship === 'object' ? o.relationship : null,
+    };
+  }
+
+  // ---------------------------------------------------------------- labels: learned meaning
+  function fixL(l) {
+    return {
+      id: l.id, n: String(l.n || 'label').slice(0, 16), cat: l.cat || 'Custom', s: cl(num(l.s, 1), 0, 2), on: !!l.on,
+      ex: (Array.isArray(l.ex) ? l.ex : []).filter(e => e && e.x).slice(-40).map(e => ({ key: String(e.key), x: fixX(e.x), y: e.y < 0 ? -1 : 1 })),
+    };
+  }
+  function meaning(l) {
+    const P = l.ex.filter(e => e.y > 0), N = l.ex.filter(e => e.y < 0), wt = e => e.key === 'prior' ? 3 : 1;
+    const n = P.reduce((a, e) => a + wt(e), 0), m = {}, w = {}, nn = N.length;
+    K.forEach(k => {
+      const mean = (P.reduce((a, e) => a + wt(e) * e.x[k], 0) + .5) / (n + 1);
+      const sd = Math.sqrt((P.reduce((a, e) => a + wt(e) * (e.x[k] - mean) ** 2, 0) + .09) / (n + 1));
+      m[k] = mean;
+      let r = n / (n + 1) * cl(1 - sd / .3) * (.3 + .7 * cl(Math.abs(mean - .5) * 3.2));
+      if (nn) { const mn = N.reduce((a, e) => a + e.x[k], 0) / nn; r *= 1 + cl(Math.abs(mean - mn) * 2) * .5; }
+      w[k] = cl(r);
+    });
+    return { m, w, n, c: n / (n + 1) };
+  }
+  // labels the caller switched on -> pulls for generate()
+  const pullsOf = labels => labels.filter(l => l.on).map(l => ({ id: l.id, s: l.s, M: meaning(l) }));
+
+  // ---------------------------------------------------------------- generator
+  // generate: draw every dial from its bell curve, then turn the dials into notes.
+  function generate(o) {
+    const c = o.char, v = o.v || 0, a = o.a || 0, seed = o.seed | 0, depth = o.depth || 0, adv = o.adv === undefined ? 1 : o.adv;
+    const pulls = o.pulls || [], r = rng(seed), sh = emoT(v, a, depth), nu = emoT(0, 0), pull = num(c.pull !== undefined ? c.pull : c.gain, .8);
+    const x = {}, z = {};
+    K.forEach(k => {
+      const g = gauss(r);
+      if (c.off[k]) { z[k] = 0; x[k] = nu[k]; return; }
+      let m = c.mu[k];
+      if (c.lock[k]) { z[k] = 0; x[k] = m; return; }
+      m += pull * (sh[k] - nu[k]);
+      pulls.forEach(p => m += cl(p.s * p.M.w[k]) * (p.M.m[k] - m));
+      z[k] = g; x[k] = cl(m + c.sd[k] * adv * g);
+    });
+    return hydrate({
+      cid: c.id, v, a, seed, x, z, act: pulls.map(p => p.id), em: nearest(v, a), pa: o.par || 'any', sn: o.sn !== false,
+      oc: c.oct, minN: c.minN, maxN: c.maxN, qk: { amt: c.quirk.amt, ...c.quirk.types },
+    });
+  }
+
+  function hydrate(s) {
+    const f = s.x, r = rng(s.seed ^ 0x5bd1e995), ph = r() * 6.28, fr = 1 + r() * 1.5, mn = s.minN || 4, mx = s.maxN || 14;
+    let n = Math.round(mn + f.len * (mx - mn));
+    if (s.pa === 'odd' && n % 2 === 0) n += n < mx ? 1 : -1;
+    if (s.pa === 'even' && n % 2) n += n < mx ? 1 : -1;
+    const f0 = 100 * 10 ** f.pitch * 2 ** (s.oc || 0), tot = (f.slope - .5) * (1.2 + f.span * 3.6), PE = [0, 2, 4, 7, 9, 12];
+    const notes = [], durs = [], first = [], last = [], rest = [], hit = [], vel = [], rv = rng(s.seed ^ 0x9e3779b9);
+    for (let i = 0; i < n; i++) {
+      const xx = i / (n - 1);
+      let q = (tot * (xx - .5) + f.wobble * (.2 + f.span * .5) * Math.sin(xx * 6.28 * fr + ph) + (r() - .5) * .3) * 12;
+      if (r() < f.leap * .5) q += r() < .5 + (f.slope - .5) * .6 ? 12 : -12;
+      if (s.sn) {
+        const oc = Math.floor(q / 12), m = q - oc * 12; let bm = 0, bd = 99;
+        for (const p of PE) if (Math.abs(p - m) < bd) { bd = Math.abs(p - m); bm = p; }
+        q = oc * 12 + bm;
+      }
+      notes.push(cl(f0 * 2 ** (q / 12), 50, 3200));
+    }
+    let i = 0, odd = false;
+    while (i < n) {
+      const o = f.meter > .55 || (f.meter >= .4 && r() < .5);
+      if (!i) odd = o;
+      let g = o ? (r() < .6 ? 3 : 5) : (r() < .6 ? 2 : 4);
+      g = Math.min(g, n - i); if (n - i - g === 1) g = n - i;
+      for (let j = 0; j < g; j++) {
+        let d = o ? (j ? 1 : 1.5) : (r() < .2 ? 2 : 1);
+        d *= .4 + 1.6 * f.noteLen;
+        if (!o) d *= j % 2 ? 1 - .5 * f.swing : 1 + .5 * f.swing;
+        d = d * (1 - f.chaos) + (.25 + r() * 2.2) * f.chaos;
+        vel.push(cl((1 + (f.swell - .5) * 1.4 * (2 * durs.length / (n - 1) - 1)) * (1 + (rv() - .5) * f.dyn * 1.4) * (j === 0 ? 1 + .6 * f.accent : 1 - .2 * f.accent), .15, 1.8));
+        durs.push(d); first.push(j === 0); last.push(j === g - 1); rest.push(r() < f.chaos * .22);
+        const kv = f.kit + (r() - .5) * .5; hit.push(r() < f.drum ? (kv < .33 ? 1 : kv < .66 ? 2 : 3) : 0);
+      }
+      i += g;
+    }
+    if (s.qk && s.qk.amt > 0) {
+      const qr = rng(s.seed ^ 0xC0FFEE), en = Object.keys(QK).filter(k => s.qk[k]);
+      if (en.length) for (let i = 0; i < notes.length; i++) {
+        if (qr() >= s.qk.amt * .3) continue;
+        const ty = en[qr() * en.length | 0];
+        if (ty === 'stutter' && i > 0 && !hit[i]) notes[i] = notes[i - 1];
+        else if (ty === 'squeak' && !hit[i]) { notes[i] = cl(notes[i] * 2, 50, 3200); vel[i] = Math.min(1.8, vel[i] * 1.3); }
+        else if (ty === 'hiccup') rest[i] = true;
+        else if (ty === 'waver' && !hit[i]) notes[i] = notes[i] * (1 + (qr() - .5) * .12);
+      }
+    }
+    return Object.assign(s, { notes, durs, first, last, rest, hit, vel, odd });
+  }
+
+  // seconds: onset and length of every note, plus the total length
+  function sched(s) {
+    const u = 60 / (40 + 160 * s.x.tempo) / 2, o = []; let t = 0;
+    s.notes.forEach((_, i) => {
+      const d = u * s.durs[i]; o.push([t, d]); t += d;
+      if (s.last[i] && i < s.notes.length - 1) t += (50 + 450 * s.x.pause) / 1000;
+    });
+    return { o, T: t };
+  }
+
+  // 17 numbers that describe how a sound feels; used for sensitivity and label learning
+  function FEAT(s) {
+    const n = s.notes, lm = n.reduce((a, b) => a + Math.log2(b), 0) / n.length, rg = Math.log2(Math.max(...n) / Math.min(...n)), T = sched(s).T, d = s.durs;
+    const dm = d.reduce((a, b) => a + b, 0) / d.length, dv = Math.sqrt(d.reduce((a, b) => a + (b - dm) ** 2, 0) / d.length), x = s.x;
+    const tw = INS.reduce((a, k) => a + x[k], 0) || 1, br = INS.reduce((a, k, i) => a + x[k] * [.9, .35, .25, .7, .5][i], 0) / tw;
+    const dr = s.hit.filter((h, i) => h && !s.rest[i]).length / n.length, rs = s.rest.filter(Boolean).length / n.length;
+    const gr = (x.noise + x.drive) / 2, mo = (x.gliss + Math.abs(x.bendA - .5) * 2 + Math.abs(x.bendZ - .5) * 2 + x.vib) / 4;
+    return {
+      lm, rg, T, br, gr, dr, rs, mo,
+      v: [lm / 6, rg / 3, n.length / 14, cl(T / 8), dv, dr, br, gr, mo, rs, (Math.log2(n[n.length - 1] / n[0]) + 3) / 6, x.bendA * .6, x.bendZ * .6, x.choir * .6, x.kit * dr,
+        Math.sqrt(s.vel.reduce((a, b) => a + (b - 1) ** 2, 0) / n.length), (s.vel[n.length - 1] - s.vel[0]) * .5 + .5],
+    };
+  }
+  // how much each dial actually changes the sound (0 .. ~1)
+  function sens(c, opt = {}) {
+    const seeds = [11, 23, 37, 51, 73], o = {};
+    K.forEach(k => {
+      if (c.off[k]) { o[k] = 0; return; }
+      let d = 0;
+      seeds.forEach(sd => {
+        const a = { ...c.mu }, b = { ...c.mu }; a[k] = 0; b[k] = 1;
+        const H = x => FEAT(hydrate({ x, seed: sd, pa: opt.par || 'any', sn: true, oc: c.oct, minN: c.minN, maxN: c.maxN })).v, fa = H(a), fb = H(b);
+        d += Math.sqrt(fa.reduce((s, v, i) => s + (v - fb[i]) ** 2, 0) / fa.length);
+      });
+      o[k] = d / seeds.length;
+    });
+    return o;
+  }
+
+  // ---------------------------------------------------------------- learning (the Like / Nope update)
+  // REINFORCE for a Gaussian policy with a running baseline. Every free dial is a bell curve (mu, sd); a sound that was
+  // liked pulls each dial's centre toward the value it drew (z = how many sd it was off), a rejected one pushes away, and
+  // the spread narrows when liked draws cluster. Locked and off dials never learn. Mutates `c`, returns [[dial, change]].
+  function learn(c, s, up, adv = 1, lr = .25) {
+    const R = up ? 1 : -1, A = R - (c.b || 0), ch = [];
+    c.b = (c.b || 0) + .2 * (R - (c.b || 0)); c.n = (c.n || 0) + 1;
+    K.forEach(k => {
+      if (c.lock[k] || c.off[k]) return;
+      const z = s.z[k] || 0, m0 = c.mu[k], s0 = c.sd[k];
+      c.mu[k] = cl(m0 + lr * A * z * s0 * Math.max(1, adv)); c.sd[k] = cl(s0 * Math.exp(.1 * A * (z * z - 1)), .01, .4);
+      const d = c.mu[k] - m0; if (Math.abs(d) > .003) ch.push([k, d]);
+    });
+    return ch;
+  }
+
+  // ---------------------------------------------------------------- Jungian archetypes as starting voices
+  // Twelve classic archetypes, each a set of dial centres. They are starting points: the designer's rating loop and the
+  // dials then make the character its own. Associations of sound with archetype are a design choice, not a measurement.
+  const ARCHETYPES = {
+    Innocent: { blurb: 'Light, bright, trusting', d: { pitch: .72, tempo: .55, chip: .55, flute: .3, vib: .3, gliss: .35, bendZ: .7, noise: 0, drive: 0, drum: 0, len: .4, pause: .35, swing: .1 } },
+    Everyman: { blurb: 'Plain, friendly, easy to be around', d: { pitch: .5, tempo: .5, chip: .6, piano: .3, meter: .35, drum: .1, vib: .2, swing: .15 } },
+    Hero: { blurb: 'Bold, brassy, rising', d: { pitch: .4, tempo: .6, trump: .9, chip: .1, drive: .15, drum: .35, kit: .3, slope: .65, accent: .6, leap: .3, bendZ: .7 } },
+    Caregiver: { blurb: 'Warm, slow, soothing', d: { pitch: .64, tempo: .38, pause: .45, flute: .5, choir: .55, piano: .25, vib: .4, gliss: .5, bendZ: .65, swell: .6, dyn: .15, swing: .2, noteLen: .65 } },
+    Explorer: { blurb: 'Curious, wandering, wide-ranging', d: { pitch: .6, tempo: .65, leap: .5, span: .7, wobble: .6, flute: .4, chip: .4, gliss: .4, chaos: .2, slope: .6 } },
+    Rebel: { blurb: 'Rough, loud, off-beat', d: { pitch: .3, tempo: .7, drive: .6, noise: .3, bass: .5, chip: .5, drum: .5, kit: .2, chaos: .45, swing: .4, accent: .7 } },
+    Lover: { blurb: 'Sliding, breathy, lingering', d: { pitch: .5, tempo: .3, pause: .55, choir: .7, flute: .5, vib: .65, gliss: .75, bendA: .35, swell: .7, noteLen: .8 } },
+    Creator: { blurb: 'Playful melodies that never repeat', d: { pitch: .55, tempo: .5, piano: .6, flute: .3, chip: .3, wobble: .7, span: .65, leap: .4, swing: .45, chaos: .3, meter: .7 } },
+    Jester: { blurb: 'Quick, bouncy, full of surprises', d: { pitch: .8, tempo: .8, chip: .7, piano: .3, drum: .4, kit: .8, swing: .8, chaos: .55, leap: .5, gliss: .5, bendZ: .85, vib: .3 } },
+    Sage: { blurb: 'Slow, airy, thoughtful', d: { pitch: .36, tempo: .2, pause: .85, bass: .45, flute: .6, choir: .1, chip: 0, vib: .3, gliss: .2, span: .3, len: .35 } },
+    Magician: { blurb: 'Shimmering, gliding, a little strange', d: { pitch: .65, tempo: .4, pause: .5, choir: .6, flute: .4, piano: .3, vib: .7, gliss: .8, bendA: .3, bendZ: .75, noise: .2, wobble: .6, span: .75 } },
+    Ruler: { blurb: 'Deep, measured, commanding', d: { pitch: .25, tempo: .3, pause: .6, bass: .7, trump: .5, chip: 0, drive: .2, vib: .15, swell: .6, accent: .5, drum: .25, kit: .15, noteLen: .7 } },
+  };
+  // which character archetype each of the designer's sound types belongs to (used for default reaction temperament)
+  const SOUND_ARCH = { Chirp: 'Innocent', Grumble: 'Rebel', Sage: 'Sage', Tock: 'Everyman', Ghost: 'Magician', Bot: 'Everyman', Brass: 'Hero', Wisp: 'Lover', Clank: 'Rebel', Drone: 'Ruler', Sparkle: 'Jester' };
+  // a ready blip-character file for an archetype
+  function fromArchetype(name, o = {}) {
+    const a = ARCHETYPES[name]; if (!a) throw new Error('archetypes: ' + Object.keys(ARCHETYPES).join(', '));
+    const mu = fixX({ ...emoT(0, 0), ...a.d }), params = {};
+    K.forEach(k => params[k] = { mu: +mu[k].toFixed(4), sd: .08, lock: false, off: false });
+    return { format: 'blip-character', version: 1, name: o.name || name, color: 0, octave: o.octave || 0, seed: o.seed === undefined ? Math.floor(rng(name.length * 7919)() * 1e9) : o.seed, gain: .8, pull: .8, params, minN: 4, maxN: 14, quirk: { amt: .12, types: { stutter: true, squeak: true, hiccup: false, waver: false } }, archetype: name };
+  }
+
+  // ---------------------------------------------------------------- score
+  // A blip-score is the whole sound as timed events. Every pitch is absolute, every time is in ms.
+  // Extension over the v1 draft: optional per-event h0 / h1 / r (start pitch, end pitch, glide ms)
+  // and a score-level "timbre" block, so a renderer needs nothing but the score.
+  const r2 = x => Math.round(x * 100) / 100, TIMBRE = ['chip', 'flute', 'bass', 'trump', 'piano', 'choir', 'noise', 'drive', 'vib'];
+  function toScore(s, o = {}) {
+    const { o: sc, T } = sched(s), f = s.x, ev = []; let prev = 0;
+    s.notes.forEach((fr, i) => {
+      const t = Math.round(sc[i][0] * 1000), dur = sc[i][1], d = Math.max(1, Math.round(dur * 1000));
+      if (s.rest[i]) { ev.push({ t, d, hz: null, vel: 0 }); prev = 0; return; }
+      const vel = r2((s.vel && s.vel[i]) || 1);
+      if (s.hit[i]) { const e = { t, d, k: s.hit[i], vel }; if (s.first[i]) e.f = 1; if (s.last[i]) e.l = 1; ev.push(e); prev = 0; return; }
+      const gl = prev && f.gliss > .15, bend = s.first[i] && Math.abs(f.bendA - .5) > .04;
+      const st = gl ? prev : bend ? fr * 2 ** ((f.bendA - .5) * 16 / 12) : fr;
+      const rt = Math.min(gl ? dur * f.gliss : bend ? .07 : .005, dur * .5);
+      const ef = s.last[i] && Math.abs(f.bendZ - .5) > .04 ? fr * 2 ** ((f.bendZ - .5) * 16 / 12) : fr;
+      const e = { t, d, hz: r2(fr), vel };
+      if (s.first[i]) e.f = 1; if (s.last[i]) e.l = 1;
+      if (Math.abs(st - fr) > .01) { e.h0 = r2(st); e.r = Math.max(1, Math.round(rt * 1000)); }
+      if (Math.abs(ef - fr) > .01) e.h1 = r2(ef);
+      ev.push(e); prev = fr;
+    });
+    const timbre = {}; TIMBRE.forEach(k => timbre[k] = r2(f[k]));
+    return {
+      format: 'blip-score', version: 1, id: o.id || ('s' + (s.seed >>> 0).toString(16)), voice: o.voice || null,
+      dur_ms: Math.round(T * 1000), timbre, events: ev,
+      meta: { seed: s.seed, source: { v: s.v, a: s.a, em: s.em } },
+    };
+  }
+  const leadOf = x => INS.slice().sort((a, b) => x[b] - x[a])[0];
+
+  // ---------------------------------------------------------------- plain-code synth
+  // Sample-by-sample. Mirrors the browser's old Web Audio voices (same wave tables, filters, envelopes)
+  // so that what the designer plays is what the WAV contains.
+  const HARM = {
+    flute: [1, .2, .05, .02], bass: [1, .8, .95, .6, .4, .3, .2, .1], trump: [1, .9, .85, .7, .55, .4, .3, .2, .1],
+    piano: [1, .5, .3, .18, .1, .06], choir: [1, .5, .35, .25, .15, .1],
+  };
+  const TN = 2048, tables = {};
+  function table(name, maxH) {
+    const h = HARM[name], key = name + ':' + Math.min(h.length, maxH);
+    if (tables[key]) return tables[key];
+    const full = tables[name + ':full'] || (tables[name + ':full'] = (() => {
+      const t = new Float32Array(TN); let pk = 0;
+      for (let i = 0; i < TN; i++) { let s = 0; h.forEach((a, k) => s += a * Math.sin(6.283185307 * (k + 1) * i / TN)); t[i] = s; pk = Math.max(pk, Math.abs(s)); }
+      return { t, pk };
+    })());
+    const t = new Float32Array(TN), nh = Math.max(1, Math.min(h.length, maxH));
+    for (let i = 0; i < TN; i++) { let s = 0; for (let k = 0; k < nh; k++) s += h[k] * Math.sin(6.283185307 * (k + 1) * i / TN); t[i] = s / full.pk; }
+    return tables[key] = t;
+  }
+  const lookup = (t, ph) => { const p = ph * TN, i = p | 0, f = p - i; return t[i % TN] * (1 - f) + t[(i + 1) % TN] * f; };
+  const blep = (t, dt) => t < dt ? (t /= dt, t + t - t * t - 1) : t > 1 - dt ? (t = (t - 1) / dt, t * t + t + t + 1) : 0;
+
+  // RBJ biquad, same maths as the Web Audio spec (lowpass/highpass Q is in dB, bandpass Q is linear)
+  class Biquad {
+    constructor(type, f, Q, sr) { this.type = type; this.sr = sr; this.Q = Q; this.x1 = this.x2 = this.y1 = this.y2 = 0; this.set(f); }
+    set(f) {
+      const sr = this.sr, fc = cl(f, 10, sr * .45), w = 2 * Math.PI * fc / sr, c = Math.cos(w), s = Math.sin(w);
+      const al = this.type === 'bandpass' ? s / (2 * this.Q) : s / (2 * 10 ** (this.Q / 20));
+      let b0, b1, b2;
+      if (this.type === 'lowpass') { b0 = (1 - c) / 2; b1 = 1 - c; b2 = b0; }
+      else if (this.type === 'highpass') { b0 = (1 + c) / 2; b1 = -(1 + c); b2 = b0; }
+      else { b0 = al; b1 = 0; b2 = -al; }
+      const a0 = 1 + al; this.b0 = b0 / a0; this.b1 = b1 / a0; this.b2 = b2 / a0; this.a1 = -2 * c / a0; this.a2 = (1 - al) / a0;
+    }
+    run(x) {
+      const y = this.b0 * x + this.b1 * this.x1 + this.b2 * this.x2 - this.a1 * this.y1 - this.a2 * this.y2;
+      this.x2 = this.x1; this.x1 = x; this.y2 = this.y1; this.y1 = y; return y;
+    }
+  }
+
+  // master compressor modelled on the one in browsers: -14 dB threshold, 22 dB knee, 7:1, with makeup gain
+  const COMP_R = 7, COMP_MK = 2; // makeup trimmed against Chromium's compressor (see tests/parity-chromium.js)
+  function compress(buf, sr) {
+    const T = -14, KN = 22, R = COMP_R, atk = Math.exp(-1 / (sr * .003)), rel = Math.exp(-1 / (sr * .18));
+    const curve = L => L < T - KN / 2 ? L : L > T + KN / 2 ? T + (L - T) / R : L + (1 / R - 1) * (L - T + KN / 2) ** 2 / (2 * KN);
+    const makeup = 10 ** (-curve(0) / 20 * .6 / 1); // 1/gain(0 dB), to the 0.6 power
+    let g = 1;
+    for (let i = 0; i < buf.length; i++) {
+      const x = buf[i], L = 20 * Math.log10(Math.abs(x) + 1e-9), want = 10 ** ((curve(L) - L) / 20);
+      g = want < g ? atk * g + (1 - atk) * want : rel * g + (1 - rel) * want;
+      buf[i] = x * g * makeup * 10 ** (COMP_MK / 20);
+    }
+  }
+
+  function renderScore(sc, o = {}) {
+    const sr = o.sr || 44100, vol = o.volume === undefined ? 1 : o.volume, tm = sc.timbre || {}, dt1 = 1 / sr;
+    const tail = 1.8, N = Math.ceil((sc.dur_ms / 1000 + tail) * sr), out = new Float32Array(N), nr = rng((sc.meta && sc.meta.seed | 0) ^ 0xBEEF);
+    const tot = INS.reduce((a, k) => a + (tm[k] || 0), 0) || 1, w = k => (tm[k] || 0) / tot, vib = tm.vib || 0;
+    const lfoHz = 5 + vib * 6, lfoCents = vib * 45, gain = .55 * vol;
+    const add = (i0, i1) => [Math.max(0, i0), Math.min(N, i1)];
+
+    // one oscillator voice: type 'sq' or a harmonic table, optional filter, envelope, detune cents
+    function voice(e, fr, st, ef, rt, dur, V) {
+      const i0 = Math.round(e.t / 1000 * sr), len = Math.round((V.dec ? dur * 1.6 + .05 : dur) * sr), amp = (e.vel || 1) * gain;
+      const att = Math.min(V.att, dur * .5), fl = V.fl && new Biquad(V.fl[0], V.fl[1], V.fl[2] || .7, sr);
+      const tHold = Math.max(att, dur - .05), tEnd = Math.max(dur - .015, tHold + .001);
+      let ph = 0; const mh = Math.floor(sr * .45 / Math.max(fr, ef, st)), tab = V.w ? table(V.w, mh) : null;
+      for (let j = 0; j < len; j++) {
+        const i = i0 + j; if (i >= N) break;
+        const tau = j * dt1; let f = fr;
+        if (tau < rt) f = st + (fr - st) * (tau / rt); else if (ef !== fr && tau >= dur * .55) f = fr + (ef - fr) * cl((tau - dur * .55) / Math.max(1e-4, dur - .02 - dur * .55));
+        f *= 2 ** ((V.det + lfoCents * Math.sin(6.283185307 * lfoHz * tau)) / 1200);
+        const dphi = f * dt1; ph += dphi; ph -= Math.floor(ph);
+        let s = tab ? lookup(tab, ph) : (ph < .5 ? 1 : -1) + blep(ph, dphi) - blep((ph + .5) % 1, dphi);
+        if (fl) { if (V.fl[3] && (j & 31) === 0) fl.set(V.fl[1] + (V.fl[3] - V.fl[1]) * Math.min(1, tau / .09)); s = fl.run(s); }
+        let env;
+        if (V.dec) env = tau < att ? V.peak * tau / att : V.peak * Math.pow(.001 / V.peak, (tau - att) / Math.max(1e-3, dur * 1.6 - att));
+        else env = tau < att ? V.peak * tau / att : tau < tHold ? V.peak : tau < tEnd ? V.peak * (1 - (tau - tHold) / (tEnd - tHold)) : 0;
+        out[i] += s * env * amp;
+      }
+    }
+    function noise(t0, d, type, fq, Q, peak, amp) {
+      const i0 = Math.round(t0 / 1000 * sr), len = Math.round(d * sr), b = new Biquad(type, fq, Q, sr);
+      for (let j = 0; j < len; j++) {
+        const i = i0 + j; if (i >= N) break;
+        out[i] += b.run(nr() * 2 - 1) * peak * Math.pow(.001 / peak, j * dt1 / d) * amp;
+      }
+    }
+    function sweep(t0, d, kind, f0, f1, peak, amp) {
+      const i0 = Math.round(t0 / 1000 * sr), len = Math.round(d * sr); let ph = 0;
+      for (let j = 0; j < len; j++) {
+        const i = i0 + j; if (i >= N) break;
+        const tau = j * dt1, f = f0 * Math.pow(f1 / f0, Math.min(1, tau / (d * .6)));
+        ph += f * dt1; ph -= Math.floor(ph);
+        const s = kind === 'sine' ? Math.sin(6.283185307 * ph) : 1 - 4 * Math.abs(((ph + .25) % 1) - .5); // triangle starts at 0
+        out[i] += s * peak * Math.pow(.001 / peak, tau / d) * amp;
+      }
+    }
+    for (const e of sc.events) {
+      if (e.hz === null) continue;
+      const amp = (e.vel || 1) * gain;
+      if (e.k) {
+        if (e.k === 1) sweep(e.t, .22, 'sine', 170, 42, .95, amp);
+        else if (e.k === 2) { noise(e.t, .16, 'bandpass', 1900, .7, .5, amp); sweep(e.t, .1, 'tri', 200, 120, .35, amp); }
+        else noise(e.t, .05, 'highpass', 7500, .5, .35, amp);
+        continue;
+      }
+      const fr = e.hz, st = e.h0 || fr, ef = e.h1 || fr, rt = (e.r || 5) / 1000, dur = e.d / 1000;
+      if (w('chip') > .04) voice(e, fr, st, ef, rt, dur, { w: 0, det: 0, peak: .22 * w('chip'), att: .005 });
+      if (w('flute') > .04) voice(e, fr, st, ef, rt, dur, { w: 'flute', det: 0, peak: .3 * w('flute'), att: .07, fl: ['lowpass', 2800] });
+      if (w('bass') > .04) voice(e, fr, st, ef, rt, dur, { w: 'bass', det: 0, peak: .3 * w('bass'), att: .05, fl: ['lowpass', 1100] });
+      if (w('trump') > .04) voice(e, fr, st, ef, rt, dur, { w: 'trump', det: 0, peak: .26 * w('trump'), att: .035, fl: ['lowpass', 500, 1.5, 3800] });
+      if (w('piano') > .04) voice(e, fr, st, ef, rt, dur, { w: 'piano', det: 0, peak: .4 * w('piano'), att: .003, fl: ['lowpass', 5500], dec: 1 });
+      if ((tm.choir || 0) > .06) [-14, 0, 14].forEach(d => voice(e, fr, st, ef, rt, dur, { w: 'choir', det: d, peak: .11 * tm.choir, att: .12, fl: ['bandpass', 900, 1.2] }));
+      if ((tm.noise || 0) > .05) noise(e.t, dur, 'bandpass', fr * 2, .8, tm.noise * .3, amp);
+    }
+    if ((tm.drive || 0) > .05) {
+      const k = 1 + tm.drive * 40, nk = Math.tanh(k);
+      for (let i = 0; i < N; i++) out[i] = Math.tanh(out[i] * k) / nk * .9;
+    }
+    compress(out, sr);
+    for (let i = 0; i < N; i++) { const x = out[i], a = Math.abs(x); out[i] = a < .9 ? x : Math.sign(x) * (.9 + .1 * Math.tanh((a - .9) / .1)); } // soft ceiling, never hard-clips
+    return out;
+  }
+  const render = (s, o) => renderScore(toScore(s), o);
+
+  // ---------------------------------------------------------------- WAV
+  function wav(samples, sr = 44100) {
+    const n = samples.length, b = new Uint8Array(44 + n * 2), dv = new DataView(b.buffer);
+    const str = (o, t) => { for (let i = 0; i < t.length; i++) b[o + i] = t.charCodeAt(i); };
+    str(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt '); dv.setUint32(16, 16, true);
+    dv.setUint16(20, 1, true); dv.setUint16(22, 1, true); dv.setUint32(24, sr, true); dv.setUint32(28, sr * 2, true);
+    dv.setUint16(32, 2, true); dv.setUint16(34, 16, true); str(36, 'data'); dv.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) dv.setInt16(44 + i * 2, Math.round(cl(samples[i], -1, 1) * 32767), true);
+    return b;
+  }
+  function readWav(bytes) { // 16-bit PCM mono/stereo (stereo is averaged)
+    const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength); let p = 12, fmt = null, data = null;
+    while (p + 8 <= bytes.length) {
+      const id = String.fromCharCode(...bytes.slice(p, p + 4)), n = dv.getUint32(p + 4, true);
+      if (id === 'fmt ') fmt = { ch: dv.getUint16(p + 10, true), sr: dv.getUint32(p + 12, true), bits: dv.getUint16(p + 22, true) };
+      if (id === 'data') { data = [p + 8, Math.min(n, bytes.length - p - 8)]; break; }
+      p += 8 + n + (n & 1);
+    }
+    if (!fmt || !data || fmt.bits !== 16) throw new Error('only 16-bit PCM WAV is supported');
+    const frames = data[1] / 2 / fmt.ch, out = new Float32Array(frames);
+    for (let i = 0; i < frames; i++) { let s = 0; for (let c = 0; c < fmt.ch; c++) s += dv.getInt16(data[0] + (i * fmt.ch + c) * 2, true); out[i] = s / fmt.ch / 32768; }
+    return { samples: out, sr: fmt.sr };
+  }
+
+  // ---------------------------------------------------------------- MIDI (format 0, 1 tick = 1 ms)
+  // Lossy by design: pitch, timing, velocity, glides (as pitch bend), vibrato (mod wheel), one GM program, drums on channel 10.
+  const GM = { chip: 80, flute: 73, bass: 70, trump: 56, piano: 0, choir: 52 };
+  function midi(sc) {
+    const trk = [];
+    const vlq = n => { const b = [n & 127]; while ((n >>= 7)) b.push((n & 127) | 128); return b.reverse(); };
+    const push = (t, bytes, ord = 1) => trk.push({ t: Math.max(0, Math.round(t)), bytes, ord });
+    const tm = sc.timbre || {}, lead = ['chip', 'flute', 'bass', 'trump', 'piano', 'choir'].sort((a, b) => (tm[b] || 0) - (tm[a] || 0))[0];
+    push(0, [0xFF, 0x51, 3, 0x07, 0xA1, 0x20], 0);                 // 500000 us per quarter
+    push(0, [0xB0, 101, 0, 0xB0, 100, 0, 0xB0, 6, 12, 0xB0, 38, 0], 0); // pitch bend range = 12 semitones
+    push(0, [0xC0, GM[lead] || 0], 0); push(0, [0xB0, 1, Math.round(cl(tm.vib || 0) * 100)], 0);
+    const note = hz => 69 + 12 * Math.log2(hz / 440), bendv = (hz, base) => cl(Math.round(8192 + (note(hz) - base) / 12 * 8192), 0, 16383);
+    const sendBend = (t, v) => push(t, [0xE0, v & 127, v >> 7], 2);
+    for (const e of sc.events) {
+      if (e.hz === null) continue;
+      const vel = Math.round(cl(e.vel * 80, 1, 127));
+      if (e.k) { const n = [0, 36, 38, 42][e.k]; push(e.t, [0x99, n, vel]); push(e.t + Math.min(e.d, 120), [0x89, n, 0], 0); continue; }
+      const nn = Math.round(note(e.hz));
+      sendBend(e.t, bendv(e.h0 || e.hz, nn));
+      if (e.h0) for (let k = 1; k <= 4; k++) sendBend(e.t + (e.r || 5) * k / 4, bendv(e.h0 + (e.hz - e.h0) * k / 4, nn));
+      push(e.t, [0x90, nn, vel]);
+      if (e.h1) for (let k = 1; k <= 4; k++) sendBend(e.t + e.d * (.55 + .4 * k / 4), bendv(e.hz + (e.h1 - e.hz) * k / 4, nn));
+      push(e.t + e.d, [0x80, nn, 0], 0);
+    }
+    push(sc.dur_ms + 100, [0xFF, 0x2F, 0], 3);
+    trk.sort((a, b) => a.t - b.t || a.ord - b.ord);
+    const body = []; let prev = 0;
+    for (const e of trk) { body.push(...vlq(e.t - prev), ...e.bytes); prev = e.t; }
+    // channel bytes inside the 'pitch bend range' blob are single messages: expand running status safely
+    const hdr = [0x4D, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, 0x01, 0xF4], n = body.length;
+    return Uint8Array.from([...hdr, 0x4D, 0x54, 0x72, 0x6B, n >>> 24 & 255, n >>> 16 & 255, n >>> 8 & 255, n & 255, ...body]);
+  }
+
+  // ---------------------------------------------------------------- Tier A reference
+  // What a one-buzzer player does: one tone at a time, no velocity, no bends, drums as short clicks.
+  // Both this function and players/common/blip_player.h must agree to the millisecond.
+  const DRUM_A = [null, [80, 60], [220, 40], [3000, 15]]; // [hz, ms] for kick, snare, hat
+  function tierA(sc, o = {}) {
+    const oc = o.oct || 0, shift = hz => oc >= 0 ? hz << oc : (hz + (1 << (-oc - 1))) >> -oc, spans = []; // integer maths, same as the C player
+    for (const e of sc.events) {
+      if (e.hz === null) continue;
+      if (e.k) { const [hz, ms] = DRUM_A[e.k]; spans.push([e.t, e.t + Math.min(ms, e.d), shift(hz)]); }
+      else spans.push([e.t, e.t + (e.d > 40 ? Math.max(e.d - 8, Math.floor((e.d * 7 + 5) / 10)) : e.d), shift(Math.round(e.hz))]);
+    }
+    return spans; // [start_ms, end_ms, hz]
+  }
+  const toneAt = (spans, ms) => { for (const s of spans) if (ms >= s[0] && ms < s[1]) return s[2]; return 0; };
+
+  // ---------------------------------------------------------------- zip (store only, no deps)
+  const crcT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = b => { let c = ~0; for (let i = 0; i < b.length; i++) c = crcT[(c ^ b[i]) & 255] ^ (c >>> 8); return ~c >>> 0; };
+  function zip(files) { // files: {name: Uint8Array|string}
+    const enc = new TextEncoder(), parts = [], cd = []; let off = 0;
+    const u16 = n => [n & 255, n >> 8 & 255], u32 = n => [n & 255, n >> 8 & 255, n >> 16 & 255, n >>> 24 & 255];
+    for (const [name, data0] of Object.entries(files)) {
+      const data = typeof data0 === 'string' ? enc.encode(data0) : data0, nm = enc.encode(name), crc = crc32(data);
+      const lh = [0x50, 0x4B, 3, 4, ...u16(20), ...u16(0x800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nm.length), ...u16(0)];
+      parts.push(Uint8Array.from(lh), nm, data);
+      cd.push(Uint8Array.from([0x50, 0x4B, 1, 2, ...u16(20), ...u16(20), ...u16(0x800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nm.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), nm);
+      off += lh.length + nm.length + data.length;
+    }
+    const cdLen = cd.reduce((a, b) => a + b.length, 0), cnt = Object.keys(files).length;
+    const end = Uint8Array.from([0x50, 0x4B, 5, 6, 0, 0, 0, 0, ...u16(cnt), ...u16(cnt), ...u32(cdLen), ...u32(off), 0, 0]);
+    const all = [...parts, ...cd, end], out = new Uint8Array(all.reduce((a, b) => a + b.length, 0)); let p = 0;
+    all.forEach(b => { out.set(b, p); p += b.length; });
+    return out;
+  }
+
+  // ---------------------------------------------------------------- bank: voice + scores + tags
+  const slug = t => String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'voice';
+  function voiceOf(c, id) {
+    const x = fixX(c.mu), lead = leadOf(x), timbre = {};
+    TIMBRE.forEach(k => timbre[k] = r2(x[k]));
+    return { format: 'blip-voice', version: 1, id, name: c.name, lead, octave: c.oct, timbre };
+  }
+  // Pre-render a palette: `per` sounds for every feeling (and any extra [v,a,name] points).
+  function bake(c, o = {}) {
+    const per = o.per || 3, id = o.id || slug(c.name), base = (o.seed === undefined ? c.seed : o.seed) | 0, pulls = o.pulls || [], scores = [];
+    const pts = Object.entries(EM).map(([n, [v, a]]) => [v, a, n]).concat(o.points || []);
+    pts.forEach(([v, a, name], pi) => {
+      for (let j = 0; j < per; j++) {
+        const seed = (base + pi * 7919 + j * 104729) | 0, s = generate({ char: c, v, a, seed, pulls, depth: o.depth || 0, par: o.par });
+        const sid = `${id}-${slug(name)}-${j + 1}`, sc = toScore(s, { id: sid, voice: id });
+        sc.meta.source.v = v; sc.meta.source.a = a; sc.meta.source.em = name;
+        scores.push({ id: sid, tags: [name], v, a, score: sc });
+      }
+    });
+    return { format: 'blip-bank', version: 1, id, voice: voiceOf(c, id), scores, bank_meta: { character: c.name, exported: o.date || new Date().toISOString() } };
+  }
+  // choose a baked score for a target feeling: nearest few, then a random one so replies do not repeat
+  function pick(bank, v, a, r = Math.random) {
+    const d = bank.scores.map(s => [Math.hypot(s.v - v, (s.a - a) * 1.2), s]).sort((p, q) => p[0] - q[0]).slice(0, 3);
+    return d[Math.floor(r() * d.length)][1];
+  }
+
+  // C header for the Tier A player (players/common/blip_player.h)
+    function cHeader(bank) {
+    let h = `/* generated by tools/blip.js header from bank "${bank.id}" -- do not edit */\n#pragma once\n#include "blip_player.h"\n\n`;
+    bank.scores.forEach((s, i) => {
+      const ev = s.score.events.map(e => `{${e.t},${e.d},${e.hz == null ? 0 : Math.round(e.hz)},${e.k || 0}}`);
+      h += `static const blip_ev blip_ev_${i}[] = {${ev.join(',')}};\n`;
+    });
+    h += `static const blip_score blip_scores[] = {\n` + bank.scores.map((s, i) => `  {"${s.id}", blip_ev_${i}, ${s.score.events.length}, ${s.score.dur_ms}}`).join(',\n') + `\n};\n`;
+    h += `static const blip_bank blip_the_bank = {"${bank.voice.id}", blip_scores, ${bank.scores.length}};\n`;
+    h += `/* ${bank.scores.length} scores, about ${bank.scores.reduce((a, s) => a + s.score.events.length * 7, 0)} bytes of events */\n`;
+    return h;
+  }
+
+  // ---------------------------------------------------------------- protocol helpers (host side)
+  // N line: live notes, "N hz/ms[/vel] ..." (hz 0 = rest). Player stays dumb; the client composes.
+  function encodeN(sc, maxBytes = 250) {
+    const ev = sc.events.filter(e => e.hz !== undefined && !e.k).map(e => ({ hz: e.hz === null ? 0 : Math.round(e.hz), ms: Math.min(9999, e.d), vel: e.vel, t: e.t }));
+    const lines = []; let line = 'N';
+    for (const e of ev) {
+      const tok = ' ' + e.hz + '/' + e.ms;
+      if (line.length + tok.length > maxBytes) { lines.push(line); line = 'N+'; if (lines.length >= 4) break; }
+      line += tok;
+    }
+    if (line.length > 2 && lines.length < 4) lines.push(line);
+    return lines;
+  }
+
+  return {
+    version: '0.2.0', K, INS, GROUPS, EM, QK, TIMBRE, GM, DRUM_A,
+    ARCHETYPES, SOUND_ARCH, fromArchetype, cl, num, rng, gauss, emoT, fixX, nearest, fixQK, charFromJSON, fixL, meaning, pullsOf,
+    generate, hydrate, sched, FEAT, sens, learn, toScore, leadOf,
+    renderScore, render, wav, readWav, midi, tierA, toneAt, zip, crc32, bake, pick, voiceOf, slug, encodeN, cHeader,
+  };
+});
+
+const E=Blip;
+const $=s=>document.querySelector(s),cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),num=(x,d)=>Number.isFinite(+x)&&x!==null&&x!==''?+x:d;
+const G=[['Melody',['pitch','slope','wobble','span','leap','len'],'#8fb3ff'],['Time',['tempo','pause','meter','swing','chaos','noteLen'],'#7ee0c3'],['Bend',['gliss','bendA','bendZ','vib'],'#ffb3d9'],['Timbre',['chip','flute','bass','trump','piano','choir'],'#ffd66b'],['Grit',['noise','drive'],'#ff9c8a'],['Drums',['drum','kit'],'#c4a8ff'],['Volume',['dyn','swell','accent'],'#a8d8ff']];
+const {K,INS}=E,PAL=['#ff9a3c','#9b7bff','#ff78c4','#3cc8e0','#b6dc3a','#d9a86c'];
+const NM={pitch:'Pitch',slope:'Rise / fall',wobble:'Wobble',span:'Range',leap:'Octave leaps',len:'Length',tempo:'Speed',pause:'Pauses',meter:'Even / odd',swing:'Swing',chaos:'Chaos',noteLen:'Note length',gliss:'Glide',bendA:'Start bend',bendZ:'End bend',vib:'Vibrato',chip:'Chip',flute:'Flute',bass:'Bassoon',trump:'Trumpet',piano:'Piano',choir:'Choir',noise:'Noise',drive:'Distort',drum:'Drum hits',kit:'Drum type',dyn:'Dynamics',swell:'Swell',accent:'Accent'};
+const DESC={pitch:'Base note height, 100 to 1000 Hz on a log scale.',slope:'Direction of the phrase: low falls, high rises.',wobble:'Adds a wavy up and down curve.',span:'How many octaves a phrase covers.',leap:'Chance a note jumps a whole octave.',len:'Number of notes, 4 to 14.',tempo:'Speed, 40 to 200 BPM.',pause:'Silence between phrases.',meter:'Low groups notes in 2s and 4s, high in 3s and 5s.',swing:'Long and short pairs inside even groups.',chaos:'Random note lengths and random rests.',noteLen:'How short (staccato) or long (legato) each note rings, independent of speed.',gliss:'Notes slide into each other.',bendA:'First note scoops up (low) or falls from above (high).',bendZ:'Last note bends up (high) or falls off (low).',vib:'Pitch wobble on every note.',chip:'Square wave, the classic 8-bit buzz.',flute:'Soft breathy tone.',bass:'Reedy low bassoon tone.',trump:'Bright brass that opens up.',piano:'Plucked tone that fades fast.',choir:'Three detuned voices with a vowel filter.',noise:'Breath or static under each note.',drive:'Distortion.',drum:'Chance a note becomes a drum hit.',kit:'Low is kick, middle snare, high hi-hat.',dyn:'Random loudness differences between notes.',swell:'Loudness curve across a phrase.',accent:'How much louder the first note of each beat is.'};
+const EM=E.EM;
+const ARCH={Chirp:{pitch:.85,tempo:.7,slope:.65,vib:.6,chip:.9,flute:.05,bass:0,trump:0,piano:.05,gliss:.55,bendZ:.8,len:.45,drum:.05,choir:0,noise:.02,drive:.1},
+Grumble:{pitch:.12,tempo:.35,pause:.6,slope:.3,vib:.2,bass:.9,chip:.15,piano:.1,trump:.2,flute:0,noise:.35,drive:.55,drum:.35,kit:.15,gliss:.2},
+Sage:{pitch:.55,tempo:.28,pause:.8,vib:.55,flute:.9,choir:.5,chip:0,piano:.15,bass:0,trump:0,gliss:.5,bendA:.35,drum:0,swing:.1,len:.4},
+Tock:{tempo:.7,pause:.25,wobble:.7,meter:.75,swing:.7,piano:.85,chip:.25,flute:0,drum:.6,kit:.5,chaos:.25,len:.6},
+Ghost:{pitch:.6,tempo:.22,pause:.85,vib:.7,choir:.9,flute:.5,chip:0,piano:0,gliss:.85,bendA:.3,bendZ:.25,noise:.25,span:.7,len:.35},
+Bot:{pitch:.5,tempo:.6,chip:.85,drive:.5,meter:.2,swing:0,chaos:0,gliss:0,vib:.05,leap:.35,flute:0,piano:.1,drum:.2,kit:.7,len:.6},
+Brass:{pitch:.35,tempo:.6,pause:.3,trump:.95,chip:.1,flute:0,piano:0,leap:.4,bendZ:.7,slope:.6,vib:.35,drive:.15,len:.55},
+Wisp:{pitch:.65,tempo:.2,pause:.75,flute:.85,noise:.3,chip:0,bass:0,piano:0,vib:.5,gliss:.6,span:.65,drum:0,len:.35,swing:.1},
+Clank:{pitch:.4,tempo:.75,drum:.75,kit:.4,chip:.5,bass:.2,flute:0,piano:0,trump:0,meter:.7,swing:.5,chaos:.3,drive:.3,len:.6,vib:.05},
+Drone:{pitch:.15,tempo:.12,pause:.85,choir:.8,bass:.5,chip:0,flute:0,piano:0,trump:0,vib:.1,span:.2,wobble:.1,len:.3,noise:.1},
+Sparkle:{pitch:.95,tempo:.85,leap:.5,chip:.9,flute:.1,bass:0,piano:.2,trump:0,vib:.4,gliss:.3,swing:.4,drum:.15,kit:.8,len:.65}};
+// starting-point traits: each pair sets a few dials at once, a quick way to sketch a voice before fine-tuning
+const TRAITS=[{q:'Energy',opts:[{label:'Still',over:{tempo:.18,vib:.1,dyn:.1,accent:.1}},{label:'Settled',over:{tempo:.38,vib:.2,dyn:.18,accent:.2}},{label:'Alert',over:{tempo:.62,vib:.35,dyn:.3,accent:.35}},{label:'Wired',over:{tempo:.85,vib:.5,dyn:.42,accent:.5}}]},
+{q:'Mood',opts:[{label:'Hollow',over:{pitch:.18,slope:.25,bass:.5,chip:0}},{label:'Muted',over:{pitch:.38,slope:.4,bass:.3,chip:.15}},{label:'Warm',over:{pitch:.58,slope:.55,bass:.1,chip:.35}},{label:'Bright',over:{pitch:.8,slope:.7,bass:0,chip:.6}}]},
+{q:'Texture',opts:[{label:'Inside',over:{chip:.7,flute:0,noise:.03,drive:.18}},{label:'Muffled',over:{chip:.4,flute:.15,noise:.1,drive:.08}},{label:'Open',over:{chip:.15,flute:.35,noise:.18,drive:.02}},{label:'Outside',over:{chip:.05,flute:.55,noise:.3,drive:0}}]},
+{q:'Rhythm',opts:[{label:'Steady',over:{meter:.18,swing:.05,chaos:.03,leap:.05}},{label:'Even',over:{meter:.35,swing:.2,chaos:.1,leap:.12}},{label:'Loose',over:{meter:.6,swing:.45,chaos:.25,leap:.25}},{label:'Wild',over:{meter:.8,swing:.7,chaos:.45,leap:.4}}]},
+{q:'Voice size',opts:[{label:'Small',over:{pitch:.78,bass:0,choir:0,span:.3},oct:1},{label:'Light',over:{pitch:.62,bass:.1,choir:.1,span:.4},oct:0},{label:'Full',over:{pitch:.4,bass:.35,choir:.25,span:.55},oct:0},{label:'Deep',over:{pitch:.25,bass:.6,choir:.4,span:.7},oct:-1}]}];
+const QK={stutter:'Stutter: repeats a note',squeak:'Squeak: a note jumps an octave',hiccup:'Hiccup: a note drops out',waver:'Waver: a note detunes briefly'};
+// annotation taxonomy: common characteristics of a human voice's emotions, delivery and situations
+const TAXO={Emotion:['Happy','Sad','Angry','Scared','Calm','Excited','Proud','Shy','Lonely','Playful','Tender','Annoyed'],
+Delivery:['Whisper','Shout','Steady','Frantic','Deadpan','Warm','Cold','Confident','Hesitant','Breathy'],
+Situation:['Greeting','Warning','Question','Celebration','Apology','Thinking aloud','Alert','Farewell','Teasing','Idle chatter']};
+let S={v:.1,a:.25,depth:0,par:'any',adv:1,chars:[],cid:0,labels:[],hist:[],cur:null,uid:1,play:null,seq:0,arch:0,checked:0,saved:0,sens:null,sh:[],volv:70,mute:0,tab:'voice',acat:'Emotion',mode:'gallery',wiz:{cid:0,step:1}},ctx,W2,NB,lt=0;
+const store={get(){try{return JSON.parse(localStorage.getItem('blip5')||'null')}catch(e){return null}},
+set(){try{localStorage.setItem('blip5',JSON.stringify({chars:S.chars.map(c=>({...ser(c),id:c.id})),cid:S.cid,labels:S.labels,uid:S.uid,v:S.v,a:S.a,depth:S.depth,adv:S.adv,vol:S.volv,hist:S.hist.slice(0,12).map(s=>({id:s.id,cid:s.cid,v:s.v,a:s.a,seed:s.seed,x:s.x,z:s.z,act:s.act,em:s.em,pa:s.pa,sn:s.sn,oc:s.oc}))}))}catch(e){}}};
+const {rng,gauss,emoT,fixX,fixQK,nearest,meaning,hydrate,sched,FEAT}=E;
+// characters
+function mkChar(name,over={},id){const used=new Set(S.chars.map(c=>c.col)),col=[0,1,2,3,4,5].find(i=>!used.has(i))??S.chars.length%6,sd={},lock={};K.forEach(k=>{sd[k]=.08;lock[k]=false});
+return{id:id??S.uid++,name,col,oct:0,minN:4,maxN:14,photo:null,setup:true,traits:{},exc:{},short:{},rng:{},lenSec:null,spec:null,feel:{},quirk:{amt:.12,types:{stutter:true,squeak:true,hiccup:false,waver:false}},seed:Math.random()*1e9|0,arch:null,temp:null,rel:null,gain:.8,mu:fixX({...emoT(0,0),...over}),sd,lock,off:{},b:0,n:0,undo:[],book:[]}}
+function ser(c){return{format:'blip-character',version:1,archetype:c.arch||undefined,temperament:c.temp||undefined,relationship:c.rel||undefined,name:c.name,color:c.col,octave:c.oct,seed:c.seed,gain:+c.gain.toFixed(3),pull:+c.gain.toFixed(3),baseline:+c.b.toFixed(3),ratings:c.n,params:Object.fromEntries(K.map(k=>[k,{mu:+c.mu[k].toFixed(4),sd:+c.sd[k].toFixed(4),lock:!!c.lock[k],off:!!c.off[k]}])),book:c.book,photo:c.photo,setup:c.setup,traits:c.traits,wizard:{pick:c.spec||undefined,except:c.exc,shortcuts:c.short,ranges:c.rng,seconds:c.lenSec||undefined},feel:c.feel,quirk:c.quirk,minN:c.minN,maxN:c.maxN}}
+function des(o){const c=mkChar(String(o.name||'Unnamed').slice(0,18),{},o.id);c.col=Math.abs(num(o.color,c.col)|0)%6;c.oct=cl(Math.round(num(o.octave,0)),-2,2);c.seed=num(o.seed,c.seed);c.gain=cl(num(o.pull!==undefined?o.pull:o.gain,.8));c.b=cl(num(o.baseline,0),-1,1);c.n=Math.max(0,num(o.ratings,0)|0);
+K.forEach(k=>{const p=(o.params||{})[k]||{};c.mu[k]=cl(num(p.mu,c.mu[k]));c.sd[k]=cl(num(p.sd,.08),.01,.4);c.lock[k]=!!p.lock;c.off[k]=!!p.off});
+c.minN=cl(Math.round(num(o.minN,4)),2,24);c.maxN=cl(Math.round(num(o.maxN,14)),c.minN+2,30);
+c.book=(Array.isArray(o.book)?o.book:[]).filter(b=>b&&b.x).slice(0,60).map(b=>({id:num(b.id,b.seed|0),v:cl(num(b.v,0),-1,1),a:cl(num(b.a,0),-1,1),seed:num(b.seed,1)|0,x:fixX(b.x),z:b.z||{},em:String(b.em||'Custom'),pa:b.pa||'any',sn:b.sn!==false,oc:num(b.oc,0),qk:fixQK(b.qk),minN:cl(Math.round(num(b.minN,4)),2,24),maxN:cl(Math.round(num(b.maxN,14)),6,30)}));
+c.photo=typeof o.photo==='string'&&o.photo.startsWith('data:image')?o.photo:null;c.setup=o.setup!==false;c.traits=o.traits&&typeof o.traits==='object'?o.traits:{};{const w=o.wizard||{};c.spec=w.pick&&typeof w.pick.n==='string'?{src:w.pick.src==='snd'?'snd':'jung',n:w.pick.n.slice(0,20)}:null;c.exc=w.except&&typeof w.except==='object'?w.except:{};c.short=w.shortcuts&&typeof w.shortcuts==='object'?w.shortcuts:{};c.rng={};if(w.ranges&&typeof w.ranges==='object')Object.entries(w.ranges).forEach(([k,r])=>{if(Array.isArray(r)&&r.length===2)c.rng[k]=[cl(num(r[0],0)),cl(num(r[1],1))]});c.lenSec=Array.isArray(w.seconds)&&w.seconds.length===2?[cl(num(w.seconds[0],2.5),.5,10),cl(num(w.seconds[1],5.5),.5,10)]:null}
+c.feel={};Object.keys(EM).forEach(k=>{const f=(o.feel||{})[k];c.feel[k]={score:cl(num(f&&f.score,0),-1,1),n:Math.max(0,num(f&&f.n,0)|0),hist:(f&&Array.isArray(f.hist)?f.hist:[]).filter(x=>x===1||x===-1).slice(-8)}});
+c.quirk=fixQK(o.quirk);c.arch=typeof o.archetype==='string'?o.archetype.slice(0,20):null;c.temp=o.temperament&&typeof o.temperament==='object'?o.temperament:null;c.rel=o.relationship&&typeof o.relationship==='object'?o.relationship:null;return c}
+const C=()=>S.chars.find(c=>c.id==S.cid)||(S.cid=S.chars[0].id,S.chars[0]);
+const cons=c=>{const u=K.filter(k=>!c.lock[k]);return Math.round(100*cl(1-u.reduce((a,k)=>a+c.sd[k],0)/(u.length||1)/.25))};
+function snap(c=C()){c.undo.push({mu:{...c.mu},sd:{...c.sd},lock:{...c.lock},b:c.b,n:c.n,oct:c.oct});if(c.undo.length>40)c.undo.shift()}
+function rnd(c){const r=rng(Math.random()*1e9|0),b=emoT(0,0);K.forEach(k=>{c.mu[k]=INS.includes(k)?0:cl(b[k]+(r()-.5)*.8)});
+const lead=INS[r()*INS.length|0];INS.forEach(k=>c.mu[k]=k===lead?.55+r()*.4:r()<.25?r()*.3:0);
+c.mu.drum=r()<.35?cl(.2+r()*.6):.05;c.mu.choir=r()<.3?cl(.2+r()*.5):0;c.oct=[-2,-1,-1,0,0,0,1,1,2][r()*9|0]}
+// labels: meaning learned from tagged examples
+const fixL=l=>({id:num(l.id,S.uid++),n:String(l.n||'label').slice(0,16),cat:l.cat||'Custom',s:cl(num(l.s,1),0,2),on:!!l.on,ex:(Array.isArray(l.ex)?l.ex:l.t?[{key:'prior',x:l.t,y:1}]:[]).filter(e=>e&&e.x).slice(-40).map(e=>({key:String(e.key),x:fixX(e.x),y:e.y<0?-1:1}))});
+const skey=s=>s.cid+':'+s.id,lab=id=>S.labels.find(l=>l.id==id);
+function setEx(l,s,y){l.ex=l.ex.filter(e=>e.key!==skey(s));if(y)l.ex.push({key:skey(s),x:fixX(s.x),y});l.ex=l.ex.slice(-40)}
+const tagOf=(l,s)=>s?(l.ex.find(e=>e.key===skey(s))||{}).y||0:0;
+function doc(l){const M=meaning(l),P=l.ex.filter(e=>e.y>0).length,top=K.slice().sort((a,b)=>M.w[b]-M.w[a]).filter(k=>M.w[k]>.1).slice(0,4);
+return`${P} yes, ${l.ex.length-P} no. `+(top.length?'Defined by '+top.map(k=>`${M.m[k]>.5?'high':'low'} ${NM[k]}`).join(', ')+`. Confidence ${Math.round(M.c*100)}%.`:'Needs a few more tags to find a pattern.')}
+function ensureTaxo(){Object.entries(TAXO).forEach(([cat,names])=>names.forEach(n=>{if(!S.labels.some(l=>l.n===n&&l.cat===cat))S.labels.push(fixL({n,cat,s:1,ex:[]}))}))}
+// sounds
+function mkSound(c,v,a,seed){const on=S.labels.filter(l=>l.on),s=E.generate({char:c,v,a,seed,depth:S.depth,adv:S.adv,par:S.par,sn:$('#snap').checked,pulls:on.map(l=>({id:l.id,s:l.s,M:meaning(l)}))});return Object.assign(s,{id:S.uid++})}
+function sens(c){return E.sens(c,{par:S.par})}
+// audio
+function master(){if(!S.master){S.master=ctx.createGain();S.comp=ctx.createDynamicsCompressor();S.comp.threshold.value=-14;S.comp.knee.value=22;S.comp.ratio.value=7;S.comp.attack.value=.003;S.comp.release.value=.18;S.master.connect(S.comp);S.comp.connect(ctx.destination)}return S.master}
+function stopVoice(){if(S.out){try{const g=S.out,t=ctx.currentTime;g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(0,t+.02)}catch(e){}}S.out=null}
+function init(){ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume()}
+function tick(fr=600,ty='triangle',d=.07){init();const t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();o.type=ty;o.frequency.setValueAtTime(fr,t);o.frequency.exponentialRampToValueAtTime(fr*1.5,t+d);g.gain.setValueAtTime(.12*vm(),t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(master());o.start(t);o.stop(t+d)}
+// The sound is rendered by the shared engine (same code that writes WAV files), then played as a buffer.
+const RSR=32000,bufs=new WeakMap();
+function play(s){init();stopVoice();const pv=vm()||1,sc=E.toScore(s);let b=bufs.get(s);if(!b||b.pv!==pv){const d=E.renderScore(sc,{sr:RSR,volume:pv}),ab=ctx.createBuffer(1,d.length,RSR);ab.copyToChannel(d,0);b={ab,pv};bufs.set(s,b)}
+const out=ctx.createGain(),src=ctx.createBufferSource(),t0=ctx.currentTime+.05;out.gain.value=vm()/pv;S.out=out;S.pv=pv;src.buffer=b.ab;src.connect(out);out.connect(ctx.destination);src.start(t0);
+S.play={t0,T:sc.dur_ms/1000};requestAnimationFrame(anim)}
+function anim(){const p=S.play,ph=$('#ph');if(!p||!ph)return;const e=ctx.currentTime-p.t0;if(e>p.T+.3){ph.setAttribute('opacity',0);S.play=null;return}ph.setAttribute('x',6+cl(e/p.T)*588);ph.setAttribute('opacity',.8);requestAnimationFrame(anim)}
+
+
+const IC={chip:'var(--yel)',flute:'var(--teal)',bass:'var(--red)',trump:'var(--pink)',piano:'var(--blu)'};
+function roll(s){const{o,T}=sched(s),lo=Math.min(...s.notes),hi=Math.max(...s.notes),y=q=>84-(Math.log(q/lo)/(Math.log(hi/lo)||1))*64,dom=INS.slice().sort((a,b)=>s.x[b]-s.x[a])[0];let h='';
+s.notes.forEach((fr,i)=>{const x=6+o[i][0]/T*588,w=Math.max(6,o[i][1]/T*588-3);
+if(s.rest[i])h+=`<rect x="${x}" y="100" width="${w}" height="4" rx="2" fill="var(--ink)" opacity=".35"/>`;
+else if(s.hit[i])h+=`<rect x="${x}" y="104" width="${Math.min(w,18)}" height="12" rx="5" fill="${['','var(--red)','var(--pink)','var(--teal)'][s.hit[i]]}" stroke="var(--ink)" stroke-width="2"/>`;
+else h+=`<rect x="${x}" y="${y(fr)+4-4*cl((s.vel[i]||1)/1.5,.1,1)}" width="${w}" height="${(4+8*cl((s.vel[i]||1)/1.5,.1,1)).toFixed(1)}" rx="5" opacity="${cl(.4+.4*(s.vel[i]||1),.4,1)}" fill="${IC[dom]}" stroke="var(--ink)" stroke-width="2.5"/>`});
+$('#roll').innerHTML=h+'<rect id="ph" x="6" y="4" width="4" height="112" rx="2" fill="var(--ink)" opacity="0"/>';
+const fl=[s.x.gliss>.5&&'glide',s.x.drive>.4&&'gritty',s.x.noise>.3&&'noisy',s.x.swing>.5&&'swing',s.x.chaos>.5&&'chaotic',Math.abs(s.x.bendA-.5)>.2&&'start bend',Math.abs(s.x.bendZ-.5)>.2&&'end bend'].filter(Boolean);
+$('#info').textContent=`${s.notes.length} notes, ${s.odd?'odd':'even'} beats, ${s.hit.filter((h,i)=>h&&!s.rest[i]).length} drum hits, ${INSN(dom)}${fl.length?', '+fl.join(', '):''}. Click the view to replay.`}
+const INSN=k=>({chip:'chip',flute:'flute',bass:'bassoon',trump:'trumpet',piano:'piano'})[k];
+
+
+
+// ---- mode switching: gallery <-> wizard <-> studio ----
+function setMode(m){S.mode=m;$('#view-gallery').hidden=m!=='gallery';$('#view-wizard').hidden=m!=='wizard';$('#view-studio').hidden=m!=='studio';
+if(m==='gallery')renderGallery();if(m==='wizard')renderWizard();if(m==='studio'){all();document.querySelectorAll('#tabs .tab').forEach(()=>{});}}
+function initials(n){return(n.trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2)||'?').toUpperCase()}
+function avatar(c){return c.photo?`<img src="${c.photo}" alt="">`:esc(initials(c.name))}
+function traitSummary(c){const t=Object.entries(c.traits||{}).filter(([i,idx])=>typeof idx==='number'&&TRAITS[i]&&TRAITS[i].opts[idx]);if(!t.length)return 'Not shaped yet';return t.map(([i,idx])=>TRAITS[i].opts[idx].label).join(', ')}
+function renderGallery(){$('#gal').innerHTML=S.chars.map(c=>`<div class="gc" data-id="${c.id}" style="--gc:${PAL[c.col]}"><div class="av">${avatar(c)}</div><h3>${esc(c.name)}</h3><p>${esc(traitSummary(c))}</p>
+<div class="row" style="justify-content:center"><button data-a="use">${c.setup?'Use':'Continue setup'}</button><label class="btn" style="padding:4px 8px">Photo<input type="file" accept="image/*" data-a="photo" hidden></label><button class="del" data-a="del">Del</button></div></div>`).join('')
++'<div class="gc new" data-a="newchar"><div class="av" style="background:transparent;border-style:dashed">+</div><h3>New character</h3><p>Start the setup wizard</p></div>'}
+$('#gal').onclick=e=>{const g=e.target.closest('.gc');if(!g)return;const b=e.target.closest('button');
+if(g.classList.contains('new')){startWizard();return}
+const c=S.chars.find(x=>x.id==g.dataset.id);if(!c)return;
+if(!b||b.dataset.a==='use'){S.cid=c.id;S.cur=null;if(c.setup){setMode('studio');speak()}else{S.wiz={cid:c.id,step:Object.keys(c.traits||{}).length?3:1};setMode('wizard')}}
+else if(b.dataset.a==='del'){if(S.chars.length<2){toast('Keep at least one character');return}S.chars=S.chars.filter(x=>x.id!=c.id);S.hist=S.hist.filter(s=>s.cid!=c.id);if(S.cid==c.id)S.cid=S.chars[0].id;store.set();renderGallery()}};
+$('#gal').onchange=async e=>{if(e.target.dataset.a!=='photo')return;const g=e.target.closest('.gc'),c=S.chars.find(x=>x.id==g.dataset.id),f=e.target.files[0];if(!c||!f)return;c.photo=await toThumb(f);store.set();renderGallery();if(S.mode==='studio'&&C().id===c.id)renderChars()}
+function toThumb(file){return new Promise(res=>{const img=new Image(),rd=new FileReader();rd.onload=()=>{img.onload=()=>{const s=64,cv=document.createElement('canvas');cv.width=s;cv.height=s;const g=cv.getContext('2d'),r=Math.max(s/img.width,s/img.height),w=img.width*r,h=img.height*r;
+g.drawImage(img,(s-w)/2,(s-h)/2,w,h);res(cv.toDataURL('image/jpeg',.82))};img.src=rd.result};rd.readAsDataURL(file)})}
+
+// ---- identity first: name, archetype, traits and shortcuts are composed in that order; anything unspecified is derived from the letters of the name ----
+const SND_BLURB={Chirp:'Tiny, bird-like',Grumble:'Low and grumpy',Sage:'Slow, airy flute',Tock:'Ticking piano and drums',Ghost:'Hollow choir',Bot:'Square-wave robot',Brass:'Bold trumpet',Wisp:'Breathy and light',Clank:'Metal percussion',Drone:'Deep humming',Sparkle:'High and glittery'};
+const EXC=[
+{lo:[{l:'it gets excited: quick bursts',d:{tempo:.3,accent:.2}},{l:'it is startled: one sharp squeak',d:{leap:.3,vib:.1}},{l:'it is pleased: a little bounce',d:{wobble:.25,swing:.15,tempo:.15}}],
+ hi:[{l:'it is tired: trails off',d:{tempo:-.3,pause:.25,slope:-.2}},{l:'it is thinking: goes quiet',d:{pause:.35,len:-.15}},{l:'it is embarrassed: fast, then silent',d:{tempo:.1,pause:.3,dyn:-.1}}]},
+{lo:[{l:'someone is kind to it: a warm lift',d:{pitch:.15,slope:.2,flute:.2}},{l:'it is amused: a dry little giggle',d:{wobble:.25,leap:.15,chip:.2}},{l:'it is protecting someone: firm',d:{accent:.3,drive:.15,bass:.1}}],
+ hi:[{l:'it is disappointed: dips low',d:{pitch:-.2,slope:-.3}},{l:'it is worried: wobbly',d:{vib:.25,wobble:.2}},{l:'it is annoyed: clipped',d:{noteLen:-.2,accent:.3,drive:.12}}]},
+{lo:[{l:'it wants to be heard: opens up',d:{flute:.25,noise:.1,chip:-.2}},{l:'it is being tender: breathy',d:{choir:.3,noise:.1,gliss:.2}},{l:'it is alarmed: a metallic edge',d:{drive:.25,chip:.2}}],
+ hi:[{l:'it is shy: draws in',d:{chip:.3,flute:-.2,dyn:-.15}},{l:'it is angry: gritty',d:{drive:.3,noise:.15}},{l:'it is sleepy: hushed',d:{dyn:-.2,swell:.2,noise:-.1}}]},
+{lo:[{l:'it gets excited: trips over itself',d:{chaos:.3,swing:.2}},{l:'it is nervous: stutters',d:{chaos:.2,leap:.1,tempo:.15}},{l:'it is showing off: a flourish',d:{gliss:.25,len:.2,leap:.15}}],
+ hi:[{l:'it is focused: snaps to a beat',d:{meter:-.3,chaos:-.25,swing:-.2}},{l:'it is serious: measured',d:{tempo:-.15,pause:.2,chaos:-.25}},{l:'it is calming someone: slow and even',d:{tempo:-.2,swing:-.1,chaos:-.3}}]},
+{lo:[{l:'it is brave: drops lower',d:{pitch:-.2,bass:.2}},{l:'it is cross: gruff',d:{drive:.2,pitch:-.12}},{l:'it is pretending to be big: puffed up',d:{bass:.3,choir:.15,pitch:-.1}}],
+ hi:[{l:'it is playful: squeaks up',d:{pitch:.25,leap:.2}},{l:'it is being gentle: softens',d:{dyn:-.15,flute:.2,pitch:.1}},{l:'it is scared: voice jumps high',d:{pitch:.2,vib:.3,leap:.2}}]}];
+const SHORT=[
+{id:'len',q:'Usual sentence length',opts:[['Tiny, about 4 notes',{len:.05}],['Short, about 6',{len:.25}],['Medium, about 9',{len:.5}],['Long, about 12',{len:.75}],['Rambling, 14 or so',{len:.95}]]},
+{id:'temper',q:'Temper',opts:[['Docile',{drive:0,noise:0,accent:.1,slope:.62,bass:0,tempo:.35}],['Gentle',{drive:.03,noise:.04,accent:.25,slope:.55,tempo:.45}],['Firm',{drive:.3,noise:.12,accent:.55,slope:.42,tempo:.6}],['Aggressive',{drive:.65,noise:.3,accent:.8,slope:.25,bass:.4,tempo:.78}]]},
+{id:'ins',q:'Main instrument',opts:[['Chip beeps',{chip:.9,flute:0,bass:0,trump:0,piano:0}],['Flute',{chip:0,flute:.9,bass:0,trump:0,piano:0}],['Bassoon',{chip:0,flute:0,bass:.9,trump:0,piano:0}],['Trumpet',{chip:0,flute:0,bass:0,trump:.9,piano:0}],['Piano',{chip:0,flute:0,bass:0,trump:0,piano:.9}],['A blend',{chip:.45,flute:.3,bass:0,trump:0,piano:.3}]]},
+{id:'pause',q:'How it pauses',opts:[['Nonstop chatter',{pause:.08}],['Easy flow',{pause:.35}],['Thoughtful',{pause:.6}],['Long silences',{pause:.88}]]}];
+function nameHash(n){let h=2166136261;for(const ch of String(n).toLowerCase().replace(/[^a-z0-9À-￿]/g,'')){h^=ch.codePointAt(0);h=Math.imul(h,16777619)>>>0}return h>>>0}
+function nameFlavour(n){const L=String(n).replace(/[^a-z]/gi,''),vr=(L.match(/[aeiouy]/gi)||[]).length/Math.max(1,L.length),h=nameHash(n);return{vr,lead:INS[h%INS.length],arch:Object.keys(E.ARCHETYPES)[h%12],h}}
+function compose(c){const fl=nameFlavour(c.name),r=rng(fl.h),b=emoT(0,0),sp=c.spec,mu={},sd={};
+K.forEach(k=>{mu[k]=INS.includes(k)?0:cl(b[k]+(r()-.5)*.7);sd[k]=.08});
+mu.pitch=cl(mu.pitch+(fl.vr-.4)*.5);mu.drum=cl(mu.drum-(fl.vr-.4)*.4);let oct=[-1,0,0,0,1][fl.h%5];
+const named=sp&&sp.n&&(sp.src==='jung'?E.ARCHETYPES[sp.n].d:ARCH[sp.n]);
+if(named){INS.forEach(k=>mu[k]=b[k]);Object.entries(named).forEach(([k,v])=>mu[k]=cl(v+(r()-.5)*.1));oct=0}
+else INS.forEach(k=>mu[k]=k===fl.lead?.55+r()*.4:r()<.2?r()*.3:0);
+Object.entries(c.traits||{}).forEach(([i,idx])=>{const o=TRAITS[i]&&TRAITS[i].opts[idx];if(!o)return;Object.entries(o.over).forEach(([k,v])=>{mu[k]=cl(v);sd[k]=.09});if(o.oct!==undefined)oct=o.oct;
+ const j=(c.exc||{})[i];if(j!=null){const ex=(idx<2?EXC[i].lo:EXC[i].hi)[j];if(ex)Object.entries(ex.d).forEach(([k,v])=>{mu[k]=cl(mu[k]+v*.5);sd[k]=Math.max(sd[k],.17)})}});
+Object.entries(c.short||{}).forEach(([id,idx])=>{const s=SHORT.find(x=>x.id===id),o=s&&s.opts[idx];if(o)Object.entries(o[1]).forEach(([k,v])=>{mu[k]=cl(v);sd[k]=Math.max(.08,sd[k])})});
+Object.entries(c.rng||{}).forEach(([k,[lo,hi]])=>{if(K.includes(k)){mu[k]=cl((lo+hi)/2);sd[k]=cl((hi-lo)/4,.01,.4)}});
+c.mu=fixX(mu);K.forEach(k=>{c.sd[k]=sd[k]});c.oct=oct;c.seed=fl.h;c.minN=4;c.maxN=14;if(c.lenSec)fitLength(c,c.lenSec[0],c.lenSec[1]);
+const old=c.arch;c.arch=sp&&sp.n?(sp.src==='jung'?sp.n:E.SOUND_ARCH[sp.n]):fl.arch;if(c.arch!==old)c.temp=null}
+const SUB={Neutral:[['Plain statement',0,0,'even and matter-of-fact, no particular feeling'],['Greeting',.35,.25,'friendly, a little up at the end, like saying hi'],['Thinking',-.05,-.35,'slow and hesitant, working something out'],['Question',.1,.3,'curious, lifting as if asking something']],
+Sad:[['Wistful',-.35,-.35,'soft and slow, a gentle fall, missing something'],['Gloomy',-.75,-.5,'heavy and low, long drops'],['Hurt',-.6,.15,'a little sharp and shaky, like being let down'],['Lonely',-.5,-.75,'very slow and small, trailing off']],
+Happy:[['Content',.55,-.1,'warm and unhurried, settled'],['Giddy',.9,.75,'bubbly and fast, bouncing leaps'],['Proud',.75,.2,'steady and rising, confident'],['Relieved',.4,-.3,'a long sigh, then a light lift']],
+Curious:[['Intrigued',.25,.2,'leaning in, rising slowly'],['Puzzled',-.05,.35,'wobbly and unsure, questions that do not resolve'],['Playful',.5,.5,'darting around the idea, hopping'],['Cautious',0,-.15,'careful small steps with pauses']],
+Excited:[['Thrilled',.85,.95,'fastest and brightest, everything at once'],['Impatient',.1,.85,'quick and clipped, pushing on'],['Nervous',-.1,.75,'jittery, shaky and uneven'],['Cheering',.95,.7,'big rising lines, celebrating']],
+Grumpy:[['Annoyed',-.45,.45,'clipped and sharp'],['Sulky',-.55,-.1,'low and slow, sticking at it'],['Furious',-.85,.9,'fast and harsh, hammering'],['Dismissive',-.25,.2,'flat and curt, brushing it off']],
+Sleepy:[['Drowsy',.15,-.8,'slow and soft, sinking'],['Cozy',.5,-.65,'warm and slow, happy to rest'],['Yawning',-.1,-.85,'long falls, spread out'],['Dreamy',.35,-.5,'floating, drifting up and down']]};
+const RNG=[{id:'sec',q:'Sentence length',unit:'sec',min:.5,max:10,def:[2.5,5.5],fmt:v=>v.toFixed(1)+' s'},
+{id:'tempo',q:'Speed',min:0,max:1,fmt:v=>Math.round(40+160*v)+' BPM'},{id:'pitch',q:'Voice height',min:0,max:1,fmt:v=>Math.round(100*10**v)+' Hz'},
+{id:'gliss',q:'Glide between notes',min:0,max:1,fmt:v=>Math.round(v*100)+'%'},{id:'drive',q:'Grit',min:0,max:1,fmt:v=>Math.round(v*100)+'%'}];
+function secs(c,seed){const s=E.generate({char:c,v:0,a:0,seed,depth:S.depth,adv:S.adv,par:S.par,sn:true,pulls:[]});return sched(s).T}
+function secStats(c){const a=[];for(let i=1;i<=30;i++)a.push(secs(c,i*7919));a.sort((x,y)=>x-y);return{med:a[15],w:a[26]-a[3]}}
+function fitLength(c,lo,hi){c.minN=2;c.maxN=30;const mid=(lo+hi)/2;let a=0,b=1;c.sd.len=.02;for(let i=0;i<12;i++){c.mu.len=(a+b)/2;secStats(c).med<mid?a=c.mu.len:b=c.mu.len}c.mu.len=(a+b)/2;
+ a=.01;b=.4;for(let i=0;i<10;i++){c.sd.len=(a+b)/2;secStats(c).w<(hi-lo)?a=c.sd.len:b=c.sd.len}c.sd.len=(a+b)/2}
+function feelWords(v,a){return(a>.5?'fast and lively':a>.15?'a little quick':a<-.5?'slow and sleepy':a<-.15?'slow':'a steady pace')+', '+(v>.5?'bright, rising tone':v>.15?'a warm tone':v<-.5?'low, falling tone':v<-.15?'a dull tone':'a neutral tone')}
+function describeSound(name,v,a,s,intent){const n=s.notes,T=sched(s).T,f=n[0],l=n[n.length-1];return`<b>${esc(name)}</b>${intent?': '+esc(intent)+'.':''} It should sound ${feelWords(v,a)}. This one has ${n.length} notes over ${T.toFixed(1)} s, from about ${Math.round(f)} Hz ${l>f*1.06?'up to':l<f/1.06?'down to':'and ending near'} ${Math.round(l)} Hz.`}
+// ---- wizard: choose or make a character, sketch it with traits, fine-tune, feelings check, quirks ----
+function startWizard(){const c=mkChar('New Friend',{});c.setup=false;S.chars.push(c);S.cid=c.id;S.cur=null;S.wiz={cid:c.id,step:1};setMode('wizard')}
+function wchar(){return S.chars.find(c=>c.id===S.wiz.cid)||C()}
+function renderWizard0(){const c=wchar(),st=S.wiz.step,N=6;$('#wzdots').innerHTML=[1,2,3,4,5,6].map(i=>`<i class="${i<=st?'on':''}"></i>`).join('');
+const nav=(back,next,label)=>`<div class="row" style="justify-content:space-between;margin-top:12px">${back?`<button data-nav="${back}">Back</button>`:'<span></span>'}<button class="save" data-nav="${next}">${label}</button></div>`,fl=nameFlavour(c.name);
+if(st===1){$('#wzbody').innerHTML=`<h2><span>1. Who is this?</span></h2><div class="row" style="gap:14px;align-items:center"><div class="av" style="--gc:${PAL[c.col]};background:${PAL[c.col]}">${avatar(c)}</div>
+<div><input type="text" id="wzname" value="${esc(c.name)}" maxlength="18"><div class="row" style="margin-top:6px"><label class="btn">Add photo<input type="file" accept="image/*" id="wzphoto" hidden></label><span class="row" id="wzsw"></span></div></div></div>
+<p class="lead">The name matters: every choice you leave open is filled in from its letters. The same name always gives the same voice, and a different name gives a different one.</p><p class="nflav" id="wzflav"></p>${nav(0,2,'Next: who they are')}`;
+$('#wzsw').innerHTML=PAL.map((p,i)=>`<button class="sw ${c.col===i?'act':''}" data-i="${i}" style="--c:${p}"></button>`).join('');
+$('#wzsw').onclick=e=>{const b=e.target.closest('button');if(b){c.col=+b.dataset.i;store.set();renderWizard()}};paintFlav(c);}
+else if(st===2){const sp=c.spec||{},card=(src,n,bl)=>`<button class="acard ${sp.src===src&&sp.n===n?'on':''}" data-pick="${src}:${n}" title="${bl}"><b>${n}</b><span>${bl}</span></button>`;
+$('#wzbody').innerHTML=`<h2><span>2. Who are they, deep down?</span></h2><p class="lead">This is the biggest choice: it sets the instrument, pitch, speed and how the character reacts when you talk to it. Everything after this refines it. You can pick one, or none and let the name decide.</p>
+<div class="sub">Character archetype</div><div class="agrid">${Object.entries(E.ARCHETYPES).map(([k,a])=>card('jung',k,a.blurb)).join('')}</div>
+<div class="sub">Or a sound type</div><div class="agrid">${Object.keys(ARCH).map(k=>card('snd',k,SND_BLURB[k]||'')).join('')}</div>
+<div class="row"><button class="acard ${sp.src==='surprise'?'on':''}" data-pick="surprise:">🎲 <b style="display:inline">Surprise me</b><span> from the name</span></button><button class="acard ${!c.spec?'on':''}" data-pick="none:">None, I will sketch it<span> leftovers come from the name</span></button></div>
+<p class="nflav">Now: ${c.spec&&c.spec.n?esc(c.spec.n):'chosen from the name: '+fl.arch}</p>${nav(1,3,'Next: sketch the voice')}`}
+else if(st===3){$('#wzbody').innerHTML=`<h2><span>3. Sketch the voice</span></h2><p class="lead">Answer any, all or none. Each answer is a starting point. After you answer, you can add an "except when…" moment: the character mostly stays true, but now and then it drifts that way, so it is predictable up to a point and a little random after that. Whatever you skip comes from the name.</p>
+${TRAITS.map((t,i)=>{const cur=c.traits[i],ex=cur==null?null:(cur<2?EXC[i].lo:EXC[i].hi);return`<div class="pair"><div class="q">${t.q}</div><div class="pchoice">${t.opts.map((o,idx)=>`<label class="${cur===idx?'on':''}" data-i="${i}" data-idx="${idx}"><input type="checkbox" ${cur===idx?'checked':''}>${o.label}</label>`).join('')}</div>${ex?`<select class="exc" data-exc="${i}"><option value="">${t.opts[cur].label}, except when… (optional)</option>${ex.map((x,j)=>`<option value="${j}" ${c.exc[i]===j?'selected':''}>…except when ${x.l}</option>`).join('')}</select>`:''}</div>`}).join('')}
+${nav(2,4,'Next: fine-tune by ear')}`}
+else if(st===4){const n=c.n;$('#wzbody').innerHTML=`<h2><span>4. Fine-tune by ear</span></h2><p class="lead">Hear the voice in different moods. Each button tells you what it is trying to do, so you can judge whether it fits. Then Like or Nope, or use the shortcuts to change the big things directly.</p>
+<div class="emo">${['Neutral',...Object.keys(EM)].map(k=>`<button data-emo="${k}" class="${S.wzNowName===k?'on':''}">▶ ${k}</button>`).join('')}</div><div class="emo subs" id="wzsubs">${subsHtml()}</div>
+<div class="nowp" id="wznow">${S.wzNow&&S.wzNowCid===c.id?S.wzNow:'Press a mood to hear it. A short note here will say what you should be hearing.'}</div>
+<div class="row" style="justify-content:center"><button class="like" id="wzlike">Like</button><button class="nope" id="wznope">Nope</button></div><p class="note" style="text-align:center;margin:2px 0 0">Ratings so far: <b>${n}</b>${n<3?' (try at least 3)':''}</p>
+<div class="sub">Shortcuts to the big things</div><div class="shg">${SHORT.map(s=>`<label>${s.q}<select class="sh" data-short="${s.id}"><option value="">As it is now</option>${s.opts.map((o,i)=>`<option value="${i}" ${c.short[s.id]===i?'selected':''}>${o[0]}</option>`).join('')}</select></label>`).join('')}</div>
+<div class="sub">Ranges: drag both ends</div><p class="nflav" style="margin:0 0 4px">Each time it speaks it picks something between the two handles. Close together means steady; far apart means it varies.</p>${RNG.map(r=>drHtml(c,r)).join('')}
+${nav(3,5,n>=1?'Next: feelings check':'Skip for now')}`;}
+else if(st===5){$('#wzbody').innerHTML=`<h2><span>5. Feelings check</span></h2><p class="note">Hear this voice as each feeling and rate how convincing it is.</p><div class="feelg" id="wzfeel"></div>${nav(4,6,'Next: quirks')}`;renderFeel('wzfeel',c);}
+else{$('#wzbody').innerHTML=`<h2><span>6. A few quirks</span></h2><p class="note">Small unpredictable glitches so the voice isn't too perfect. Optional.</p>
+<div class="ctl"><span>Quirkiness</span><input type="range" id="wzqamt" min="0" max="100" value="${c.quirk.amt*100}"><output>${Math.round(c.quirk.amt*100)}</output></div>
+<div class="quirkbox row" id="wzqtypes"></div>${nav(5,0,'Finish: enter studio')}`;renderQuirkBox('wzqtypes',c,'wzqamt');}}
+function subsHtml(){const l=SUB[S.wzNowName];return l?l.map((x,i)=>`<button data-sub="${i}" class="${S.wzSub===i?'on':''}" title="${esc(x[3])}">${x[0]}</button>`).join(''):'<span class="note">Pick a mood, then a kind of that mood.</span>'}
+function drVal(c,r){if(r.id==='sec')return c.lenSec||r.def;const m=c.mu[r.id],s=c.sd[r.id],g=c.rng&&c.rng[r.id];return g||[cl(m-2*s),cl(m+2*s)]}
+function drHtml(c,r){const [lo,hi]=drVal(c,r),f=v=>Math.round(1000*(v-r.min)/(r.max-r.min));return`<div class="dr" data-dr="${r.id}"><span class="drl">${r.q}</span><div class="drt"><i class="drf"></i><input type="range" class="lo" min="0" max="1000" value="${f(lo)}" aria-label="${r.q} lowest"><input type="range" class="hi" min="0" max="1000" value="${f(hi)}" aria-label="${r.q} highest"></div><output></output><button class="drx" data-drx="${r.id}" title="Back to automatic">↺</button></div>`}
+function drPaint(d){const r=RNG.find(x=>x.id===d.dataset.dr),lo=d.querySelector('.lo'),hi=d.querySelector('.hi');let a=+lo.value,b=+hi.value;if(a>b-15){if(document.activeElement===lo){a=b-15;lo.value=a}else{b=a+15;hi.value=b}}
+ d.querySelector('.drf').style.cssText=`left:${a/10}%;right:${100-b/10}%`;const v=x=>r.min+(r.max-r.min)*x/1000;d.querySelector('output').textContent=r.fmt(v(a))+' to '+r.fmt(v(b))+(r.id==='sec'?' (middle '+r.fmt(v((a+b)/2))+')':'');return[v(a),v(b)]}
+function wzHearMode(){try{return localStorage.getItem('hbHear')||'every'}catch(e){return'every'}}
+function addHear(){const st=S.wiz.step,body=$('#wzbody');if(st<2||st>4)return;const m=wzHearMode(),h=document.createElement('div');h.className='hear';h.innerHTML=`<button id="wzhearb" class="${m==='off'?'':'on'}">🔊 Hear as you choose: ${m==='off'?'off':'on'}</button><select id="wzhear" aria-label="When to play sounds"><option value="every" ${m==='every'?'selected':''}>on every choice</option><option value="step" ${m==='step'?'selected':''}>once when I change step</option><option value="off" ${m==='off'?'selected':''}>off, I will press play</option></select><button id="wzhearnow">▶ Hear it now</button>`;body.insertBefore(h,body.children[1])}
+function renderWizard(){renderWizard0();addHear();document.querySelectorAll('.dr').forEach(drPaint)}
+function paintFlav(c){const f=nameFlavour(c.name),e=document.getElementById('wzflav');if(e)e.innerHTML=`“${esc(c.name)}”: ${Math.round(f.vr*100)}% vowels, so it leans ${f.vr>.45?'brighter and more melodic':'rougher and more percussive'}. If no instrument is chosen it will favour ${f.lead==='trump'?'trumpet':f.lead==='bass'?'bassoon':f.lead}.`}
+function wzPlay(c,name,si){const l=SUB[name]||SUB.Neutral;if(S.wzNowName!==name||si==null){si=si==null?((S.wzNowName===name?(S.wzSub+1):0)%l.length):si}S.wzSub=si;const [sn,v,a,intent]=l[si],s=mkSound(c,v,a,Math.random()*1e9|0);S.hist.unshift(s);S.hist=S.hist.slice(0,40);S.cur=s;play(s);S.wzNow=describeSound(name+' ('+sn.toLowerCase()+')',v,a,s,intent);S.wzNowName=name;S.wzNowCid=c.id;const n=document.getElementById('wznow');if(n)n.innerHTML=S.wzNow;const sb=document.getElementById('wzsubs');if(sb)sb.innerHTML=subsHtml();document.querySelectorAll('.emo button[data-emo]').forEach(b=>b.classList.toggle('on',b.dataset.emo===name))}
+function reCompose(c,msg){if(c.n>0||c.undo.length>0){snap(c);if(c.n>0)toast('Earlier ratings were reset by this change. Undo is in the studio.');c.n=0}compose(c);S.sens=sens(c);store.set()}
+$('#wzbody').onclick=e=>{const nv=e.target.closest('[data-nav]'),pc=e.target.closest('.pchoice label'),pk=e.target.closest('[data-pick]'),em=e.target.closest('[data-emo]'),c=wchar();
+if(pk){const [src,n]=pk.dataset.pick.split(':');const same=c.spec&&c.spec.src===src&&c.spec.n===n;if(src==='none'||same)c.spec=null;else if(src==='surprise'){const ks=Object.keys(E.ARCHETYPES);c.spec={src:'jung',n:ks[(nameHash(c.name)>>>3)%ks.length]}}else c.spec={src,n};reCompose(c);renderWizard();wzPreview(c);return}
+if(pc){const i=+pc.dataset.i,idx=+pc.dataset.idx;if(c.traits[i]===idx){delete c.traits[i];delete c.exc[i]}else{c.traits[i]=idx;delete c.exc[i]}reCompose(c);renderWizard();wzPreview(c);return}
+if(em){wzPlay(c,em.dataset.emo);return}
+const sb=e.target.closest('[data-sub]');if(sb){wzPlay(c,S.wzNowName,+sb.dataset.sub);return}
+const dx=e.target.closest('[data-drx]');if(dx){const id=dx.dataset.drx;if(id==='sec')c.lenSec=null;else delete c.rng[id];reCompose(c);renderWizard();wzPreview(c);return}
+if(e.target.id==='wzhearb'){try{localStorage.setItem('hbHear',wzHearMode()==='off'?'every':'off')}catch(x){}renderWizard();return}
+if(e.target.id==='wzhearnow'){mkAndShow(c);return}
+if(e.target.id==='wzlike'||e.target.id==='wznope'){S.cid=c.id;rate(e.target.id==='wzlike');S.wiz.step=4;renderWizard();return}
+if(!nv)return;const d=+nv.dataset.nav;if(d===0){c.setup=true;S.cid=c.id;S.cur=null;store.set();setMode('studio');speak();toast(`${c.name} is ready. Keep teaching it any time.`);return}
+S.wiz.step=d;renderWizard();if(d>=2&&d<=3)wzPreview(c,'nav')};
+function wzPreview(c,why='choice'){const m=wzHearMode();if(m==='off'||(m==='step'&&why==='choice'))return;clearTimeout(wzPreview.t);wzPreview.t=setTimeout(()=>mkAndShow(c),120)}
+$('#wzbody').oninput=e=>{const dr=e.target.closest&&e.target.closest('.dr');if(dr){drPaint(dr);return}
+if(e.target.id==='wzname'){const c=wchar();c.name=e.target.value.slice(0,18)||'New Friend';if(!(c.n>0))compose(c);store.set();paintFlav(c)}};
+$('#wzbody').onchange=async e=>{const c=wchar(),x=e.target;if(x.id==='wzphoto'){const f=x.files[0];if(f){c.photo=await toThumb(f);store.set();renderWizard()}}
+else if(x.id==='wzhear'){try{localStorage.setItem('hbHear',x.value)}catch(e){}renderWizard()}
+else if(x.closest('.dr')){const d=x.closest('.dr'),r=RNG.find(q=>q.id===d.dataset.dr),[lo,hi]=drPaint(d);if(r.id==='sec')c.lenSec=[+lo.toFixed(2),+hi.toFixed(2)];else c.rng[r.id]=[+((lo-r.min)/(r.max-r.min)).toFixed(3),+((hi-r.min)/(r.max-r.min)).toFixed(3)];reCompose(c);wzPreview(c)}
+else if(x.dataset.exc!==undefined){const i=x.dataset.exc;if(x.value==='')delete c.exc[i];else c.exc[i]=+x.value;reCompose(c);wzPreview(c)}
+else if(x.dataset.short!==undefined){const id=x.dataset.short;if(x.value==='')delete c.short[id];else c.short[id]=+x.value;reCompose(c);wzPreview(c)}};
+function mkAndShow(c){const s=mkSound(c,S.v,S.a,Math.random()*1e9|0);S.hist.unshift(s);S.hist=S.hist.slice(0,40);S.cur=s;play(s)}
+// ---- feelings scorecard: how convincing is this character at each feeling (separate from dial-learning Like/Nope) ----
+function renderFeel(id,c=C()){$('#'+id).innerHTML=Object.entries(EM).map(([name,[v,a]])=>{const f=c.feel[name]||{score:0,n:0,hist:[]},pct=Math.round((f.score+1)/2*100),played=S.feelPlayed&&S.feelPlayed[c.id+':'+name];
+return`<div class="fc" data-name="${name}"><b>${name}</b><div class="fscore">${f.n?pct+'%':'—'}</div><div class="fn">${f.n} rated</div><div class="fdots">${(f.hist||[]).slice(-8).map(h=>`<i class="${h>0?'y':'n'}"></i>`).join('')||'<i></i>'}</div>
+<div class="row" style="justify-content:center"><button data-a="play">▶ Play</button><button class="like" data-a="good" ${played?'':'disabled'}>Good</button><button class="nope" data-a="bad" ${played?'':'disabled'}>Not quite</button></div></div>`}).join('')}
+document.addEventListener('click',e=>{const fc=e.target.closest('.fc');if(!fc)return;const b=e.target.closest('button');if(!b)return;const name=fc.dataset.name,[v,a]=EM[name],c=(S.mode==='wizard'?wchar():C());
+if(!S.feelPlayed)S.feelPlayed={};
+if(b.dataset.a==='play'){const s=mkSound(c,v,a,Math.random()*1e9|0);if(S.mode==='studio'){S.hist.unshift(s);showCur(s)}else S.cur=s;play(s);S.feelPlayed[c.id+':'+name]=true;if(S.mode==='wizard')renderFeel('wzfeel',c);else renderFeel('feel',c);return}
+if(b.dataset.a==='good'||b.dataset.a==='bad'){if(b.disabled)return;const up=b.dataset.a==='good',f=c.feel[name]||{score:0,n:0,hist:[]};f.score=cl(f.score*.7+(up?1:-1)*.3,-1,1);f.n++;f.hist=(f.hist||[]).concat(up?1:-1).slice(-8);c.feel[name]=f;S.feelPlayed[c.id+':'+name]=false;store.set();
+fc.classList.add(up?'gflash':'nflash');setTimeout(()=>fc.classList.remove('gflash','nflash'),700);
+if(S.mode==='wizard')renderFeel('wzfeel',c);else renderFeel('feel',c);toast(`Counted: ${name} marked ${up?'good':'not quite'} (${f.n} ratings total, now ${Math.round((f.score+1)/2*100)}%).`)}});
+// ---- quirks ----
+function renderQuirkBox(id,c=C(),ampId='qamt'){$('#'+id).innerHTML=Object.entries(QK).map(([k,label])=>`<label class="k"><input type="checkbox" data-qk="${k}" ${c.quirk.types[k]?'checked':''}>${label}</label>`).join('');
+if($('#'+ampId))$('#'+ampId).value=c.quirk.amt*100;const o=$('#'+ampId)&&$('#'+ampId).nextElementSibling;if(o)o.textContent=Math.round(c.quirk.amt*100)}
+document.addEventListener('input',e=>{if(e.target.id==='qamt'){C().quirk.amt=e.target.value/100;$('#qamto').textContent=e.target.value;store.set()}
+if(e.target.id==='wzqamt'){wchar().quirk.amt=e.target.value/100;e.target.nextElementSibling.textContent=e.target.value;store.set()}});
+document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.qk){const c=e.target.closest('#wzqtypes')?wchar():C();c.quirk.types[e.target.dataset.qk]=e.target.checked;store.set();tick(e.target.checked?700:420,'square',.05)}});
+$('#redosetup').onclick=()=>{S.wiz={cid:C().id,step:2};setMode('wizard')};
+$('#tochars').onclick=()=>setMode('gallery');
+
+function toast(m){const e=$('#toast');e.textContent=m;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2800)}
+const esc=t=>String(t).replace(/</g,'&lt;');
+const vm=()=>S.mute?0:(S.volv/70)**2;
+// feeling wheel: superellipse (squircle) rings
+const sup=(r,n=4)=>{let p='';for(let i=0;i<=72;i++){const t=i/72*6.2832,c=Math.cos(t),s=Math.sin(t);p+=(i?'L':'M')+(r*Math.sign(c)*Math.abs(c)**(2/n)*100).toFixed(1)+' '+(-r*Math.sign(s)*Math.abs(s)**(2/n)*100).toFixed(1)}return p+'Z'}
+function buildWheel(){$('#wheel').innerHTML=[.25,.5,.75,1].map(r=>`<path d="${sup(r)}" fill="none" stroke="var(--ink)" stroke-width="${r==1?3:1.2}" opacity="${r==1?1:.3}"/>`).join('')+'<path d="M-100 0H100M0-100V100" stroke="var(--ink)" opacity=".3"/>'+
+'<text x="0" y="-104" text-anchor="middle">energetic</text><text x="0" y="112" text-anchor="middle">calm</text><text x="-103" y="3" text-anchor="end">sad</text><text x="103" y="3">glad</text>'+
+Object.entries(EM).map(([k,[v,a]])=>`<g class="anc" data-k="${k}"><rect x="${v*100-5}" y="${-a*100-5}" width="10" height="10" rx="3.5" fill="var(--card)" stroke="var(--ink)" stroke-width="2.5"/><text x="${v*100}" y="${-a*100-9}" text-anchor="middle">${k}</text></g>`).join('')+'<rect id="wp" x="-9" y="-9" width="18" height="18" rx="7" fill="var(--ch)" stroke="var(--ink)" stroke-width="3"/>'}
+function updateWheel(){$('#wp').setAttribute('transform',`translate(${S.v*100} ${-S.a*100})`);const r=(S.v**4+S.a**4)**.25,dn=S.depth>25?'deep':S.depth<-25?'shallow':'medium depth';$('#va').textContent=`valence ${S.v.toFixed(2)}, arousal ${S.a.toFixed(2)}, intensity ${Math.round(r*100)}%, ${dn}, nearest ${nearest(S.v,S.a)}`}
+function setVA(v,a){const q=(v**4+a**4)**.25;if(q>1){v/=q;a/=q}S.v=cl(v,-1,1);S.a=cl(a,-1,1);updateWheel();paint()}
+function wpt(e){const r=$('#wheel').getBoundingClientRect();setVA((e.clientX-r.left)/r.width*240/100-1.2,-((e.clientY-r.top)/r.height*236/100-1.18));const n=performance.now();if(n-lt>90){lt=n;tick(160*2**((S.v+1)*1.2+(S.a+1)*.6))}}
+// dial rack
+const eff=(c,k)=>cl(c.mu[k]+c.gain*(emoT(S.v,S.a,S.depth)[k]-emoT(0,0)[k]));
+function buildRack(){$('#rack').innerHTML='<p class="note" style="margin:0 0 8px">Drag the track to set the center. Drag the small black handle to set the spread. L freezes the value, O turns the dial off completely.</p>'+G.map(([g,ks,col],gi)=>`<details class="grp" style="--gc:${col}" ${gi<2?'open':''}><summary><h3 style="display:inline">${g}</h3> <span class="gsum" data-gs="${g}"></span></summary>${ks.map(k=>`<div class="drow" data-k="${k}"><span class="dn">${NM[k]}</span><div class="track" data-k="${k}"><i class="b2"></i><i class="band"></i><i class="ctr"></i><i class="dot"></i><i class="smp"></i><i class="grip"></i></div><div class="imp"><i></i></div><input type="checkbox" class="lk" data-k="${k}" aria-label="Lock ${NM[k]}" title="Lock"><input type="checkbox" class="ofk" data-k="${k}" aria-label="Turn off ${NM[k]}" title="Off"></div>`).join('')}</details>`).join('')}
+const impact=k=>S.sens?Math.round(100*cl(S.sens[k]/.19)):0;
+function help(k){const c=C(),i=impact(k),m=c.mu[k],d=c.sd[k];$('#dhelp').innerHTML=`<b>${NM[k]}.</b> ${DESC[k]} Center ${m.toFixed(2)}, spread ±${d.toFixed(2)}: 95% of sounds land between ${cl(eff(c,k)-2*d).toFixed(2)} and ${cl(eff(c,k)+2*d).toFixed(2)}. Impact ${i}%${i<25?' (weak: barely changes the sound)':i>60?' (strong)':''}.`}
+function paint(){const c=C(),s=S.cur;K.forEach(k=>{const t=document.querySelector(`.track[data-k=${k}]`),off=!!c.off[k],d=c.lock[k]?0:c.sd[k],e=eff(c,k),[b2,b,ct,dt,sm,gr]=t.children,set=(el,lo,hi)=>{el.style.left=cl(lo)*100+'%';el.style.width=(cl(hi)-cl(lo))*100+'%'};
+set(b2,e-2*d,e+2*d);set(b,e-d,e+d);ct.style.left=e*100+'%';dt.style.left=c.mu[k]*100+'%';if(gr)gr.style.left=cl(e+d)*100+'%';if(s&&s.cid==c.id){sm.style.left=s.x[k]*100+'%';sm.style.display='block'}else sm.style.display='none';
+const row=t.parentNode;row.querySelector('.lk').checked=!!c.lock[k];row.querySelector('.ofk').checked=off;row.classList.toggle('locked',!!c.lock[k]);row.classList.toggle('off',off);t.classList.toggle('off',off);row.querySelector('.imp i').style.width=(off?0:impact(k))+'%'});
+G.forEach(([g,ks])=>{const avg=Math.round(100*ks.reduce((a,k)=>a+eff(c,k),0)/ks.length);document.querySelector(`[data-gs="${g}"]`).textContent=`avg ${avg}%`});
+if($('#cname').value!==c.name)$('#cname').value=c.name;$('#gain').value=c.gain*100;$('#gaino').textContent=Math.round(c.gain*100);const q=cons(c);$('#cons').style.width=q+'%';$('#conso').textContent=q+'%';$('#undo').disabled=!c.undo.length;
+$('#octo').textContent=(c.oct>0?'+':'')+c.oct;$('#csum').textContent=`${c.n} ratings, ${K.filter(k=>c.lock[k]).length} dials locked, ${K.filter(k=>c.off[k]).length} off, ${c.book.length} kept.`;
+if(document.activeElement!==$('#minn'))$('#minn').value=c.minN;if(document.activeElement!==$('#maxn'))$('#maxn').value=c.maxN;
+if(s){const f=FEAT(s),n=s.notes;$('#stats').innerHTML=[['avg',Math.round(2**f.lm)+' Hz'],['range',f.rg.toFixed(1)+' oct'],['notes',n.length],['length',f.T.toFixed(1)+' s'],['drums',Math.round(f.dr*n.length)],['rests',Math.round(f.rs*n.length)],['bright',Math.round(f.br*100)+'%'],['grit',Math.round(f.gr*100)+'%'],['octave',(s.oc>0?'+':'')+(s.oc||0)]].map(([a,b])=>`<span class="st"><i>${a}</i>${b}</span>`).join('')}}
+// lists
+function renderChars(){$('#chars').innerHTML=S.chars.map(c=>`<button class="chr ${c.id==S.cid?'act':''}" data-id="${c.id}" style="--c:${PAL[c.col]}"><span class="cav" style="--c:${PAL[c.col]}">${avatar(c)}</span>${esc(c.name)}</button>`).join('');$('#sws').innerHTML=PAL.map((p,i)=>`<button class="sw ${C().col==i?'act':''}" data-i="${i}" style="--c:${p}" aria-label="Color ${i+1}"></button>`).join('')}
+function renderLabs(){const used=S.labels.filter(l=>l.ex.length>0);$('#labs').innerHTML=used.length?used.map(l=>`<div class="lab ${l.on?'on':''}" data-id="${l.id}"><div class="lh"><input type="checkbox" data-a="on" ${l.on?'checked':''} aria-label="Use ${esc(l.n)}"><strong>${esc(l.n)}</strong><span class="note" style="margin:0">${l.cat}</span><input type="range" min="0" max="200" value="${l.s*100}" data-a="s" title="Pull strength" aria-label="Pull"><button class="x del" data-a="del" aria-label="Delete">×</button></div><div class="ld">${doc(l)}</div></div>`).join(''):'<p class="note">Tag a sound in Label it to teach your first word.</p>'}
+function renderSubs(){$('#subs').innerHTML=Object.keys(TAXO).concat(S.labels.some(l=>l.cat==='Custom')?['Custom']:[]).map(c=>`<button class="sub ${c===S.acat?'act':''}" data-c="${c}">${c}</button>`).join('')}
+function renderChips(){const s=S.cur,list=S.labels.filter(l=>l.cat===S.acat);$('#chips').innerHTML=list.map(l=>`<button class="ch" data-id="${l.id}" data-y="${tagOf(l,s)}">${esc(l.n)}</button>`).join('')||'<p class="note">No words here yet.</p>';
+$('#atitle').textContent=s?`${s.em} sound from ${(S.chars.find(c=>c.id===s.cid)||C()).name}`:'Press New random sound';}
+function spark(s){const lo=Math.min(...s.notes),hi=Math.max(...s.notes),p=s.notes.map((v,i)=>[6+i*(168/(s.notes.length-1)),22-(Math.log(v/lo)/(Math.log(hi/lo)||1))*17]);
+return`<svg viewBox="0 0 180 26" width="100%" height="24"><polyline points="${p.map(q=>q.join(',')).join(' ')}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>${p.map((q,i)=>`<circle cx="${q[0]}" cy="${q[1]}" r="${s.hit[i]?2:3}" fill="${s.rest[i]?'none':s.hit[i]?'var(--like)':'var(--nope)'}" stroke="var(--ink)" stroke-width="1.3"/>`).join('')}</svg>`}
+function card(s,i,src){const c=S.chars.find(x=>x.id==s.cid)||C();return`<div class="snd ${S.cur&&S.cur.id===s.id&&S.cur.cid===s.cid?'sel':''}" data-src="${src}" data-i="${i}" style="--ch:${PAL[c.col]}"><div class="top"><b>${s.em}</b><span>${esc(c.name)}, ${s.notes.length} notes, oct ${s.oc>0?'+':''}${s.oc||0}</span></div>${spark(s)}
+<div class="mini"><button class="like" data-a="play">▶</button>${src==='h'?'<button class="save" data-a="keep">Keep</button><button data-a="vary">Vary</button><button data-a="lbl">Label</button>':'<button class="del" data-a="rm">Remove</button>'}</div></div>`}
+function renderSounds(){S.sh=S.hist.slice(0,20);$('#hist').innerHTML=S.sh.length?S.sh.map((s,i)=>card(s,i,'h')).join(''):'<p class="note">Nothing yet. Press Speak.</p>';
+S.bk=C().book.map(b=>hydrate({...b,cid:C().id,act:[]}));$('#book').innerHTML=S.bk.length?S.bk.map((s,i)=>card(s,i,'b')).join(''):'<p class="note">Keep sounds you love. They replay identically forever and travel in the character file.</p>'}
+function renderGuide(){const c=C(),st=[['Who they are','Archetype and name decide the biggest part of the sound. They are chosen in the setup wizard, step 2.',!!(c.spec&&c.spec.n)||!!c.arch,`<button data-g="who">Redo in the setup wizard</button><i class="note" style="flex-basis:100%;margin:2px 0 0">${c.arch?'Archetype: '+esc(c.arch):'Not chosen yet, so the name is deciding.'}</i>`],
+['Lock what makes it you','Pitch and instruments are identity. Lock them so the voice stays recognizable.',K.filter(k=>c.lock[k]).length>=6,'<button data-g="lock">Lock identity</button>'],
+['Check it at every feeling','Plays six feelings in this voice. A good character is still itself in all of them.',S.checked,'<button data-g="check">Voice check</button>'],
+['Teach it','Press Like or Nope. Watch spreads shrink and Steadiness rise.',c.n>=3,''],
+['Label a few sounds','Open Label it, tap words that fit.',S.labels.some(l=>l.ex.some(e=>e.key!=='prior')),'<button data-g="label">Open Label it</button>'],
+['Save the character','Download the JSON to reuse it later.',S.saved,'<button class="save" data-g="save">Save character</button>']];
+const cur=st.findIndex(x=>!x[2]);$('#guide').innerHTML=st.map((x,i)=>`<div class="gs ${x[2]?'done':''}"><b>${x[2]?'✓':i+1}</b><div><strong>${x[0]}</strong><p>${x[1]}</p><div class="row">${x[3]}</div></div></div>`).join('');$('#guideD').open=cur>=0&&cur<3;}
+function setPad(){updateWheel()}
+function all(){document.documentElement.style.setProperty('--ch',PAL[C().col]);S.sens=sens(C());updateWheel();renderChars();renderGuide();renderSubs();renderChips();renderLabs();renderSounds();renderFeel('feel',C());renderQuirkBox('qtypes',C());paint();store.set()}
+function showCur(s){S.cur=s;roll(s);paint();renderSounds();renderChips()}
+function speak(){S.seq++;const s=mkSound(C(),S.v,S.a,Math.random()*1e9|0);S.hist.unshift(s);S.hist=S.hist.slice(0,40);showCur(s);play(s);store.set()}
+function seq(list){const id=++S.seq;let i=0;const step=()=>{if(id!==S.seq||i>=list.length)return;const s=list[i++];showCur(s);play(s);setTimeout(step,(sched(s).T+.4)*1000)};step()}
+function flash(ks){ks.forEach(k=>{const r=document.querySelector(`.drow[data-k=${k}]`);if(!r)return;r.classList.remove('flash');void r.offsetWidth;r.classList.add('flash')})}
+// reinforcement learning: Gaussian policy per dial, REINFORCE with running baseline
+function rate(up){const s=S.cur;if(!s){toast('Press Speak first');return}if(!s.z||s.id==null||S.bk.includes(s)){toast('Rate a recent sound, not a phrasebook one');return}const c=S.chars.find(x=>x.id==s.cid)||C(),ch=(snap(c),E.learn(c,s,up,S.adv));
+const ln=[];if(up)(s.act||[]).forEach(id=>{const l=lab(id);if(l){setEx(l,s,1);ln.push(l.n)}});
+ch.sort((a,b)=>Math.abs(b[1])-Math.abs(a[1]));$('#learn').textContent=`${c.name} ${up?'liked':'rejected'} that (${c.n} ratings). Moved: `+(ch.slice(0,4).map(([k,d])=>`${NM[k]} ${d>0?'▲':'▼'}${Math.abs(d).toFixed(3)}`).join(', ')||'almost nothing yet')+`. Steadiness ${cons(c)}%.`+(ln.length?` Added as an example for: ${ln.join(', ')}.`:'');
+all();flash(ch.map(x=>x[0]));speak()}
+// tabs
+function showTab(t){S.tab=t;['voice','label','sounds','save'].forEach(x=>$('#pane-'+x).hidden=x!==t);document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('act',b.dataset.t===t))}
+$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)showTab(b.dataset.t)};
+// events
+$('#speak').onclick=speak;$('#replay').onclick=()=>S.cur?play(S.cur):speak();$('#roll').onclick=()=>S.cur&&play(S.cur);$('#like').onclick=()=>rate(true);$('#nope').onclick=()=>rate(false);
+function undo(){const c=C(),u=c.undo.pop();if(!u)return;Object.assign(c,{mu:u.mu,sd:u.sd,lock:u.lock,b:u.b,n:u.n,oct:u.oct});all();toast('Went back one step')}
+$('#undo').onclick=undo;
+const oct=d=>{const c=C();snap(c);c.oct=cl(c.oct+d,-2,2);all();speak()};$('#octd').onclick=()=>oct(-1);$('#octu').onclick=()=>oct(1);
+$('#vol').oninput=e=>{S.volv=+e.target.value;S.mute=0;$('#mute').textContent='Mute';if(S.out)S.out.gain.value=vm()/(S.pv||1);store.set()};
+const mute=()=>{S.mute=!S.mute;$('#mute').textContent=S.mute?'Unmute':'Mute';if(S.out)S.out.gain.value=vm()/(S.pv||1)};$('#mute').onclick=mute;
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea')||e.metaKey||e.ctrlKey)return;const k=e.key.toLowerCase();
+if(e.code==='Space'&&!e.target.matches('button')){e.preventDefault();speak()}else if(k==='l')rate(true);else if(k==='n')rate(false);else if(k==='u')undo();else if(k==='r')$('#replay').click();else if(k==='m')mute();else if(k==='[')oct(-1);else if(k===']')oct(1)});
+$('#wheel').onpointerdown=e=>{const a=e.target.closest('.anc');if(a){const[v,q]=EM[a.dataset.k];setVA(v,q);if($('#aud').checked)speak();return}$('#wheel').setPointerCapture(e.pointerId);wpt(e);$('#wheel').onpointermove=wpt};
+$('#wheel').onpointerup=()=>{$('#wheel').onpointermove=null;store.set();if($('#aud').checked)speak()};
+$('#wheel').onkeydown=e=>{const d={ArrowLeft:[-.1,0],ArrowRight:[.1,0],ArrowUp:[0,.1],ArrowDown:[0,-.1]}[e.key];if(d){e.preventDefault();setVA(S.v+d[0],S.a+d[1]);tick(160*2**((S.v+1)*1.2+(S.a+1)*.6))}};
+$('#depth').oninput=e=>{S.depth=e.target.value/100;updateWheel();paint();tick(300+e.target.value*2)};
+$('#depth').onchange=()=>{store.set();if($('#aud').checked)speak()};
+$('#par').innerHTML=['any','odd','even'].map((w,i)=>`<label class="k"><input type="radio" name="w" value="${w}" ${i?'':'checked'}>${w}</label>`).join(' ');
+$('#par').onchange=e=>{S.par=e.target.value;all();if($('#aud').checked)speak()};
+$('#adv').oninput=e=>{S.adv=e.target.value/100;$('#advo').textContent=S.adv.toFixed(1);tick(250+e.target.value*3)};
+function setRange(){const c=C(),mn=cl(Math.round(num($('#minn').value,4)),2,28),mx=cl(Math.round(num($('#maxn').value,mn+2)),mn+2,30);c.minN=mn;c.maxN=mx;S.sens=sens(c);store.set();paint()}
+$('#minn').onchange=setRange;$('#maxn').onchange=setRange;
+let drag=null;
+$('#rack').onpointerdown=e=>{const t=e.target.closest('.track');if(!t||C().off[t.dataset.k])return;const grip=e.target.closest('.grip');drag={t,mode:grip?'spread':'center'};t.setPointerCapture(e.pointerId);snap();dial(e)};
+$('#rack').onpointermove=e=>{if(drag)dial(e)};
+$('#rack').onpointerup=()=>{if(drag){drag=null;S.sens=sens(C());paint();store.set()}};
+$('#rack').onpointerover=e=>{const r=e.target.closest('.drow');if(r&&!drag)help(r.dataset.k)};
+function dial(e){const t=drag.t,r=t.getBoundingClientRect(),k=t.dataset.k,c=C(),fx=cl((e.clientX-r.left)/r.width);
+if(drag.mode==='spread'&&!c.lock[k])c.sd[k]=cl(Math.abs(fx-eff(c,k)),.01,.4);else c.mu[k]=cl(fx-(eff(c,k)-c.mu[k]));
+paint();help(k);const n=performance.now();if(n-lt>80){lt=n;tick(200+c.mu[k]*700,'triangle',.04)}}
+$('#rack').onchange=e=>{if(e.target.classList.contains('lk')){snap();C().lock[e.target.dataset.k]=e.target.checked;all()}
+else if(e.target.classList.contains('ofk')){snap();C().off[e.target.dataset.k]=e.target.checked;S.sens=sens(C());all()}};
+$('#chars').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.cid=+b.dataset.id;S.cur=null;all();speak()};
+$('#sws').onclick=e=>{const b=e.target.closest('button');if(!b)return;C().col=+b.dataset.i;all()};
+$('#cname').oninput=e=>{C().name=e.target.value.slice(0,18)||'Unnamed';renderChars();store.set()};
+$('#gain').oninput=e=>{C().gain=e.target.value/100;$('#gaino').textContent=e.target.value;paint();store.set()};
+$('#cnew').onclick=()=>{const c=mkChar('Char '+(S.chars.length+1));rnd(c);S.chars.push(c);S.cid=c.id;S.cur=null;all();speak()};
+$('#cclone').onclick=()=>{const c=des({...ser(C()),name:C().name+' II',color:undefined,id:undefined});S.chars.push(c);S.cid=c.id;all();toast('Cloned. Edit the copy, the original stays as it was.')};
+$('#cdel').onclick=()=>{if(S.chars.length<2){toast('Keep at least one character');return}const id=S.cid;S.chars=S.chars.filter(c=>c.id!=id);S.hist=S.hist.filter(s=>s.cid!=id);S.cid=S.chars[0].id;S.cur=null;all()};
+$('#creroll').onclick=()=>{snap();rnd(C());all();speak();toast('New voice rolled. Undo brings the old one back.')};
+$('#cfreeze').onclick=()=>{const c=C(),v=!K.every(k=>c.lock[k]);snap();K.forEach(k=>c.lock[k]=v);all();toast(v?'All dials locked.':'All dials unlocked.')};
+$('#guide').onclick=e=>{const b=e.target.closest('button'),c=C();if(!b)return;
+if(b.dataset.g==='who'){S.wiz={cid:c.id,step:2};setMode('wizard');return}
+if(b.dataset.jung){const n=b.dataset.jung;snap();c.arch=n;c.temp=null;c.mu=fixX({...emoT(0,0),...E.ARCHETYPES[n].d});K.forEach(k=>c.sd[k]=.08);if(/^Char \d+$/.test(c.name))c.name=n;S.arch=1;all();speak()}
+else if(b.dataset.arch){const n=b.dataset.arch;snap();if(n==='Random')rnd(c);else{c.arch=E.SOUND_ARCH[n]||null;c.temp=null;c.mu=fixX({...emoT(0,0),...ARCH[n]});K.forEach(k=>c.sd[k]=.08);if(/^Char \d+$/.test(c.name))c.name=n}S.arch=1;all();speak()}
+else if(b.dataset.g==='lock'){snap();['pitch',...INS,'choir'].forEach(k=>c.lock[k]=true);all();toast('Locked pitch and instruments. Everything else can still vary.')}
+else if(b.dataset.g==='check')vcheck();else if(b.dataset.g==='save')save(false);else if(b.dataset.g==='label')showTab('label')};
+function vcheck(){const c=C(),l=Object.entries(EM).map(([k,[v,a]],i)=>{const s=mkSound(c,v,a,c.seed+i*101);S.hist.unshift(s);return s});S.checked=1;renderGuide();seq(l)}
+$('#vcheck').onclick=vcheck;
+$('#mk6').onclick=()=>{const o=S.adv;S.adv=o*1.6;const l=[];for(let i=0;i<6;i++){const s=mkSound(C(),S.v,S.a,Math.random()*1e9|0);S.hist.unshift(s);l.push(s)}S.adv=o;seq(l);toast('Six variations. Switch to Label it to tag the ones that fit.')};
+$('#clr').onclick=()=>{S.hist=[];S.cur=null;all()};
+// annotate tab
+function annoTarget(s){showCur(s);play(s)}
+$('#arand').onclick=()=>{const pool=S.hist.filter(s=>s.z);if(!pool.length){speak();return}annoTarget(pool[Math.random()*pool.length|0])};
+$('#aplay').onclick=()=>S.cur&&play(S.cur);
+$('#subs').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.acat=b.dataset.c;renderSubs();renderChips()};
+$('#chips').onclick=e=>{const b=e.target.closest('button');if(!b||!S.cur)return;const l=lab(+b.dataset.id),y=tagOf(l,S.cur),n=y===0?1:y===1?-1:0;setEx(l,S.cur,n);renderChips();renderLabs();store.set();tick(n>0?700:n<0?380:520,'square',.05)};
+$('#ladd').onclick=()=>{const n=$('#lname').value.trim();if(!n||!S.cur){toast(!n?'Type a word first':'Play a sound first');return}const l=fixL({n,cat:'Custom',s:1,ex:[]});setEx(l,S.cur,1);S.labels.push(l);S.acat='Custom';$('#lname').value='';all();toast(`"${l.n}" added and tagged yes for this sound`)};
+$('#labs').onchange=e=>{const l=lab(e.target.closest('.lab').dataset.id);if(l&&e.target.dataset.a==='on'){l.on=e.target.checked;all();if($('#aud').checked)speak()}};
+$('#labs').oninput=e=>{const l=lab(e.target.closest('.lab').dataset.id);if(l&&e.target.dataset.a==='s'){l.s=e.target.value/100;store.set();tick(250+l.s*250)}};
+$('#labs').onclick=e=>{const b=e.target.closest('button');if(b&&b.dataset.a==='del'){S.labels=S.labels.filter(x=>x.id!=b.closest('.lab').dataset.id);all()}};
+function vary(s){const c=S.chars.find(x=>x.id==s.cid)||C(),r=rng(Math.random()*1e9|0),x={},z={};K.forEach(k=>{if(c.lock[k]){x[k]=s.x[k];z[k]=0;return}const d=.06*gauss(r);x[k]=cl(s.x[k]+d);z[k]=(s.z[k]||0)+d/(c.sd[k]*S.adv)});
+const n=hydrate({id:S.uid++,cid:c.id,v:s.v,a:s.a,seed:Math.random()*1e9|0,x,z,act:[],em:s.em,pa:s.pa,sn:s.sn,oc:s.oc});S.hist.unshift(n);showCur(n);play(n)}
+function onCard(e){const c=e.target.closest('.snd');if(!c)return;const src=c.dataset.src,s=(src==='h'?S.sh:S.bk)[+c.dataset.i],b=e.target.closest('button'),a=b&&b.dataset.a;if(!s)return;
+if(a==='keep'){C().book.push({id:s.id,v:s.v,a:s.a,seed:s.seed,x:s.x,z:s.z,em:s.em,pa:s.pa,sn:s.sn,oc:s.oc||0,qk:s.qk});all();toast('Kept in phrasebook');return}
+if(a==='rm'){C().book.splice(+c.dataset.i,1);all();return}if(a==='vary'){vary(s);return}if(a==='lbl'){annoTarget(s);showTab('label');return}showCur(s);play(s)}
+$('#hist').onclick=onCard;$('#book').onclick=onCard;
+// save and load
+const proj=()=>({format:'blip-project',version:1,chars:S.chars.map(ser),labels:S.labels.filter(l=>l.ex.length>0).map(l=>({n:l.n,cat:l.cat,s:l.s,ex:l.ex}))});
+async function save(all){const txt=JSON.stringify(all?proj():ser(C()),null,1);$('#json').value=txt;S.saved=1;renderGuide();
+try{const dl=window.claude&&await claude.use('downloads');if(dl){await dl.save({filename:all?'blip-project.json':'blip-'+(C().name.toLowerCase().replace(/\W+/g,'-')||'character')+'.json',data:txt});toast('Saved');return}}catch(e){if(e&&e.code==='declined')return}
+try{const fn=all?'blip-project.json':'blip-'+(C().name.toLowerCase().replace(/\W+/g,'-')||'character')+'.json',bl=new Blob([txt],{type:'application/json'}),u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast('Downloaded '+fn);return}catch(e){}
+try{await navigator.clipboard.writeText(txt);toast('JSON copied. It is also in the box.')}catch(e){toast('JSON is in the box. Copy it from there.')}}
+function load(txt){try{const o=JSON.parse(txt),list=o.format==='blip-project'&&Array.isArray(o.chars)?o.chars:o.format==='blip-character'?[o]:null;if(!list||!list.length)throw 0;
+if(Array.isArray(o.labels))o.labels.forEach(l=>{if(!S.labels.some(x=>x.n===l.n&&x.cat===(l.cat||'Custom')))S.labels.push(fixL({...l,on:false,id:undefined}))});
+list.forEach(x=>{const c=des({...x,id:undefined});S.chars.push(c);S.cid=c.id});S.cur=null;all();speak();toast(`Loaded ${list.length} character${list.length>1?'s':''}`)}catch(e){toast('That is not a Blip Lab JSON file')}}
+async function dl(name,data){try{const c=window.claude&&await claude.use('downloads');if(c){if(/\.(wav|mid)$/.test(name)){data=E.zip({[name]:data});name=name.replace(/\.\w+$/,'.zip')}await c.save({filename:name,data});toast('Saved '+name);return}}catch(e){if(e&&e.code==='declined')return}
+try{const bl=new Blob([data]),u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast('Downloaded '+name)}catch(e){toast('Download is not available here')}}
+const slug=n=>E.slug(n);
+$('#xsnd').onclick=()=>{const s=S.cur;if(!s){toast('Press Speak first');return}const id=slug(C().name)+'-'+(s.em||'sound').toLowerCase()+'-'+s.seed,sc=E.toScore(s,{id,voice:slug(C().name)});
+dl(id+'.zip',E.zip({[id+'.wav']:E.wav(E.renderScore(sc,{sr:44100}),44100),[id+'.mid']:E.midi(sc),[id+'.score.json']:JSON.stringify(sc,null,1)}))};
+$('#xbank').onclick=()=>{toast('Baking...');setTimeout(()=>{const c=C(),on=S.labels.filter(l=>l.on),bank=E.bake(c,{per:3,pulls:on.map(l=>({id:l.id,s:l.s,M:meaning(l)}))}),f={'bank.json':JSON.stringify(bank,null,1),'blip_bank.h':E.cHeader(bank)};
+bank.scores.forEach(s=>{f['midi/'+s.id+'.mid']=E.midi(s.score);f['wav/'+s.id+'.wav']=E.wav(E.renderScore(s.score,{sr:22050}),22050)});dl(slug(c.name)+'-bank.zip',E.zip(f))},30)};
+$('#sv1').onclick=()=>save(false);$('#sv2').onclick=()=>save(true);$('#ldtxt').onclick=()=>load($('#json').value);
+$('#file').onchange=async e=>{const f=e.target.files[0];if(f){load(await f.text());e.target.value=''}};
+$('#reset').onclick=()=>{if(!confirm('Erase all characters, labels and history?'))return;try{localStorage.removeItem('blip5')}catch(e){}defaults();all()};
+$('#theme').onclick=()=>{const d=document.documentElement;d.dataset.theme=getComputedStyle(d).getPropertyValue('--bg').trim()==='#16121f'?'light':'dark'};
+$('h1').onclick=()=>{setVA(Math.random()*2-1,Math.random()*2-1);speak()};
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&!b.closest('#speak,#chars,.snd,#guide,#chips'))tick(480+Math.random()*300,'square',.05)});
+document.addEventListener('change',e=>{if(e.target.type==='checkbox')tick(e.target.checked?700:420,'square',.05)});
+function defaults(){S.uid=1;S.hist=[];S.cur=null;S.chars=[];['Chirp','Grumble','Sage','Tock'].forEach(n=>S.chars.push(mkChar(n,ARCH[n])));S.chars.forEach(c=>{c.setup=true;c.arch=E.SOUND_ARCH[c.name]||null});S.cid=S.chars[0].id;S.labels=[];ensureTaxo()}
+buildWheel();buildRack();
+const sv=store.get();
+if(sv&&Array.isArray(sv.chars)&&sv.chars.length){try{S.uid=num(sv.uid,1);S.chars=sv.chars.map(des);S.cid=sv.cid;S.v=cl(num(sv.v,.1),-1,1);S.a=cl(num(sv.a,.25),-1,1);S.depth=cl(num(sv.depth,0),-1,1);S.adv=cl(num(sv.adv,1),.2,2);$('#adv').value=S.adv*100;$('#advo').textContent=S.adv.toFixed(1);S.volv=cl(num(sv.vol,70),0,100);$('#vol').value=S.volv;$('#depth').value=S.depth*100;
+S.labels=(sv.labels||[]).map(fixL);ensureTaxo();S.uid=Math.max(S.uid,...S.chars.map(c=>c.id+1),...S.labels.map(l=>l.id+1));
+S.hist=(sv.hist||[]).filter(h=>h&&h.x&&S.chars.some(c=>c.id==h.cid)).map(h=>hydrate({id:num(h.id,S.uid++),cid:h.cid,v:num(h.v,0),a:num(h.a,0),seed:num(h.seed,1)|0,x:fixX(h.x),z:h.z||{},act:(h.act||[]).filter(t=>S.labels.some(l=>l.id==t)),em:String(h.em||'Custom'),pa:h.pa||'any',sn:h.sn!==false,oc:num(h.oc,0)}))}catch(e){defaults()}}else defaults();
+C();S.cur=S.hist.find(s=>s.cid==S.cid)||mkSound(C(),S.v,S.a,7);S.bk=[];roll(S.cur);showTab('voice');setMode('gallery');
+
+</script></body></html>

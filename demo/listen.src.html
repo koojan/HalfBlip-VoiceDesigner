@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Half Blip Listen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=DM+Sans:wght@500;700&display=swap">
+<style>
+:root{--bg:#fff1d6;--card:#fffaf0;--ink:#1b1b1f;--acc:#ff9a3c;--acc2:#3b63ff;--good:#14b88f;--bad:#ff4d3d;--save:#ffc928;--dots:#1b1b1f1c}
+@media(prefers-color-scheme:dark){:root{--bg:#16121f;--card:#241e33;--ink:#fff1d6;--dots:#fff1d61c}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 13px/1.4 "DM Sans",system-ui,sans-serif;background-image:radial-gradient(var(--dots) 1.5px,transparent 2px);background-size:18px 18px}
+h1,h2,h3{font-family:Unbounded,"Arial Black",sans-serif;margin:0}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 12px 0}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;max-width:1000px;margin:0 auto;padding-bottom:5px}
+.logo{font:800 19px Unbounded,sans-serif;letter-spacing:-.04em;white-space:nowrap}.logo i{font-style:normal;background:var(--bad);color:#1b1b1f;border:2.5px solid var(--ink);padding:0 .14em;border-radius:38%;display:inline-block;transform:rotate(-4deg);margin-left:3px}
+.chars{display:flex;gap:6px;overflow-x:auto;flex:1 1 240px;padding:4px 4px 6px;scrollbar-width:none;min-width:0}.chars::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:6px;padding:2px 11px 2px 3px;border-radius:999px;flex:none}.chip.act{background:var(--c);box-shadow:inset 0 0 0 2.5px var(--ink),3px 3px 0 var(--ink);font-weight:800}
+.av{width:26px;height:26px;border-radius:50%;border:2px solid var(--ink);background:var(--c);display:grid;place-items:center;font:800 11px Unbounded,sans-serif;color:#1b1b1f}
+.border{display:block;width:calc(100% + 24px);margin:0 -12px;height:20px}
+main{max-width:1000px;margin:0 auto;padding:12px 12px 60px}
+.grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}@media(max-width:760px){.grid{grid-template-columns:1fr}}.wide{grid-column:1/-1}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:22px;padding:11px 13px;box-shadow:5px 5px 0 var(--ink)}
+.card h2{font-size:12px;margin-bottom:8px}.card h2 span{background:var(--save);padding:1px 8px;border-radius:10px;border:2px solid var(--ink)}
+button,.btn{font:700 12px "DM Sans",sans-serif;color:#1b1b1f;background:var(--card);border:2.5px solid var(--ink);padding:5px 11px;cursor:pointer;border-radius:12px;box-shadow:3px 3px 0 var(--ink)}
+button:active{transform:translate(3px,3px);box-shadow:none}button.go{font:800 15px Unbounded,sans-serif;background:var(--acc2);color:#fff;padding:7px 18px;border-radius:18px}button.alt{background:var(--save)}
+.orb{width:70px;height:70px;border-radius:40% 60% 55% 45%;border:3px solid var(--ink);background:var(--card);flex:none;transition:background .2s,border-radius 1.2s}.orb.hear{background:#3cc8e0}.orb.think{background:#9b7bff}.orb.talk{background:var(--acc);border-radius:50%}.orb.idle{background:color-mix(in srgb,var(--good) 45%,var(--card))}
+#st{font:800 19px Unbounded,sans-serif}.help{font-size:11.5px;opacity:.8;margin:5px 0 0}
+.lv{height:13px;border:2.5px solid var(--ink);border-radius:8px;overflow:hidden;background:var(--card);margin-top:8px}.lv i{display:block;height:100%;width:0;background:var(--good)}
+table{border-collapse:collapse;width:100%}td{padding:2px 0;border-bottom:1px dashed #8886}td:last-child{text-align:right;font-weight:800}
+.dual{position:relative;height:13px;border:2.5px solid var(--ink);border-radius:8px;margin:3px 0 8px;background:linear-gradient(90deg,#8883,transparent 50%,#8883)}.dual b{position:absolute;inset:0;border-radius:5px;background:var(--acc2);opacity:.35}.dual i{position:absolute;top:-4px;width:7px;height:19px;background:var(--ink);border-radius:4px}
+.mode{display:inline-block;font:800 13px Unbounded,sans-serif;padding:3px 12px;border:2.5px solid var(--ink);border-radius:999px;background:var(--m,var(--acc))}
+.bars{margin-top:8px;display:grid;gap:3px}.bar{display:grid;grid-template-columns:104px 1fr 34px;gap:6px;align-items:center;font-size:11px;font-weight:700}.bar i{display:block;height:9px;border:2px solid var(--ink);border-radius:6px;background:linear-gradient(90deg,var(--m) var(--w),var(--card) var(--w))}
+.log{max-height:170px;overflow:auto;font:11.5px/1.5 ui-monospace,monospace;opacity:.85}.log div{border-bottom:1px dashed #8884}
+input[type=range]{-webkit-appearance:none;appearance:none;height:11px;background:var(--card);border:2.5px solid var(--ink);border-radius:8px;width:100%;margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--acc2);border:2.5px solid var(--ink);border-radius:38%}
+input[type=text]{width:100%;font:inherit;border:2.5px solid var(--ink);border-radius:12px;padding:5px 9px;background:var(--card);color:var(--ink)}
+.ctl{display:grid;grid-template-columns:104px 1fr 54px;gap:8px;align-items:center;margin:6px 0}
+details.g{border:2.5px dashed var(--ink);border-radius:14px;padding:5px 9px;margin-top:8px}details.g summary{cursor:pointer;font-weight:800}
+.sim{display:flex;gap:6px;flex-wrap:wrap}
+.drop{border:3px dashed var(--ink);border-radius:16px;padding:8px 12px;text-align:center;font-weight:700}.drop.over{background:var(--save)}
+label.k{display:inline-flex;gap:6px;align-items:center;font-weight:700;cursor:pointer}
+/*@TEMPERCSS@*/
+:root{--spring:cubic-bezier(.34,1.56,.64,1)}
+button,.btn,.chip{transition:transform .45s var(--spring),box-shadow .45s ease}
+@media(hover:hover){button:not(:disabled):hover,.btn:hover,.chip:hover{transform:translate(-2px,-4px) rotate(-1.5deg) scale(1.05);box-shadow:5px 7px 0 var(--ink)}}
+button:active,.btn:active{transform:translate(2px,3px) scale(.92)!important;box-shadow:0 0 0 var(--ink)!important;transition-duration:.12s}
+@keyframes popin{0%{opacity:0;transform:translateY(20px) rotate(-1.4deg) scale(.97)}60%{opacity:1;transform:translateY(-5px) rotate(.7deg)}100%{opacity:1;transform:none}}
+.card{animation:popin .75s var(--spring) both}.card:nth-child(2){animation-delay:.07s}.card:nth-child(3){animation-delay:.14s}.card:nth-child(4){animation-delay:.21s}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}.orb{animation:breathe 5s ease-in-out infinite}.orb.hear,.orb.talk{animation-duration:1.4s}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+</style></head><body>
+<div class="top"><div class="row"><div class="logo">HALF<i>BLIP</i> Listen</div><div class="chars" id="chars" aria-label="Choose a character"></div>
+ <label class="btn" title="Load one or more character files saved from the designer">Load character file<input type="file" id="chf" accept=".json" multiple hidden></label></div>
+ <svg class="border" width="100%" height="20" aria-hidden="true"><defs><pattern id="pt" width="120" height="20" patternUnits="userSpaceOnUse"><animateTransform attributeName="patternTransform" type="translate" from="0 0" to="120 0" dur="50s" repeatCount="indefinite"/><path d="M0 18.5H120" stroke="var(--ink)" stroke-width="2.4"/><g stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"><path d="M14 17 C5 17 3 7 12 2.5 C11 7.5 18 7 19 12 C19.6 15 17 17 14 17Z" fill="var(--acc)"/><path d="M41 16.5 L47 5 L53 16.5Z" fill="var(--acc2)"/><circle cx="68" cy="10.5" r="4.4" fill="var(--save)"/><path d="M80 12 q3.5 -8 7 0 t7 0" fill="none" stroke="var(--bad)" stroke-width="2.2" stroke-linecap="round"/><path d="M104 17 C97 17 96 9 103 5 C102 9.5 108 9 108.6 13 C109 15.5 107 17 104 17Z" fill="var(--good)"/></g></pattern></defs><rect width="100%" height="20" fill="url(#pt)"/></svg></div>
+<main><div class="grid">
+ <section class="card"><h2><span>Right now</span></h2>
+  <div style="display:flex;gap:14px;align-items:center"><div class="orb" id="orb"></div><div><div id="st">Not listening</div><div id="sub" class="help" style="margin:0">Press Start and allow the microphone. <b id="who"></b> will answer.</div></div></div>
+  <div class="lv"><i id="lv"></i></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="go" id="go">🎤 Start listening</button><button id="hello">Say hello</button></div>
+  <p class="help">Audio is analysed in this page only and is not stored. It stops listening while it talks, so it will not answer itself; headphones help.</p></section>
+ <section class="card"><h2><span>What it did</span></h2><div id="dec"><span class="help">Waiting for you to speak.</span></div></section>
+ <section class="card"><h2><span>What it heard</span></h2><table id="heard"><tr><td>Nothing yet</td><td></td></tr></table>
+  <div style="margin-top:10px">Energy (calm ↔ lively) <b id="aN" style="float:right"></b></div><div class="dual"><b id="aB"></b><i id="aI" style="left:50%"></i></div>
+  <div>Mood (low ↔ good) <b id="vN" style="float:right"></b></div><div class="dual"><b id="vB"></b><i id="vI" style="left:50%"></i></div>
+  <p class="help">Energy can be read from a voice. Mood mostly cannot, so that bar stays in the middle unless words tell it more.</p></section>
+ <section class="card"><h2><span>Set-up</span></h2>
+  <div class="ctl"><span>Sensitivity</span><input type="range" id="sens" min="15" max="60" value="28"><output id="senso"></output></div>
+  <div class="ctl"><span>Sentence end</span><input type="range" id="hang" min="300" max="1400" step="50" value="500"><output id="hango"></output></div>
+  <div class="ctl"><span>Echo you</span><input type="range" id="echo" min="0" max="150" value="100"><output id="echoo"></output></div>
+  <div class="ctl"><span>Volume</span><input type="range" id="vol" min="0" max="100" value="80"><output id="vo"></output></div>
+  <label class="k"><input type="checkbox" id="guard" checked> Stop listening while it talks</label>
+  <details class="g"><summary>Type what you said (stand-in for speech-to-text)</summary><input type="text" id="txt" placeholder="e.g. thanks, that was great!"></details></section>
+ <section class="card wide"><h2><span>Who it is when you talk to it</span></h2>
+  <p class="help" style="margin-top:0">Every character reacts in its own way: it may soothe you, tease you, disagree, grumble, sulk or stay quiet. Answer the questions or tune the numbers. It is saved in the character file when you use the designer, and kept in this browser here.</p>
+  <div id="tui"></div>
+  <h2 style="margin-top:14px"><span>Try it without a microphone</span></h2><div class="sim" id="sim"></div><p class="help"><label class="k"><input type="checkbox" id="know" checked> It can tell my mood (as if it understood my words)</label></p></section>
+ <section class="card wide"><h2><span>Log</span></h2><div class="log" id="log"></div></section>
+</div></main>
+<script>
+/*@ENGINE@*/
+/*@LISTEN@*/
+/*@TEMPERUI@*/
+const $=s=>document.getElementById(s),cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const PAL=['#ff9a3c','#9b7bff','#ff78c4','#3cc8e0','#b6dc3a','#d9a86c'],MC={match:'#3cc8e0',soothe:'#9ee0a8',cheer:'#ffc928',tease:'#ff78c4',contradict:'#ff9a3c',complain:'#ff6a55',sulk:'#8f8fc9',perk:'#b6dc3a',backchannel:'#d9d3c4',own:'#c4a8ff',silent:'#cfcfcf'};
+const LAB={happy:'😊 Happy',excited:'🤩 Excited',calm:'😌 Calm',sad:'😢 Sad',angry:'😠 Angry',question:'❓ Question',ramble:'🗣 Rambling',whisper:'🤫 Whisper',shout:'📢 Shout',hello:'👋 Hello'};
+const CHIRP=/*@CHIRP@*/null;
+// characters: built-in archetypes, ones saved by the designer in this browser, and loaded files
+let list=[],cur=0,ctx,vol=.8,deaf=0,listening=false,ls=null,seq=0,tui=null;const pi=BlipListen.prosodyInterpreter(),H={ff:2.8,hang:500,echo:1,guard:true,know:true};
+const mkItem=(o,src)=>{const c=Blip.charFromJSON(o);c.id=list.length+1;c.col=list.length%6;return{c,src,arch:c.archetype,temp:c.temperament,rel:c.relationship,brain:null}};
+function init0(){list.push(mkItem(CHIRP,'built-in'));Object.keys(Blip.ARCHETYPES).forEach(a=>list.push(mkItem(Blip.fromArchetype(a),'archetype')));
+ try{const sv=JSON.parse(localStorage.getItem('blip5')||'null');if(sv&&Array.isArray(sv.chars))sv.chars.forEach(o=>{try{list.push(mkItem(o,'designer'))}catch(e){}})}catch(e){}
+ try{const mine=JSON.parse(localStorage.getItem('blipListenChars')||'[]');mine.forEach(o=>list.push(mkItem(o,'file')))}catch(e){}}
+const item=()=>list[cur],tempOf=it=>BlipListen.fixTemperament(it.temp||BlipListen.temperamentFor(it.arch));
+function brain(){const it=item(),key=JSON.stringify(it.temp||it.arch||'');if(!it.brain||it.brain.key!==key){const b=BlipListen.createBrain({temperament:tempOf(it),state:it.rel||undefined});b.key=key;it.brain=b}return it.brain}
+function chips(){$('chars').innerHTML=list.map((it,i)=>`<button class="chip${i===cur?' act':''}" data-i="${i}" style="--c:${PAL[it.c.col]}" title="${it.src}"><span class="av" style="--c:${PAL[it.c.col]}">${it.c.name.slice(0,1).toUpperCase()}</span>${it.c.name}</button>`).join('');$('who').textContent=item().c.name;const a=$('chars').querySelector('.act');a&&a.scrollIntoView({inline:'center',block:'nearest'})}
+function pick(i){cur=i;chips();mountTui();try{play(preview())}catch(e){}}
+$('chars').onclick=e=>{const b=e.target.closest('button');if(b)pick(+b.dataset.i)};
+function mountTui(){const it=item();tui=TemperUI.mount($('tui'),{get:()=>it.temp||tempOf(it),set:t=>{it.temp=t;it.brain=null},onChange:()=>{}})}
+const log=t=>{const d=document.createElement('div');d.textContent=new Date().toLocaleTimeString()+'  '+t;$('log').prepend(d);while($('log').children.length>50)$('log').lastChild.remove()};
+const setSt=(k,t,s)=>{$('orb').className='orb '+(k||'');$('st').textContent=t;$('sub').textContent=s||''};
+const bar=(id,v)=>{const p=50+50*v;$(id+'I').style.left=`calc(${p}% - 3px)`;const b=$(id+'B');b.style.left=Math.min(50,p)+'%';b.style.right=(100-Math.max(50,p))+'%'};
+// sound out
+const preview=()=>BlipListen.mimic({heard:null,char:item().c,v:.3,a:.25,seed:item().c.seed+3,strength:0});
+function play(s){ctx=ctx||new AudioContext();if(ctx.state==='suspended')ctx.resume();const sr=24000,d=Blip.renderScore(Blip.toScore(s),{sr:sr,volume:Math.max(.05,vol*1.6)}),b=ctx.createBuffer(1,d.length,sr);b.copyToChannel(d,0);try{play.src&&play.src.stop()}catch(e){}const src=ctx.createBufferSource();src.buffer=b;src.connect(ctx.destination);src.start();play.src=src;return Blip.sched(s).T}
+function say(s){const T=play(s);deaf=performance.now()+T*1000+600;setSt('talk','Answering',Math.round(T*1000)+' ms');setTimeout(()=>setSt(listening?'idle':'',listening?'Listening':'Not listening',''),T*1000+100)}
+function decisionHtml(d,via){const N=BlipListen.MODE_NAME,rows=(d.scores||[]).slice(0,6),mx=Math.max(.01,...rows.map(r=>r[1]));
+ return `<span class="mode" style="--m:${MC[d.mode]||'#ccc'}">${d.label||N[d.mode]}</span> <span class="help">${via}${d.kind==='none'?': it chose not to answer':''}</span><p style="margin:8px 0 2px"><b>Why:</b> ${d.why||'—'}.</p>${d.kind!=='none'?`<p class="help" style="margin:2px 0">Answers with energy <b>${d.a.toFixed(2)}</b>, mood <b>${d.v.toFixed(2)}</b>, copying you <b>${Math.round(d.mimic*H.echo*100)}%</b>, after ${d.delay_ms} ms.</p>`:''}<div class="bars">${rows.map(([m,s])=>`<div class="bar" style="--m:${MC[m]}"><span>${N[m]}</span><i style="--w:${Math.round(100*s/mx)}%"></i><span>${s.toFixed(2)}</span></div>`).join('')}</div>`}
+function heardHtml(u,aff){const s=u.summary;$('heard').innerHTML=[['Length',s.dur_ms+' ms'],['Pitch',s.pitch_mean_hz+' Hz'],['Pitch range',s.pitch_range_semitones+' semitones'],['Loudness',s.rms_mean],['Speed',s.rate_per_s+' beats/s'],['Shape',s.contour]].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');bar('a',aff.a);bar('v',aff.v);$('aN').textContent=aff.a.toFixed(2)+' (sure '+Math.round(aff.ca*100)+'%)';$('vN').textContent=aff.v.toFixed(2)+' (sure '+Math.round(aff.cv*100)+'%)'}
+function react(u,aff,via){const it=item(),b=brain(),d=b.onUtterance({summary:u.summary},aff,performance.now());it.rel=b.state();saveRel();$('dec').innerHTML=decisionHtml(d,via);heardHtml(u,aff);log(via+': '+(d.kind==='none'?'silent':d.label)+' ('+d.why+')');
+ if(d.kind!=='reply'){setSt(listening?'idle':'',listening?'Listening':'Not listening','It chose to stay quiet.');return}
+ const s=BlipListen.mimic({heard:u,char:it.c,v:d.v,a:d.a,seed:(it.c.seed+seq++)|0,strength:Math.min(1,d.mimic*H.echo),exaggerate:d.exaggerate,len:d.len});setTimeout(()=>say(s),d.delay_ms)}
+function saveRel(){try{const mine=list.filter(i=>i.src==='file').map(i=>({...i.raw,temperament:i.temp||undefined,relationship:i.rel||undefined}));if(mine.length)localStorage.setItem('blipListenChars',JSON.stringify(mine))}catch(e){}}
+// mic
+async function start(){try{ctx=ctx||new AudioContext();const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:false,autoGainControl:false}});await ctx.resume();const k=Math.max(1,Math.round(ctx.sampleRate/16000)),sr=ctx.sampleRate/k;
+ build(sr);const src=ctx.createMediaStreamSource(stream),mute=ctx.createGain();mute.gain.value=0;mute.connect(ctx.destination);let on=()=>{};
+ try{const code="class T extends AudioWorkletProcessor{process(i){const c=i[0][0];if(c)this.port.postMessage(c.slice());return true}}registerProcessor('tap',T)";await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([code],{type:'application/javascript'})));const n=new AudioWorkletNode(ctx,'tap');src.connect(n);n.connect(mute);n.port.onmessage=e=>on(e.data)}
+ catch(w){const sp=ctx.createScriptProcessor(2048,1,1);src.connect(sp);sp.connect(mute);sp.onaudioprocess=e=>on(new Float32Array(e.inputBuffer.getChannelData(0)));log('using script-processor fallback')}
+ let acc=[],cnt=0;on=c=>{if(H.guard&&performance.now()<deaf)return;const o=new Float32Array(Math.floor(c.length/k));for(let i=0;i<o.length;i++){let s=0;for(let j=0;j<k;j++)s+=c[i*k+j];o[i]=s/k}acc.push(o);cnt+=o.length;if(cnt>=800){const m=new Float32Array(cnt);let p=0;acc.forEach(a=>{m.set(a,p);p+=a.length});acc=[];cnt=0;ls&&ls.push(m)}};
+ listening=true;H.sr=sr;setSt('idle','Listening','Say something.');log('listening as '+item().c.name);
+ setInterval(()=>{if(!listening||performance.now()<deaf)return;const d=brain().onIdle(performance.now());if(d){log('on its own: '+d.label);$('dec').innerHTML=decisionHtml(d,'By itself');say(BlipListen.mimic({heard:null,char:item().c,v:d.v,a:d.a,seed:(item().c.seed+seq++)|0,strength:0,len:'short'}))}},1000)
+ }catch(e){setSt('','Cannot listen',String(e.message||e));log('error: '+e.message);$('go').textContent='🎤 Start listening'}}
+function build(sr){sr=sr||H.sr;ls=BlipListen.createListener({sr,hangMs:H.hang,floorFactor:H.ff});ls.on('utterance',u=>{setSt('think','Thinking','');const est=[pi(u)],t=$('txt').value.trim();if(t)est.push(BlipListen.lexiconInterpreter(t));react(u,BlipListen.fuse(est),'You')}).on('start',()=>setSt('hear','Hearing you','')).on('noise',()=>setSt('idle','Listening','')).on('frame',f=>{$('lv').style.width=Math.min(100,f.rms*400)+'%'})}
+$('go').onclick=()=>{if(listening)location.reload();else{$('go').textContent='■ Stop listening';start()}};
+$('hello').onclick=()=>{const u=BlipListen.fakeUtterance('hello');react(u,u.affect,'You (simulated hello)')};
+$('sim').innerHTML=Object.keys(BlipListen.SIM).map(k=>`<button data-k="${k}">${LAB[k]}</button>`).join('');$('sim').onclick=e=>{const b=e.target.closest('button');if(!b)return;const u=BlipListen.fakeUtterance(b.dataset.k,{knowsMood:$('know').checked});react(u,u.affect,'You (simulated): '+b.textContent.replace(/^\S+\s/,''))};
+$('sens').oninput=e=>{H.ff=e.target.value/10;$('senso').textContent=H.ff.toFixed(1)+'×';if(listening)build()};$('hang').oninput=e=>{H.hang=+e.target.value;$('hango').textContent=H.hang+' ms';if(listening)build()};
+$('echo').oninput=e=>{H.echo=e.target.value/100;$('echoo').textContent=e.target.value+'%'};$('vol').oninput=e=>{vol=e.target.value/100;$('vo').textContent=e.target.value};$('guard').onchange=e=>H.guard=e.target.checked;
+$('senso').textContent='2.8×';$('hango').textContent='500 ms';$('echoo').textContent='100%';$('vo').textContent='80';
+// loading character files: button, or drag and drop anywhere on the page
+async function loadFiles(files){let n=0;for(const f of files){try{const o=JSON.parse(await f.text()),arr=o.format==='blip-project'?o.chars:[o];for(const x of arr){if(x&&x.format==='blip-character'){const it=mkItem(x,'file');it.raw=x;list.push(it);n++}}}catch(e){log('could not read '+f.name)}}
+ if(n){cur=list.length-1;chips();mountTui();log('loaded '+n+' character'+(n>1?'s':''));try{const mine=list.filter(i=>i.src==='file').map(i=>i.raw);localStorage.setItem('blipListenChars',JSON.stringify(mine))}catch(e){}}}
+$('chf').onchange=async e=>{await loadFiles([...e.target.files]);e.target.value=''};
+document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();loadFiles([...e.dataTransfer.files])});
+init0();chips();mountTui();
+window.__blip={get listening(){return listening},log:()=>[...$('log').children].map(d=>d.textContent),chars:()=>list.map(i=>i.c.name+':'+i.src),react};
+</script></body></html>

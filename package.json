@@ -1,0 +1,16 @@
+{
+  "name": "blip-lab",
+  "version": "0.2.0",
+  "description": "Design expressive 8-bit robot voices, then generate, render and export them: a shared engine, a designer, a listener, and a tiny player for microcontrollers.",
+  "license": "MIT",
+  "private": true,
+  "bin": {
+    "blip": "tools/blip.js"
+  },
+  "scripts": {
+    "build": "node tools/build.js",
+    "test": "node tests/engine.test.js && node tests/listen.test.js && sh players/host/run.sh",
+    "test:browser": "node tests/designer-chromium.js && node tests/demo-chromium.js && node tests/app-chromium.js && node tests/parity-chromium.js $OLD_DESIGNER",
+    "test:sim": "node tests/rl-sim.js --care=5 && node tests/rl-sim.js --care=5 --noise=0.25"
+  }
+}
